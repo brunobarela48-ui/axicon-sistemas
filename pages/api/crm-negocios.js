@@ -4,78 +4,41 @@ const TABELA_VAREJO  = 'crm_negocios_varejo'
 const TABELA_ATACADO = 'crm_negocios_atacado'
 const TABELA_LEGADA  = 'crm_negocios'
 
-// Cache por instância serverless para evitar ALTER TABLE repetido
-const colunasGarantidas = new Set()
-let esquemaBaseGarantido = false
-
-async function garantirColuna(campoId) {
-  if (colunasGarantidas.has(campoId)) return
-  const { error } = await supabase.rpc('crm_add_campo_column', { p_campo_id: campoId })
-  if (error) console.error('[crm-negocios] garantirColuna falhou:', campoId, error.message)
-  colunasGarantidas.add(campoId)
-}
-
-// Garante que campos_personalizados existe em ambas as tabelas (precisa da função crm_ensure_base_columns no DB)
-async function garantirEsquemaBase() {
-  if (esquemaBaseGarantido) return
-  const { error } = await supabase.rpc('crm_ensure_base_columns').catch(e => ({ error: e }))
-  if (error) console.error('[crm-negocios] garantirEsquemaBase falhou (rode sql/ensure-base-columns.sql no Supabase):', error.message || error)
-  esquemaBaseGarantido = true
-}
-
+// Converte negócio do estado JS para linha do banco.
+// Usa apenas colunas do schema base (separate-negocios-tables.sql).
+// Campos personalizados vão em campos_extras como JSON — sem depender de RPCs ou ALTER TABLE.
 function toRow(n) {
   const extras = typeof n.campos_extras === 'object' && n.campos_extras !== null
-    ? n.campos_extras : {};
-
-  const { area: _area, ...camposPersonalizados } = extras;
-
-  // Cada campo personalizado vira uma coluna individual (campo_XXXXX: valor)
-  const colunasIndividuais = {};
-  for (const [key, val] of Object.entries(camposPersonalizados)) {
-    colunasIndividuais[key] = val !== null && val !== undefined ? String(val) : null;
-  }
+    ? n.campos_extras : {}
+  const { area: _area, ...camposPersonalizados } = extras
 
   return {
-    id:                    n.id,
-    empresa_id:            'axicon',
-    titulo:                n.titulo        || null,
-    valor:                 n.valor         || 0,
-    etapa:                 n.etapa         || null,
-    produto:               n.produto       || null,
-    probabilidade:         n.probabilidade || 20,
-    descricao:             n.descricao     || null,
-    contato_id:            n.contatoId     || null,
-    consultor_id:          n.consultorId   || null,
-    data_criacao:          n.dataCriacao   || null,
-    campos_extras:         { area: n.area || null },
-    campos_personalizados: camposPersonalizados,
-    ...colunasIndividuais,
-    bitrix_id:             n.bitrixId      || null,
-    importado_de:          n.importadoDe   || null,
-    atualizado_em:         new Date().toISOString(),
+    id:            n.id,
+    empresa_id:    'axicon',
+    titulo:        n.titulo        || null,
+    valor:         n.valor         || 0,
+    etapa:         n.etapa         || null,
+    produto:       n.produto       || null,
+    probabilidade: n.probabilidade || 20,
+    descricao:     n.descricao     || null,
+    contato_id:    n.contatoId     || null,
+    consultor_id:  n.consultorId   || null,
+    data_criacao:  n.dataCriacao   || null,
+    campos_extras: JSON.stringify({ area: n.area || null, ...camposPersonalizados }),
+    bitrix_id:     n.bitrixId      || null,
+    importado_de:  n.importadoDe   || null,
+    atualizado_em: new Date().toISOString(),
   }
 }
 
 function fromRow(r, defaultArea = 'varejo') {
-  const extras = typeof r.campos_extras === 'object' && r.campos_extras !== null
-    ? r.campos_extras
-    : (() => { try { return JSON.parse(r.campos_extras || '{}') } catch { return {} } })();
-
-  // Coleta colunas individuais campo_* diretamente do registro
-  const camposDasColunas = {};
-  for (const [key, val] of Object.entries(r)) {
-    if (key.startsWith('campo_') && val !== null && val !== undefined) {
-      camposDasColunas[key] = val;
-    }
+  let extras = {}
+  if (typeof r.campos_extras === 'object' && r.campos_extras !== null) {
+    extras = r.campos_extras
+  } else {
+    try { extras = JSON.parse(r.campos_extras || '{}') } catch { extras = {} }
   }
-
-  // Fallback para campos_personalizados JSONB ou campos_extras antigo
-  const camposDoJsonb = (r.campos_personalizados && typeof r.campos_personalizados === 'object')
-    ? r.campos_personalizados
-    : (() => { const { area: _a, ...rest } = extras; return rest; })();
-
-  // Colunas individuais têm prioridade (escrita mais recente)
-  const camposPersonalizados = { ...camposDoJsonb, ...camposDasColunas };
+  const { area, ...camposPersonalizados } = extras
 
   return {
     id:            r.id,
@@ -89,36 +52,35 @@ function fromRow(r, defaultArea = 'varejo') {
     consultorId:   r.consultor_id,
     dataCriacao:   r.data_criacao,
     campos_extras: camposPersonalizados,
-    area:          extras.area || defaultArea,
+    area:          area || defaultArea,
     bitrixId:      r.bitrix_id,
     importadoDe:   r.importado_de,
   }
 }
 
 export default async function handler(req, res) {
+  // ── GET ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     const [resV, resA] = await Promise.all([
       supabase.from(TABELA_VAREJO).select('*').eq('empresa_id', 'axicon').order('id'),
       supabase.from(TABELA_ATACADO).select('*').eq('empresa_id', 'axicon').order('id'),
     ])
 
-    const tabelasExistem = !resV.error && !resA.error
-
-    if (tabelasExistem) {
+    if (!resV.error && !resA.error) {
       const varejo  = (resV.data || []).map(r => fromRow(r, 'varejo'))
       const atacado = (resA.data || []).map(r => fromRow(r, 'atacado'))
       const negocios = [...varejo, ...atacado]
 
+      // Migração automática única: se tabelas separadas estão vazias mas legada tem dados
       if (negocios.length === 0) {
         const { data: leg } = await supabase
           .from(TABELA_LEGADA).select('*').eq('empresa_id', 'axicon').order('id')
-
         if (Array.isArray(leg) && leg.length > 0) {
-          const legRows = leg.map(r => fromRow(r, r.area || 'varejo'))
-          const legVarejo  = legRows.filter(n => n.area !== 'atacado').map(toRow)
-          const legAtacado = legRows.filter(n => n.area === 'atacado').map(toRow)
-          if (legVarejo.length  > 0) await supabase.from(TABELA_VAREJO).upsert(legVarejo,  { onConflict: 'id' })
-          if (legAtacado.length > 0) await supabase.from(TABELA_ATACADO).upsert(legAtacado, { onConflict: 'id' })
+          const legRows  = leg.map(r => fromRow(r, r.area || 'varejo'))
+          const legVar   = legRows.filter(n => n.area !== 'atacado').map(toRow)
+          const legAtac  = legRows.filter(n => n.area === 'atacado').map(toRow)
+          if (legVar.length  > 0) await supabase.from(TABELA_VAREJO).upsert(legVar,  { onConflict: 'id' })
+          if (legAtac.length > 0) await supabase.from(TABELA_ATACADO).upsert(legAtac, { onConflict: 'id' })
           return res.status(200).json({ negocios: legRows })
         }
       }
@@ -126,61 +88,54 @@ export default async function handler(req, res) {
       return res.status(200).json({ negocios })
     }
 
+    // Fallback: tabelas separadas não existem, usa legada
     const { data, error } = await supabase
       .from(TABELA_LEGADA).select('*').eq('empresa_id', 'axicon').order('id')
     if (error) return res.status(500).json({ error: error.message })
-    return res.status(200).json({ negocios: (data || []).map(r => fromRow(r, r.area || 'varejo')) })
+    return res.status(200).json({ negocios: (data || []).map(r => fromRow(r, 'varejo')) })
   }
 
+  // ── PUT ──────────────────────────────────────────────────────────────────
   if (req.method === 'PUT') {
     const { negocios } = req.body
     if (!Array.isArray(negocios)) return res.status(400).json({ error: 'negocios deve ser array' })
 
-    // Garante que campos_personalizados existe antes de qualquer upsert
-    await garantirEsquemaBase()
-
-    // Garante que cada campo personalizado tem uma coluna no banco antes de salvar
-    const campoIds = new Set()
-    negocios.forEach(n => {
-      const extras = typeof n.campos_extras === 'object' && n.campos_extras ? n.campos_extras : {}
-      const { area: _a, ...campos } = extras
-      Object.keys(campos).forEach(k => campoIds.add(k))
-    })
-    await Promise.all([...campoIds].map(garantirColuna))
-
     const varejo  = negocios.filter(n => (n.area || 'varejo') !== 'atacado')
     const atacado = negocios.filter(n => n.area === 'atacado')
-    const varejoIds  = varejo.map(n => n.id)
-    const atacadoIds = atacado.map(n => n.id)
-    const totalIds   = negocios.map(n => n.id)
-    const safeToDelete = totalIds.length > 0
 
+    // Verifica se tabelas separadas existem
     const { error: probeErr } = await supabase.from(TABELA_VAREJO).select('id').limit(0)
     const usarSeparadas = !probeErr
 
     if (usarSeparadas) {
       if (varejo.length > 0) {
-        const { error } = await supabase.from(TABELA_VAREJO).upsert(varejo.map(toRow), { onConflict: 'id' })
-        if (error) return res.status(500).json({ error: `varejo upsert: ${error.message}` })
+        const { error } = await supabase
+          .from(TABELA_VAREJO).upsert(varejo.map(toRow), { onConflict: 'id' })
+        if (error) return res.status(500).json({ error: `varejo: ${error.message}` })
       }
       if (atacado.length > 0) {
-        const { error } = await supabase.from(TABELA_ATACADO).upsert(atacado.map(toRow), { onConflict: 'id' })
-        if (error) return res.status(500).json({ error: `atacado upsert: ${error.message}` })
+        const { error } = await supabase
+          .from(TABELA_ATACADO).upsert(atacado.map(toRow), { onConflict: 'id' })
+        if (error) return res.status(500).json({ error: `atacado: ${error.message}` })
       }
 
-      if (safeToDelete) {
-        if (varejoIds.length > 0) {
-          await supabase.from(TABELA_VAREJO).delete().eq('empresa_id', 'axicon').not('id', 'in', `(${varejoIds.join(',')})`)
-        } else {
-          await supabase.from(TABELA_VAREJO).delete().eq('empresa_id', 'axicon')
-        }
-        if (atacadoIds.length > 0) {
-          await supabase.from(TABELA_ATACADO).delete().eq('empresa_id', 'axicon').not('id', 'in', `(${atacadoIds.join(',')})`)
-        } else {
-          await supabase.from(TABELA_ATACADO).delete().eq('empresa_id', 'axicon')
-        }
+      // Remove negócios deletados
+      const varejoIds  = varejo.map(n => n.id)
+      const atacadoIds = atacado.map(n => n.id)
+      if (varejoIds.length > 0) {
+        await supabase.from(TABELA_VAREJO).delete()
+          .eq('empresa_id', 'axicon').not('id', 'in', `(${varejoIds.join(',')})`)
+      } else {
+        await supabase.from(TABELA_VAREJO).delete().eq('empresa_id', 'axicon')
+      }
+      if (atacadoIds.length > 0) {
+        await supabase.from(TABELA_ATACADO).delete()
+          .eq('empresa_id', 'axicon').not('id', 'in', `(${atacadoIds.join(',')})`)
+      } else {
+        await supabase.from(TABELA_ATACADO).delete().eq('empresa_id', 'axicon')
       }
     } else {
+      // Fallback legado
       const rows = negocios.map(toRow)
       const ids  = negocios.map(n => n.id)
       if (rows.length > 0) {
@@ -188,7 +143,8 @@ export default async function handler(req, res) {
         if (error) return res.status(500).json({ error: error.message })
       }
       if (ids.length > 0) {
-        await supabase.from(TABELA_LEGADA).delete().eq('empresa_id', 'axicon').not('id', 'in', `(${ids.join(',')})`)
+        await supabase.from(TABELA_LEGADA).delete()
+          .eq('empresa_id', 'axicon').not('id', 'in', `(${ids.join(',')})`)
       }
     }
 
