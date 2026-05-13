@@ -1370,6 +1370,8 @@ function Pipeline({ dados, onMover, onAtualizar, onAdicionar, onRemover, onMensa
   function KanbanCard({ n }) {
     const contato = dados.contatos.find(c => c.id === n.contatoId);
     const stage = stages.find(s => s.id === n.etapa);
+    const [resumo, setResumo] = useState(n.campos_extras?.resumo_card || '');
+    const [editandoResumo, setEditandoResumo] = useState(false);
     return (
       <div
         draggable
@@ -1456,6 +1458,75 @@ function Pipeline({ dados, onMover, onAtualizar, onAdicionar, onRemover, onMensa
         {n.fechamento && (
           <div style={{ marginTop: 8, fontSize: 10, color: "#aaa", display: "flex", alignItems: "center", gap: 4 }}>
             {I.cal} {fmtDate(n.fechamento)}
+          </div>
+        )}
+
+        {/* Resumo do Negócio */}
+        <div style={{ marginTop: 10 }} onClick={e => e.stopPropagation()}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+            <div style={{ fontSize: 9, letterSpacing: 1.5, color: "#aaa", fontWeight: 600, textTransform: "uppercase" }}>Resumo</div>
+            {!editandoResumo && (
+              <button onClick={() => { setResumo(n.campos_extras?.resumo_card || ''); setEditandoResumo(true); }}
+                style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", padding: "2px 4px", borderRadius: 4, display: "flex", lineHeight: 1 }}
+                onMouseEnter={e => e.currentTarget.style.color = PAL.primary}
+                onMouseLeave={e => e.currentTarget.style.color = "#bbb"}>
+                {I.edit}
+              </button>
+            )}
+          </div>
+          {editandoResumo ? (
+            <>
+              <textarea
+                value={resumo}
+                onChange={e => setResumo(e.target.value)}
+                autoFocus
+                rows={3}
+                style={{ width: "100%", padding: "8px 10px", border: `1.5px solid ${PAL.primary}60`, borderRadius: 7, fontSize: 11, fontFamily: SN, resize: "none", boxSizing: "border-box", color: "#555", lineHeight: 1.5, background: "#fff", outline: "none" }}
+              />
+              <div style={{ display: "flex", gap: 4, marginTop: 4, justifyContent: "flex-end" }}>
+                <button onClick={() => setEditandoResumo(false)}
+                  style={{ padding: "4px 10px", borderRadius: 6, border: "1px solid #e0dbd0", background: "#fff", fontSize: 10, cursor: "pointer", fontFamily: SN, color: "#888" }}>
+                  Cancelar
+                </button>
+                <button onClick={() => { onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), resumo_card: resumo } }); setEditandoResumo(false); }}
+                  style={{ padding: "4px 12px", borderRadius: 6, border: "none", background: PAL.primary, color: "#fff", fontSize: 10, fontWeight: 700, cursor: "pointer", fontFamily: SN }}>
+                  Salvar
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ fontSize: 11, color: resumo ? "#555" : "#ccc", lineHeight: 1.6, fontStyle: resumo ? "normal" : "italic", background: "#FAFAF8", borderRadius: 7, padding: "8px 10px", minHeight: 38 }}>
+              {resumo || "Nenhum resumo adicionado."}
+            </div>
+          )}
+        </div>
+
+        {/* Pré-Proposta — apenas Atacado */}
+        {pipeAtiva === 'atacado' && (
+          <div style={{ marginTop: 8, padding: "10px 12px", background: `${ASSESS.primary}06`, borderRadius: 8, border: `1px solid ${ASSESS.primary}18` }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontSize: 9, letterSpacing: 1.5, color: ASSESS.primary, fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Pré-Proposta</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div>
+                <div style={{ fontSize: 9, letterSpacing: 1, color: "#888", fontWeight: 600, marginBottom: 3, textTransform: "uppercase" }}>Destinação dos Recursos</div>
+                <select
+                  value={n.campos_extras?.destinacao_recursos || ''}
+                  onChange={e => { e.stopPropagation(); onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), destinacao_recursos: e.target.value } }); }}
+                  style={{ fontSize: 11, padding: "5px 8px", borderRadius: 6, border: "1px solid #EDE8E0", background: "white", color: n.campos_extras?.destinacao_recursos ? "#444" : "#aaa", fontFamily: SN, width: "100%", cursor: "pointer" }}>
+                  <option value="">— Selecionar —</option>
+                  {['Capital de Giro', 'Expansão / Investimento', 'Quitação de Dívidas', 'Antecipação de Recebíveis', 'Estruturação Financeira', 'Outro'].map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div>
+                <div style={{ fontSize: 9, letterSpacing: 1, color: "#888", fontWeight: 600, marginBottom: 3, textTransform: "uppercase" }}>Garantias</div>
+                <select
+                  value={n.campos_extras?.tipo_garantia || ''}
+                  onChange={e => { e.stopPropagation(); onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), tipo_garantia: e.target.value } }); }}
+                  style={{ fontSize: 11, padding: "5px 8px", borderRadius: 6, border: "1px solid #EDE8E0", background: "white", color: n.campos_extras?.tipo_garantia ? "#444" : "#aaa", fontFamily: SN, width: "100%", cursor: "pointer" }}>
+                  <option value="">— Selecionar —</option>
+                  {['Imóvel', 'Veículo', 'Recebíveis', 'Aval / Fiança', 'Sem Garantia', 'Avaliando'].map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+            </div>
           </div>
         )}
 
@@ -2437,6 +2508,14 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
   const [novaNota, setNovaNota] = useState('');
   const [editando, setEditando] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [abaDetalhe, setAbaDetalhe] = useState('visao_geral');
+
+  const switchTab = (tab) => {
+    if (tab === 'edicao_rapida' && n) {
+      setEditForm({ titulo: n.titulo, valor: n.valor, produto: n.produto || '', probabilidade: n.probabilidade, prazo: n.prazo || '', taxaJuros: n.taxaJuros || '', origem: n.origem || '', fechamento: n.fechamento || '', proximaAcao: n.proximaAcao || '', observacoes: n.observacoes || '', consultorId: n.consultorId || null });
+    }
+    setAbaDetalhe(tab);
+  };
 
   const cliente = n ? dados.contatos.find(c => c.id === n.contatoId) : null;
   const consultor = n ? dados.funcionarios.find(f => f.id === n.consultorId) : null;
@@ -2616,9 +2695,9 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
           </div>
           <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:12}}>
             {onAtualizar && (
-              <button onClick={()=>{setEditForm({titulo:n.titulo,valor:n.valor,produto:n.produto,probabilidade:n.probabilidade,prazo:n.prazo||'',taxaJuros:n.taxaJuros||'',origem:n.origem||'',fechamento:n.fechamento||'',proximaAcao:n.proximaAcao||'',observacoes:n.observacoes||'',consultorId:n.consultorId||null});setEditando(true);}}
+              <button onClick={()=>switchTab('edicao_rapida')}
                 style={{padding:"8px 18px",borderRadius:8,border:`1.5px solid ${PAL.primary}`,background:"white",color:PAL.primary,cursor:"pointer",fontSize:12,fontWeight:700,letterSpacing:.5,display:"flex",alignItems:"center",gap:6}}>
-                {I.edit} Editar
+                {I.edit} Edição Rápida
               </button>
             )}
             <div style={{textAlign:"right"}}>
@@ -2649,8 +2728,18 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
         </div>
       </div>
 
+      {/* ABAS */}
+      <div style={{display:"flex",gap:4,marginBottom:20,background:"white",borderRadius:12,padding:4,border:"1px solid #f0ede5"}}>
+        {[{id:'visao_geral',label:'Visão Geral'},{id:'pre_proposta',label:'Pré-Proposta'},{id:'edicao_rapida',label:'Edição Rápida'}].map(t=>(
+          <button key={t.id} onClick={()=>switchTab(t.id)}
+            style={{flex:1,padding:"10px 0",borderRadius:8,border:"none",cursor:"pointer",fontSize:12,fontWeight:abaDetalhe===t.id?700:400,background:abaDetalhe===t.id?PAL.primary:"transparent",color:abaDetalhe===t.id?"white":"#888",transition:"all .15s",fontFamily:SN}}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* GRID PRINCIPAL */}
-      <div style={{display:"grid",gridTemplateColumns:"1.5fr 1fr",gap:20,alignItems:"start"}}>
+      <div style={{display:abaDetalhe==='visao_geral'?"grid":"none",gridTemplateColumns:"1.5fr 1fr",gap:20,alignItems:"start"}}>
         {/* COLUNA ESQUERDA */}
         <div>
           {/* Detalhes financeiros */}
@@ -2702,6 +2791,37 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
               </div>
             )}
           </div>
+
+          {/* Pré-Proposta — apenas Atacado */}
+          {areaNegocio === 'atacado' && (
+            <>
+              <SectionTitle label="Pré-Proposta"/>
+              <div style={{background:"white",borderRadius:14,padding:"22px 24px",border:"1px solid rgba(113,63,42,0.10)",marginBottom:20}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+                  <div>
+                    <label style={{fontSize:9,letterSpacing:2,color:"#aaa",fontWeight:600,marginBottom:6,textTransform:"uppercase",display:"block"}}>Destinação dos Recursos</label>
+                    <select
+                      value={n.campos_extras?.destinacao_recursos || ''}
+                      onChange={e => onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), destinacao_recursos: e.target.value } })}
+                      style={{width:"100%",padding:"9px 12px",border:"1px solid #e0dbd0",borderRadius:8,fontSize:13,fontFamily:SN,background:"white",color:n.campos_extras?.destinacao_recursos ? "#1a1a1a" : "#aaa"}}>
+                      <option value="">— Selecionar —</option>
+                      {['Capital de Giro','Expansão / Investimento','Quitação de Dívidas','Antecipação de Recebíveis','Estruturação Financeira','Outro'].map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{fontSize:9,letterSpacing:2,color:"#aaa",fontWeight:600,marginBottom:6,textTransform:"uppercase",display:"block"}}>Tipo de Garantia</label>
+                    <select
+                      value={n.campos_extras?.tipo_garantia || ''}
+                      onChange={e => onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), tipo_garantia: e.target.value } })}
+                      style={{width:"100%",padding:"9px 12px",border:"1px solid #e0dbd0",borderRadius:8,fontSize:13,fontFamily:SN,background:"white",color:n.campos_extras?.tipo_garantia ? "#1a1a1a" : "#aaa"}}>
+                      <option value="">— Selecionar —</option>
+                      {['Imóvel','Veículo','Recebíveis','Aval / Fiança','Sem Garantia','Avaliando'].map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* CAMPOS CUSTOMIZADOS — agrupados por seção, expansíveis */}
           {onAtualizar && (dados.campos_customizados||[]).length > 0 && (() => {
@@ -3052,6 +3172,107 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
           })()}
         </div>
       </div>
+
+      {/* ABA: PRÉ-PROPOSTA */}
+      {abaDetalhe === 'pre_proposta' && (
+        <div style={{maxWidth:700}}>
+          <div style={{background:"white",borderRadius:14,padding:"28px 32px",border:"1px solid rgba(113,63,42,0.10)"}}>
+            <div style={{fontSize:10,letterSpacing:2,color:PAL.primary,fontWeight:700,textTransform:"uppercase",marginBottom:24}}>Informações para Proposta</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+              <div>
+                <label style={lblStyle}>DESTINAÇÃO DOS RECURSOS</label>
+                <select value={n.campos_extras?.destinacao_recursos||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),destinacao_recursos:e.target.value}})} style={inpStyle}>
+                  <option value="">— Selecionar —</option>
+                  {['Capital de Giro','Expansão / Investimento','Quitação de Dívidas','Antecipação de Recebíveis','Estruturação Financeira','Outro'].map(o=><option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={lblStyle}>TIPO DE GARANTIA</label>
+                <select value={n.campos_extras?.tipo_garantia||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),tipo_garantia:e.target.value}})} style={inpStyle}>
+                  <option value="">— Selecionar —</option>
+                  {['Imóvel','Veículo','Recebíveis','Aval / Fiança','Sem Garantia','Avaliando'].map(o=><option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={lblStyle}>VALOR DA GARANTIA (R$)</label>
+                <input type="number" value={n.campos_extras?.valor_garantia||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),valor_garantia:e.target.value}})} style={inpStyle} placeholder="0"/>
+              </div>
+              <div>
+                <label style={lblStyle}>FATURAMENTO MÉDIO MENSAL (R$)</label>
+                <input type="number" value={n.campos_extras?.faturamento_mensal||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),faturamento_mensal:e.target.value}})} style={inpStyle} placeholder="0"/>
+              </div>
+              <div style={{gridColumn:"1/-1"}}>
+                <label style={lblStyle}>HISTÓRICO DE CRÉDITO</label>
+                <select value={n.campos_extras?.historico_credito||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),historico_credito:e.target.value}})} style={inpStyle}>
+                  <option value="">— Selecionar —</option>
+                  {['Limpo (sem restrições)','Negativado (em tratativa)','Score baixo','Score médio','Score alto','Recuperando'].map(o=><option key={o} value={o}>{o}</option>)}
+                </select>
+              </div>
+              <div style={{gridColumn:"1/-1"}}>
+                <label style={lblStyle}>OBSERVAÇÕES DA PRÉ-PROPOSTA</label>
+                <textarea rows={4} value={n.campos_extras?.obs_pre_proposta||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),obs_pre_proposta:e.target.value}})} style={{...inpStyle,resize:"vertical"}} placeholder="Informações relevantes para a proposta..."/>
+              </div>
+            </div>
+            <div style={{marginTop:20,paddingTop:16,borderTop:"1px solid #f5f0e8"}}>
+              {n.campos_extras?.destinacao_recursos && n.campos_extras?.tipo_garantia ? (
+                <div style={{fontSize:12,color:"#2e8a4e",display:"flex",alignItems:"center",gap:6}}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Campos principais preenchidos — pronto para gerar proposta
+                </div>
+              ) : (
+                <div style={{fontSize:12,color:"#f59e0b"}}>Preencha Destinação e Garantia para avançar com a proposta</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ABA: EDIÇÃO RÁPIDA */}
+      {abaDetalhe === 'edicao_rapida' && (
+        <div style={{maxWidth:700}}>
+          <div style={{background:"white",borderRadius:14,padding:"28px 32px",border:"1px solid rgba(113,63,42,0.10)"}}>
+            <div style={{fontSize:10,letterSpacing:2,color:PAL.primary,fontWeight:700,textTransform:"uppercase",marginBottom:24}}>Editar Negócio</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+              {[
+                {label:"TÍTULO",key:"titulo",full:true},
+                {label:"VALOR (R$)",key:"valor",type:"number"},
+                {label:"PROBABILIDADE (%)",key:"probabilidade",type:"number"},
+                {label:"PRAZO (MESES)",key:"prazo",type:"number"},
+                {label:"TAXA DE JUROS (% A.M.)",key:"taxaJuros",type:"number"},
+                {label:"ORIGEM",key:"origem"},
+                {label:"PREVISÃO DE FECHAMENTO",key:"fechamento",type:"date"},
+                {label:"PRÓXIMA AÇÃO",key:"proximaAcao",full:true},
+              ].map(({label,key,type,full})=>(
+                <div key={key} style={full?{gridColumn:"1/-1"}:{}}>
+                  <label style={lblStyle}>{label}</label>
+                  <input type={type||"text"} value={editForm[key]??''} onChange={e=>setEditForm(f=>({...f,[key]:type==='number'?parseFloat(e.target.value)||0:e.target.value}))} style={inpStyle}/>
+                </div>
+              ))}
+              <div style={{gridColumn:"1/-1"}}>
+                <label style={lblStyle}>PRODUTO</label>
+                <select value={editForm.produto||''} onChange={e=>setEditForm(f=>({...f,produto:e.target.value}))} style={inpStyle}>
+                  {Object.keys(PRODUTOS_COMISSAO).map(p=><option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+              <div style={{gridColumn:"1/-1"}}>
+                <label style={lblStyle}>CONSULTOR</label>
+                <select value={editForm.consultorId||''} onChange={e=>setEditForm(f=>({...f,consultorId:Number(e.target.value)||null}))} style={inpStyle}>
+                  <option value="">— Sem consultor —</option>
+                  {dados.funcionarios.map(f=><option key={f.id} value={f.id}>{f.nome}</option>)}
+                </select>
+              </div>
+              <div style={{gridColumn:"1/-1"}}>
+                <label style={lblStyle}>OBSERVAÇÕES</label>
+                <textarea value={editForm.observacoes||''} onChange={e=>setEditForm(f=>({...f,observacoes:e.target.value}))} rows={3} style={{...inpStyle,resize:"vertical"}}/>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"flex-end",marginTop:24}}>
+              <button onClick={()=>setAbaDetalhe('visao_geral')} style={{padding:"10px 20px",borderRadius:8,border:"1px solid #e0dbd0",background:"white",cursor:"pointer",fontSize:13,fontFamily:SN}}>Cancelar</button>
+              <button onClick={()=>{onAtualizar(n.id,editForm);setAbaDetalhe('visao_geral');}} style={{padding:"10px 24px",borderRadius:8,border:"none",background:PAL.primary,color:"white",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:SN}}>Salvar Alterações</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
