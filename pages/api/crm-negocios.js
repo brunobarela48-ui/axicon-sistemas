@@ -1,5 +1,7 @@
 import { supabaseAdmin as supabase } from '../../lib/supabase-admin'
 
+export const config = { api: { bodyParser: { sizeLimit: '10mb' } } }
+
 const TABELA_VAREJO  = 'crm_negocios_varejo'
 const TABELA_ATACADO = 'crm_negocios_atacado'
 const TABELA_LEGADA  = 'crm_negocios'

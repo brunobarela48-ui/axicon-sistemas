@@ -402,8 +402,10 @@ const fillTemplate = (txt, vars) => {
 
 // ── SLUG ROUTING ─────────────────────────────────────────────────────────────
 const TELA_SLUGS = {
-  dashboard:       'dashboard',
-  pipeline:        'pipeline',
+  dashboard:        'dashboard',
+  pipeline:         'pipeline',
+  pipeline_varejo:  'pipeline-varejo',
+  pipeline_atacado: 'pipeline-atacado',
   contatos:        'contatos',
   contato_detalhe: 'contato',
   negocio_detalhe: 'negocio',
@@ -887,6 +889,8 @@ export default function CRM({ inline = false, telaProp, navegarProp, usuarioProp
   const titulos = {
     dashboard: "Dashboard CRM",
     pipeline: "Pipeline de Vendas",
+    pipeline_varejo: "Pipeline — Varejo",
+    pipeline_atacado: "Pipeline — Atacado",
     contatos: "Contatos",
     contato_detalhe: "Detalhe do Contato",
     negocio_detalhe: "Detalhe do Negócio",
@@ -926,6 +930,8 @@ export default function CRM({ inline = false, telaProp, navegarProp, usuarioProp
       )}
       {tela==='dashboard' && <Dashboard dados={dadosFiltrados} usuario={usuario} setTela={navegar}/>}
       {tela==='pipeline' && <Pipeline dados={dadosFiltrados} onMover={moverNegocio} onAtualizar={atualizarNegocio} onAdicionar={()=>setModal({tipo:'novo-negocio',defaultConsultorId:meuFuncId})} onRemover={removerNegocio} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} draggedNegocio={draggedNegocio} setDraggedNegocio={setDraggedNegocio} onGerarProposta={onGerarProposta} onTransferirNegocio={transferirNegocio}/>}
+      {tela==='pipeline_varejo' && <Pipeline area="varejo" dados={dadosFiltrados} onMover={moverNegocio} onAtualizar={atualizarNegocio} onAdicionar={()=>setModal({tipo:'novo-negocio',defaultConsultorId:meuFuncId})} onRemover={removerNegocio} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} draggedNegocio={draggedNegocio} setDraggedNegocio={setDraggedNegocio} onGerarProposta={onGerarProposta} onTransferirNegocio={transferirNegocio}/>}
+      {tela==='pipeline_atacado' && <Pipeline area="atacado" dados={dadosFiltrados} onMover={moverNegocio} onAtualizar={atualizarNegocio} onAdicionar={()=>setModal({tipo:'novo-negocio',defaultConsultorId:meuFuncId})} onRemover={removerNegocio} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} draggedNegocio={draggedNegocio} setDraggedNegocio={setDraggedNegocio} onGerarProposta={onGerarProposta} onTransferirNegocio={transferirNegocio}/>}
       {tela==='contatos' && <Contatos dados={dadosFiltrados} onAdicionar={()=>setModal('novo-contato')} onEditar={(c)=>setModal({tipo:'editar-contato',data:c})} onRemover={removerContato} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrir={(id)=>navegar('contato_detalhe',id)}/>}
       {tela==='contato_detalhe' && <ContatoDetalhe dados={dadosFiltrados} contatoId={telaParam} onVoltar={()=>navegar('contatos')} onEditar={(c)=>setModal({tipo:'editar-contato',data:c})} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} onAtualizar={atualizarContato}/>}
       {tela==='negocio_detalhe' && <NegocioDetalhe dados={dadosFiltrados} negocioId={telaParam} onVoltar={()=>navegar('pipeline')} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirContato={(id)=>navegar('contato_detalhe',id)} onAtualizar={atualizarNegocio} onAdicionarAtividade={adicionarAtividade} onToggleAtividade={toggleAtividade} onRemoverAtividade={removerAtividade} onAdicionarNota={adicionarAtividade}/>}
@@ -1027,7 +1033,8 @@ export default function CRM({ inline = false, telaProp, navegarProp, usuarioProp
         <div>
           <SectionLabel>CRM</SectionLabel>
           <NavItem icon={I.dash} label="Dashboard" active={tela==='dashboard'} onClick={()=>navegar('dashboard')}/>
-          <NavItem icon={I.pipe} label="Pipeline" active={tela==='pipeline'} onClick={()=>navegar('pipeline')}/>
+          <NavItem icon={I.pipe} label="Pipeline Varejo" active={tela==='pipeline_varejo'} onClick={()=>navegar('pipeline_varejo')}/>
+          <NavItem icon={I.pipe} label="Pipeline Atacado" active={tela==='pipeline_atacado'} onClick={()=>navegar('pipeline_atacado')}/>
           <NavItem icon={I.users} label="Contatos" active={tela==='contatos'||tela==='contato_detalhe'} onClick={()=>navegar('contatos')}/>
           <NavItem icon={I.cal} label="Atividades" active={tela==='atividades'} onClick={()=>navegar('atividades')}/>
           <NavItem icon={I.cal} label="Agendamento" active={tela==='agendamento'} onClick={()=>navegar('agendamento')}/>
@@ -1354,8 +1361,8 @@ const COLUNAS_PIPELINE = [
   { id: 'acoes',      label: 'Ações', always: true, width: '150px' },
 ];
 
-function Pipeline({ dados, onMover, onAtualizar, onAdicionar, onRemover, onMensagem, onAbrirNegocio, draggedNegocio, setDraggedNegocio, onGerarProposta, onTransferirNegocio }) {
-  const [pipeAtiva, setPipeAtiva] = useState('varejo');
+function Pipeline({ area: areaFixa, dados, onMover, onAtualizar, onAdicionar, onRemover, onMensagem, onAbrirNegocio, draggedNegocio, setDraggedNegocio, onGerarProposta, onTransferirNegocio }) {
+  const [pipeAtiva, setPipeAtiva] = useState(areaFixa || 'varejo');
   const [visao, setVisao] = useState('kanban'); // 'kanban' | 'lista'
   const [ordemLista, setOrdemLista] = useState('valor'); // 'valor' | 'prob' | 'fechamento' | 'etapa'
   const [colsVisiveis, setColsVisiveis] = useState(['negocio','produto','etapa','valor','prob','fechamento','acoes']);
@@ -1799,23 +1806,25 @@ function Pipeline({ dados, onMover, onAtualizar, onAdicionar, onRemover, onMensa
         </div>
       </div>
 
-      {/* ── TABS VAREJO / ATACADO ── */}
+      {/* ── TABS VAREJO / ATACADO (oculta quando área já está fixada pela rota) ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-        <div style={{ display: "flex", background: "#F5F0E8", borderRadius: 10, padding: 3, gap: 2 }}>
-          {[
-            { id: 'varejo', label: 'Varejo', cor: VAREJO.primary },
-            { id: 'atacado', label: 'Atacado', cor: ASSESS.primary },
-          ].map(t => {
-            const count = dados.negocios.filter(n => getAreaNegocio(n) === t.id).length;
-            return (
-              <button key={t.id} onClick={() => setPipeAtiva(t.id)}
-                style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: pipeAtiva === t.id ? "#fff" : "transparent", color: pipeAtiva === t.id ? t.cor : "#888", cursor: "pointer", fontSize: 12, fontWeight: pipeAtiva === t.id ? 700 : 500, fontFamily: SN, display: "flex", alignItems: "center", gap: 8, boxShadow: pipeAtiva === t.id ? "0 1px 4px rgba(0,0,0,.08)" : "none" }}>
-                {t.label}
-                <span style={{ fontSize: 10, padding: "1px 7px", borderRadius: 99, background: pipeAtiva === t.id ? `${t.cor}18` : "rgba(0,0,0,0.06)", color: pipeAtiva === t.id ? t.cor : "#aaa", fontWeight: 700 }}>{count}</span>
-              </button>
-            );
-          })}
-        </div>
+        {!areaFixa && (
+          <div style={{ display: "flex", background: "#F5F0E8", borderRadius: 10, padding: 3, gap: 2 }}>
+            {[
+              { id: 'varejo', label: 'Varejo', cor: VAREJO.primary },
+              { id: 'atacado', label: 'Atacado', cor: ASSESS.primary },
+            ].map(t => {
+              const count = dados.negocios.filter(n => getAreaNegocio(n) === t.id).length;
+              return (
+                <button key={t.id} onClick={() => setPipeAtiva(t.id)}
+                  style={{ padding: "8px 20px", borderRadius: 8, border: "none", background: pipeAtiva === t.id ? "#fff" : "transparent", color: pipeAtiva === t.id ? t.cor : "#888", cursor: "pointer", fontSize: 12, fontWeight: pipeAtiva === t.id ? 700 : 500, fontFamily: SN, display: "flex", alignItems: "center", gap: 8, boxShadow: pipeAtiva === t.id ? "0 1px 4px rgba(0,0,0,.08)" : "none" }}>
+                  {t.label}
+                  <span style={{ fontSize: 10, padding: "1px 7px", borderRadius: 99, background: pipeAtiva === t.id ? `${t.cor}18` : "rgba(0,0,0,0.06)", color: pipeAtiva === t.id ? t.cor : "#aaa", fontWeight: 700 }}>{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* KPI mini pills */}
         <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>

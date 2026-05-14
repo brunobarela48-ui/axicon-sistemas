@@ -1,3045 +1,469 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-lang="pt">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Áxicon Soluções Financeiras</title>
-<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  /* ─────────────────────────────────────────────────────────────────
-     PALETA ÁXICON (do design system da intranet)
-     Varejo:  #001489 / #2B367B / accent #CCA67F / light #EEF0F8
-     Atacado: #713F2A / #7C4D33 / accent #DAB58F / light #F7F3EE
-     Sidebar: #0E0E0E · Main: #F5F4F0
-     Tipografia: The Seasons (Cormorant Garamond preview) + Montserrat
-  ───────────────────────────────────────────────────────────────── */
-  :root {
-    --atacado: #713F2A;
-    --atacado-2: #7C4D33;
-    --atacado-dark: #4A2918;
-    --atacado-light: #F7F3EE;
-    --varejo: #001489;
-    --accent: #CCA67F;
-    --accent-2: #DAB58F;
-    --sidebar: #0E0E0E;
-    --main: #F5F4F0;
-    --paper: #FFFFFF;
-    --input-bg: #EFE9E0;
-    --ink: #1a1a1a;
-    --ink-soft: #555;
-    --line: rgba(113, 63, 42, 0.12);
-    --line-soft: rgba(113, 63, 42, 0.08);
-    --serif: 'Cormorant Garamond', 'Georgia', serif;
-    --sans: 'Montserrat', 'Helvetica Neue', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--main);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-weight: 400;
-    line-height: 1.6;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ───────── TOPBAR (estilo intranet, branca, 68px) ───────── */
-  .topbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 68px;
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
-    justify-content: space-between;
-  }
-  .topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-  }
-  .logo-mark {
-    display: inline-flex;
-    align-items: center;
-    height: 44px;
-  }
-  .logo-mark img {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-    display: block;
-    /* SVG vem em branco -> pintamos no tom Atacado para topbar clara */
-    filter: brightness(0) saturate(100%) invert(22%) sepia(28%) saturate(1600%) hue-rotate(348deg) brightness(85%) contrast(90%);
-  }
-  .logo-mark.light img {
-    /* versão accent (dourado) para fundos escuros */
-    filter: brightness(0) saturate(100%) invert(76%) sepia(22%) saturate(420%) hue-rotate(355deg) brightness(94%) contrast(86%);
-  }
-  .logo-mark.invert img {
-    filter: brightness(0) invert(1);
-    opacity: 0.92;
-  }
-  .breadcrumb {
-    font-family: var(--sans);
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 500;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .breadcrumb span { color: var(--atacado); font-weight: 600; }
-
-  .topbar-nav {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    flex-shrink: 0;
-  }
-  .topbar-nav a {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    text-decoration: none;
-    font-weight: 500;
-    white-space: nowrap;
-    transition: color 0.25s;
-  }
-  .topbar-nav a:hover { color: var(--atacado); }
-
-  /* Toggle de idioma PT/EN */
-  .lang-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: 16px;
-    padding-left: 24px;
-    border-left: 1px solid var(--line);
-  }
-  .lang-btn {
-    background: transparent;
-    border: none;
-    font-family: var(--sans);
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: var(--ink-soft);
-    font-weight: 600;
-    cursor: pointer;
-    padding: 4px 6px;
-    transition: color 0.25s;
-  }
-  .lang-btn.active {
-    color: var(--atacado);
-    border-bottom: 1.5px solid var(--accent);
-  }
-  .lang-btn:hover { color: var(--atacado); }
-  .lang-divider {
-    color: var(--ink-soft);
-    opacity: 0.4;
-    font-size: 10px;
-  }
-
-  /* ── Hamburger button (visível só em mobile) ── */
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-    width: 36px;
-    height: 36px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    margin-left: 8px;
-    flex-shrink: 0;
-  }
-  .hamburger span {
-    display: block;
-    height: 1.5px;
-    width: 100%;
-    background: var(--atacado);
-    transition: transform 0.25s, opacity 0.25s;
-    transform-origin: center;
-  }
-  .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-  .hamburger.open span:nth-child(2) { opacity: 0; }
-  .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-
-  /* ── Menu mobile overlay ── */
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 68px;
-    left: 0;
-    right: 0;
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-    z-index: 99;
-    padding: 16px 20px 24px;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line-soft);
-    transition: color 0.2s;
-  }
-  .mobile-menu a:last-of-type { border-bottom: none; }
-  .mobile-menu a:hover { color: var(--atacado); }
-  .mobile-menu .lang-toggle {
-    margin-left: 0;
-    padding-left: 0;
-    border-left: none;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-    margin-top: 8px;
-  }
-
-  @media (max-width: 1280px) {
-    .breadcrumb { display: none; }
-    .topbar-left { gap: 0; }
-  }
-  @media (max-width: 1100px) {
-    .topbar-nav { gap: 18px; }
-    .topbar { padding: 0 24px; }
-  }
-  @media (max-width: 980px) {
-    .topbar { padding: 0 20px; }
-    .topbar-nav a { display: none; }
-    .topbar-nav .lang-toggle { display: none; }
-    .hamburger { display: flex; }
-  }
-  @media (max-width: 480px) {
-    .topbar { height: 58px; }
-    .logo-mark { height: 36px; }
-    .mobile-menu { top: 58px; }
-  }
-
-  /* ───────── SECTION LABEL (padrão intranet com linha gradiente) ───────── */
-  .section-label {
-    font-family: var(--sans);
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--atacado);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .section-label::before {
-    content: '';
-    width: 56px;
-    height: 1.5px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-
-  .section-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(36px, 5vw, 64px);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    margin-bottom: 24px;
-  }
-  .section-title em {
-    font-style: italic;
-    color: var(--atacado);
-    font-weight: 400;
-  }
-
-  .section-lead {
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--ink-soft);
-    max-width: 520px;
-    font-weight: 400;
-  }
-
-  /* ───────── HERO (padrão home da intranet "Bom dia, *André.*") ───────── */
-  .hero {
-    padding: 140px 40px 100px;
-    background: var(--main);
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -120px; right: -120px;
-    width: 520px; height: 520px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.18), transparent 65%);
-    pointer-events: none;
-  }
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: -200px; left: -200px;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(113, 63, 42, 0.06), transparent 65%);
-    pointer-events: none;
-  }
-  .hero-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 80px;
-    align-items: stretch;
-  }
-  .hero-greeting {
-    font-family: var(--sans);
-    font-size: 12px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--atacado);
-    font-weight: 600;
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .hero-greeting::before {
-    content: '';
-    width: 40px;
-    height: 1.5px;
-    background: var(--atacado);
-  }
-  .hero h1 {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(44px, 6vw, 88px);
-    line-height: 1;
-    letter-spacing: -0.015em;
-    color: var(--ink);
-    margin-bottom: 36px;
-  }
-  .hero h1 em {
-    font-style: italic;
-    color: var(--atacado);
-    font-weight: 400;
-  }
-  .hero-sub {
-    font-size: 17px;
-    line-height: 1.75;
-    color: var(--ink-soft);
-    margin-bottom: 44px;
-    max-width: 540px;
-  }
-
-  /* Bloco de identificação do documento (substitui CTAs do hero) */
-  .hero-doc {
-    margin-top: 8px;
-    padding-top: 32px;
-    border-top: 1px solid var(--line);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    max-width: 480px;
-  }
-  .hero-doc-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 24px;
-  }
-  .hero-doc-lbl {
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-  }
-  .hero-doc-val {
-    font-family: var(--serif);
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--atacado);
-    font-style: italic;
-    text-align: right;
-  }
-
-  /* Hero card lateral (estilo card intranet) */
-  .hero-card {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 40px 36px;
-    border-radius: 4px;
-    box-shadow: 0 24px 48px -24px rgba(113, 63, 42, 0.18);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  .hero-card-label {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-  .hero-card h3 {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 32px;
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 24px;
-  }
-  .hero-card h3 em { font-style: italic; color: var(--atacado); }
-  .hero-card-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-    flex: 1;
-  }
-  .meta-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-  }
-  .meta-row .lbl { color: var(--ink-soft); }
-  .meta-row .val { color: var(--atacado); font-weight: 600; font-family: var(--serif); font-size: 16px; }
-
-  /* Rodapé do card hero */
-  .hero-card-footer {
-    margin-top: auto;
-    padding-top: 24px;
-    border-top: 1px solid var(--line-soft);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .hcf-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .hcf-label {
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    opacity: 0.7;
-  }
-  .hcf-val {
-    font-family: var(--serif);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--atacado);
-    line-height: 1.1;
-  }
-
-  @media (max-width: 980px) {
-    .hero { padding: 110px 20px 60px; }
-    .hero-inner { grid-template-columns: 1fr; gap: 50px; }
-  }
-
-  /* ───────── KPI BAR (padrão KPI cards da intranet) ───────── */
-  .kpis {
-    padding: 60px 40px;
-    background: var(--paper);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .kpis-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-  }
-  .kpi {
-    background: var(--main);
-    border-top: 3px solid var(--accent);
-    padding: 32px 28px;
-    border-radius: 4px;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  .kpi:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -20px rgba(113, 63, 42, 0.22);
-  }
-  .kpi-label {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-  .kpi-value {
-    font-family: var(--serif);
-    font-weight: 400;
-    font-size: 44px;
-    line-height: 1;
-    color: var(--atacado);
-    letter-spacing: -0.015em;
-  }
-  .kpi-value .unit {
-    font-size: 0.5em;
-    color: var(--ink);
-    margin-left: 4px;
-    font-weight: 300;
-  }
-  .kpi-foot {
-    margin-top: 14px;
-    font-size: 12px;
-    color: var(--ink-soft);
-    font-weight: 500;
-  }
-  @media (max-width: 880px) {
-    .kpis { padding: 40px 20px; }
-    .kpis-inner { grid-template-columns: 1fr 1fr; gap: 16px; }
-  }
-  @media (max-width: 480px) {
-    .kpis-inner { grid-template-columns: 1fr; }
-  }
-
-  /* ───────── TESE (3 pilares) ───────── */
-  .thesis {
-    padding: 120px 40px;
-    background: var(--main);
-  }
-  .thesis-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 0.9fr 1.5fr;
-    gap: 100px;
-    align-items: start;
-  }
-  .pillars {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin-top: 24px;
-  }
-  .pillar {
-    padding: 36px 0;
-    border-top: 1px solid var(--line);
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 24px;
-    align-items: start;
-    transition: padding-left 0.4s;
-  }
-  .pillar:hover { padding-left: 16px; }
-  .pillar:last-child { border-bottom: 1px solid var(--line); }
-  .pillar-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 32px;
-    color: var(--accent);
-    font-weight: 400;
-    line-height: 1;
-  }
-  .pillar-title {
-    font-family: var(--serif);
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-  .pillar-text {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-  }
-  @media (max-width: 980px) {
-    .thesis { padding: 80px 20px; }
-    .thesis-inner { grid-template-columns: 1fr; gap: 40px; }
-  }
-
-  /* ───────── PRODUTOS (cards no estilo intranet com border-top accent) ───────── */
-  .products {
-    padding: 120px 40px;
-    background: var(--atacado-light);
-  }
-  .products-header {
-    max-width: 1320px;
-    margin: 0 auto 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-  }
-  .products-grid {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  .product {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 36px 32px;
-    border-radius: 4px;
-    transition: all 0.35s;
-    position: relative;
-    cursor: pointer;
-    min-height: 240px;
-    display: flex;
-    flex-direction: column;
-  }
-  .product:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 48px -20px rgba(113, 63, 42, 0.22);
-    border-top-color: var(--atacado);
-  }
-  .product-tag {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .product-title {
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: 26px;
-    color: var(--atacado);
-    margin-bottom: 14px;
-    line-height: 1.15;
-  }
-  .product-desc {
-    font-size: 13.5px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-    margin-bottom: auto;
-  }
-  .product-arrow {
-    font-family: var(--serif);
-    color: var(--atacado);
-    margin-top: 24px;
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    transition: gap 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .product:hover .product-arrow { gap: 14px; }
-  @media (max-width: 980px) {
-    .products { padding: 80px 20px; }
-    .products-header { grid-template-columns: 1fr; gap: 32px; }
-    .products-grid { grid-template-columns: 1fr; gap: 16px; }
-    .product { min-height: auto; }
-  }
-
-  /* ───────── FLUXO DE ATENDIMENTO ───────── */
-  .flow {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    min-height: 600px;
-    position: relative;
-  }
-  .flow-left {
-    background: var(--sidebar);
-    color: var(--paper);
-    padding: 100px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-  .flow-left::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.10), transparent 65%);
-    pointer-events: none;
-  }
-  .flow-left::after {
-    content: '';
-    position: absolute;
-    bottom: 60px;
-    left: 80px;
-    width: 1.5px;
-    height: 180px;
-    background: var(--paper);
-    opacity: 0.85;
-  }
-  .flow-section-label {
-    font-size: 10px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 28px;
-    position: relative;
-    z-index: 2;
-  }
-  .flow-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(46px, 5.4vw, 72px);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    color: var(--paper);
-    margin-bottom: 80px;
-    position: relative;
-    z-index: 2;
-  }
-  .flow-narrative {
-    position: relative;
-    z-index: 2;
-    padding-left: 24px;
-    max-width: 440px;
-  }
-  .flow-narrative p {
-    font-size: 14.5px;
-    line-height: 1.75;
-    color: rgba(247, 243, 238, 0.78);
-    margin-bottom: 20px;
-  }
-  .flow-narrative p:last-child {
-    margin-bottom: 0;
-  }
-  .flow-right {
-    background: var(--main);
-    padding: 100px 80px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 56px;
-  }
-  .flow-step {
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 24px;
-    align-items: start;
-    position: relative;
-  }
-  .flow-step-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 72px;
-    line-height: 0.9;
-    color: var(--atacado);
-    letter-spacing: -0.03em;
-  }
-  .flow-step-content h3 {
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: 30px;
-    color: var(--atacado);
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
-  }
-  .flow-step-content p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-    max-width: 540px;
-  }
-
-  @media (max-width: 980px) {
-    .flow { grid-template-columns: 1fr; }
-    .flow-left { padding: 64px 24px; }
-    .flow-left::after { display: none; }
-    .flow-narrative { padding-left: 16px; border-left: 1.5px solid var(--paper); }
-    .flow-title { margin-bottom: 48px; }
-    .flow-right { padding: 64px 24px; gap: 40px; }
-    .flow-step { grid-template-columns: 56px 1fr; gap: 16px; }
-    .flow-step-num { font-size: 56px; }
-    .flow-step-content h3 { font-size: 24px; }
-  }
-
-  /* ───────── NEGÓCIOS ESTRUTURADOS (CASES) ───────── */
-  .cases {
-    padding: 120px 40px;
-    background: var(--main);
-    position: relative;
-    overflow: hidden;
-  }
-  .cases::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.08), transparent 65%);
-    pointer-events: none;
-  }
-  .cases-header {
-    max-width: 1320px;
-    margin: 0 auto 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-    position: relative;
-    z-index: 2;
-  }
-  .cases-grid {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    position: relative;
-    z-index: 2;
-  }
-  .case-card {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 44px 40px;
-    border-radius: 4px;
-    transition: all 0.4s;
-    position: relative;
-    overflow: hidden;
-  }
-  .case-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 28px 48px -24px rgba(113, 63, 42, 0.22);
-    border-top-color: var(--atacado);
-  }
-  .case-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 160px;
-    height: 160px;
-    background: radial-gradient(circle at top right, rgba(204, 166, 127, 0.12), transparent 60%);
-    pointer-events: none;
-  }
-  .case-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--line);
-  }
-  .case-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-  }
-  .case-tag {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--atacado);
-    font-weight: 700;
-    padding: 6px 12px;
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    background: var(--atacado-light);
-  }
-  .case-title {
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: 28px;
-    line-height: 1.2;
-    color: var(--ink);
-    margin-bottom: 16px;
-    letter-spacing: -0.01em;
-  }
-  .case-title em {
-    font-style: italic;
-    color: var(--atacado);
-  }
-  .case-desc {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-    margin-bottom: 28px;
-  }
-  .case-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-  }
-  .case-stat-lbl {
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .case-stat-val {
-    font-family: var(--serif);
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--atacado);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-  }
-  .case-stat-val .unit {
-    font-size: 0.55em;
-    color: var(--ink-soft);
-    font-weight: 400;
-    margin-left: 4px;
-  }
-
-  /* Timeline de prazos dentro do case */
-  .case-timeline {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-  }
-  .case-timeline-label {
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .case-timeline-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-    opacity: 0.4;
-  }
-  .case-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .case-step {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    align-items: center;
-    gap: 14px;
-    padding: 11px 0;
-    border-bottom: 1px dashed rgba(113, 63, 42, 0.12);
-    transition: padding-left 0.25s;
-  }
-  .case-step:last-child {
-    border-bottom: none;
-  }
-  .case-step:hover {
-    padding-left: 6px;
-  }
-  .case-step-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 500;
-    text-align: center;
-  }
-  .case-step-name {
-    font-size: 12.5px;
-    color: var(--ink);
-    line-height: 1.4;
-    font-weight: 500;
-  }
-  .case-step-name .qualifier {
-    color: var(--ink-soft);
-    font-size: 11px;
-    font-style: italic;
-    font-weight: 400;
-    margin-left: 4px;
-  }
-  .case-step-time {
-    font-family: var(--serif);
-    font-size: 14px;
-    color: var(--atacado);
-    font-weight: 500;
-    white-space: nowrap;
-    letter-spacing: -0.01em;
-  }
-  .case-step-time .time-unit {
-    font-size: 11px;
-    color: var(--ink-soft);
-    font-weight: 400;
-    font-style: italic;
-    margin-left: 2px;
-  }
-  .case-total {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--atacado);
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-  .case-total-lbl {
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--atacado);
-    font-weight: 700;
-  }
-  .case-total-val {
-    font-family: var(--serif);
-    font-size: 22px;
-    color: var(--atacado);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-  .case-total-val .time-unit {
-    font-size: 13px;
-    color: var(--ink-soft);
-    font-weight: 400;
-    font-style: italic;
-    margin-left: 4px;
-  }
-
-  @media (max-width: 980px) {
-    .cases { padding: 80px 20px; }
-    .cases-header { grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
-    .cases-grid { grid-template-columns: 1fr; gap: 16px; }
-    .case-card { padding: 32px 28px; }
-    .case-title { font-size: 24px; }
-    .case-step { grid-template-columns: 22px 1fr auto; gap: 10px; }
-    .case-step-name { font-size: 12px; }
-  }
-
-  /* ───────── ECOSSISTEMA / MAPA ───────── */
-  .ecosystem {
-    padding: 120px 40px;
-    background: var(--main);
-    position: relative;
-    overflow: hidden;
-  }
-  .ecosystem::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -200px;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.1), transparent 65%);
-    pointer-events: none;
-  }
-  .ecosystem-header {
-    max-width: 1320px;
-    margin: 0 auto 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-    position: relative;
-    z-index: 2;
-  }
-  .map-container {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 48px;
-    align-items: start;
-    position: relative;
-    z-index: 2;
-  }
-  .map-wrapper {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 24px;
-    border-radius: 4px;
-    aspect-ratio: 1 / 1.05;
-    box-shadow: 0 24px 48px -24px rgba(113, 63, 42, 0.15);
-  }
-  .map-wrapper svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  /* Silhueta única do Brasil */
-  .brazil-shape {
-    transition: fill 0.4s;
-  }
-
-  /* Halos das regiões ativas (atrás da silhueta) */
-  .halo {
-    transition: opacity 0.4s;
-    opacity: 0.7;
-  }
-  .halo.halo-sede {
-    opacity: 1;
-  }
-  .halo.highlight {
-    opacity: 1;
-  }
-
-  .pin-group { cursor: pointer; }
-  .pin-pulse {
-    fill: var(--atacado);
-    opacity: 0;
-    transform-origin: center;
-    transform-box: fill-box;
-    animation: pulse 2.4s ease-out infinite;
-  }
-  .pin-dot {
-    fill: var(--atacado);
-    stroke: var(--paper);
-    stroke-width: 2;
-    transition: all 0.3s;
-  }
-  .pin-sede {
-    stroke: var(--accent);
-    stroke-width: 2.5;
-    filter: drop-shadow(0 0 8px rgba(113, 63, 42, 0.45));
-  }
-  .pin-dot-inner {
-    pointer-events: none;
-  }
-  .pin-group:hover .pin-dot,
-  .pin-group.active .pin-dot {
-    fill: var(--accent);
-    stroke: var(--atacado);
-  }
-
-  .pin-label {
-    font-family: var(--sans);
-    font-size: 9.5px;
-    fill: var(--ink);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    text-anchor: middle;
-  }
-  /* Sede sempre visível */
-  .pin-group.active .pin-label,
-  .pin-group:hover .pin-label,
-  .pin-group .pin-label[font-weight="700"] { opacity: 1; }
-
-  .pin-line {
-    stroke: var(--accent);
-    stroke-width: 0.7;
-    stroke-dasharray: 3 4;
-    opacity: 0.45;
-    transition: opacity 0.3s;
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: 0.5; }
-    100% { transform: scale(4); opacity: 0; }
-  }
-
-  .map-legend {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-  .region-card {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-left: 3px solid transparent;
-    padding: 22px 24px;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 8px;
-    border-radius: 4px;
-  }
-  .region-card:hover, .region-card.active {
-    border-left-color: var(--atacado);
-    background: var(--paper);
-    box-shadow: 0 16px 32px -16px rgba(113, 63, 42, 0.18);
-    transform: translateX(4px);
-  }
-  .region-name {
-    font-family: var(--sans);
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .region-cities {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.15;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .region-focus {
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    line-height: 1.5;
-  }
-  .region-card.active .region-cities { color: var(--atacado); }
-
-  @media (max-width: 1080px) {
-    .ecosystem { padding: 80px 20px; }
-    .ecosystem-header { grid-template-columns: 1fr; gap: 32px; }
-    .map-container { grid-template-columns: 1fr; gap: 32px; }
-    .map-wrapper { max-width: 480px; margin: 0 auto; width: 100%; }
-  }
-
-  /* ───────── TIME ───────── */
-  .team {
-    padding: 120px 40px;
-    background: var(--paper);
-    border-top: 1px solid var(--line);
-  }
-  .team-inner { max-width: 1320px; margin: 0 auto; }
-  .team-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-    margin-bottom: 60px;
-  }
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  .person {
-    background: var(--main);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 36px 32px;
-    border-radius: 4px;
-    transition: all 0.35s;
-  }
-  .person:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 24px 48px -20px rgba(113, 63, 42, 0.2);
-  }
-  .person-avatar {
-    width: 104px;
-    height: 104px;
-    border-radius: 50%;
-    background: var(--paper);
-    border: 2px solid var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 26px;
-    font-family: var(--serif);
-    font-size: 32px;
-    color: var(--atacado);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 8px 24px -10px rgba(113, 63, 42, 0.25);
-    transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
-  }
-  .person-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    filter: saturate(0.95) contrast(1.02);
-  }
-  .person:hover .person-avatar {
-    transform: scale(1.04);
-    border-color: var(--atacado);
-    box-shadow: 0 16px 32px -10px rgba(113, 63, 42, 0.35);
-  }
-  .person-name {
-    font-family: var(--serif);
-    font-size: 24px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 6px;
-    line-height: 1.2;
-  }
-  .person-role {
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 22px;
-    line-height: 1.6;
-  }
-  .person-bio {
-    font-size: 13.5px;
-    line-height: 1.7;
-    color: var(--ink-soft);
-  }
-  @media (max-width: 980px) {
-    .team { padding: 80px 20px; }
-    .team-header { grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
-    .team-grid { grid-template-columns: 1fr; gap: 16px; }
-  }
-
-  /* ───────── PARCEIROS ───────── */
-  .partners {
-    padding: 120px 40px;
-    background: var(--atacado-light);
-  }
-  .partners-inner { max-width: 1320px; margin: 0 auto; }
-  .partners-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-    margin-bottom: 60px;
-  }
-  .partners-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-  .partner {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 36px 24px;
-    border-radius: 4px;
-    transition: all 0.3s;
-    text-align: center;
-  }
-  .partner:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -20px rgba(113, 63, 42, 0.2);
-    border-top-color: var(--atacado);
-  }
-  .partner-name {
-    font-family: var(--serif);
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--atacado);
-    margin-bottom: 14px;
-    letter-spacing: -0.01em;
-  }
-  .partner-desc {
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--ink-soft);
-  }
-  @media (max-width: 1100px) {
-    .partners-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 720px) {
-    .partners { padding: 80px 20px; }
-    .partners-header { grid-template-columns: 1fr; gap: 32px; margin-bottom: 40px; }
-    .partners-grid { grid-template-columns: 1fr; gap: 12px; }
-  }
-
-  /* ───────── PROJEÇÃO 2026 ───────── */
-  .projection {
-    padding: 120px 40px;
-    background: var(--main);
-    position: relative;
-    overflow: hidden;
-  }
-  .projection::before {
-    content: '';
-    position: absolute;
-    top: 30%;
-    left: -150px;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.1), transparent 65%);
-    pointer-events: none;
-  }
-  .projection-header {
-    max-width: 1320px;
-    margin: 0 auto 60px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: end;
-    position: relative;
-    z-index: 2;
-  }
-  .projection-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-  }
-  .projection-hero {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 56px 48px;
-    border-radius: 4px;
-    box-shadow: 0 24px 48px -24px rgba(113, 63, 42, 0.18);
-    margin-bottom: 32px;
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    gap: 60px;
-    align-items: center;
-  }
-  .proj-meta-label {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .proj-target {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(72px, 9vw, 132px);
-    line-height: 0.95;
-    color: var(--atacado);
-    letter-spacing: -0.025em;
-    margin-bottom: 16px;
-  }
-  .proj-target em {
-    font-style: italic;
-    color: var(--accent);
-    font-weight: 400;
-    font-size: 0.55em;
-    display: inline-block;
-    margin-left: 8px;
-  }
-  .proj-target-sub {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 22px;
-    color: var(--ink-soft);
-    font-weight: 400;
-    line-height: 1.3;
-  }
-
-  /* Mini gráfico de barras evolução */
-  .proj-chart {
-    position: relative;
-    height: 280px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    padding: 24px 0 56px;
-    border-bottom: 1px solid var(--line);
-  }
-  .proj-bar {
-    width: 84px;
-    background: linear-gradient(180deg, var(--accent), rgba(204, 166, 127, 0.4));
-    border-radius: 2px 2px 0 0;
-    position: relative;
-    transition: all 0.4s;
-    cursor: default;
-  }
-  .proj-bar.actual {
-    background: linear-gradient(180deg, var(--atacado), var(--atacado-2));
-  }
-  .proj-bar.target {
-    background: linear-gradient(180deg, var(--accent), var(--accent-2));
-    box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(204, 166, 127, 0.4);
-  }
-  .proj-bar-value {
-    position: absolute;
-    top: -28px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--serif);
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--atacado);
-    white-space: nowrap;
-  }
-  .proj-bar-label {
-    position: absolute;
-    bottom: -42px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-  }
-  .proj-bar-period {
-    position: absolute;
-    bottom: -58px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 13px;
-    color: var(--ink-soft);
-    opacity: 0.75;
-    white-space: nowrap;
-  }
-
-  /* Frentes de crescimento - cards inferiores */
-  .proj-pillars {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 24px;
-  }
-  .proj-pillar {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-top: 3px solid var(--accent);
-    padding: 32px 28px;
-    border-radius: 4px;
-    transition: all 0.35s;
-  }
-  .proj-pillar:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -20px rgba(113, 63, 42, 0.18);
-    border-top-color: var(--atacado);
-  }
-  .proj-pillar-num {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-  }
-  .proj-pillar-title {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--atacado);
-    margin-bottom: 12px;
-    line-height: 1.2;
-  }
-  .proj-pillar-text {
-    font-size: 13px;
-    line-height: 1.65;
-    color: var(--ink-soft);
-  }
-  .proj-pillar-stat {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line);
-    font-family: var(--serif);
-    font-size: 18px;
-    color: var(--atacado);
-    font-weight: 500;
-  }
-
-  @media (max-width: 980px) {
-    .projection { padding: 80px 20px; }
-    .projection-header { grid-template-columns: 1fr; gap: 32px; }
-    .projection-hero { grid-template-columns: 1fr; gap: 48px; padding: 40px 28px; }
-    .proj-chart { height: 220px; }
-    .proj-bar { width: 60px; }
-    .proj-pillars { grid-template-columns: 1fr; }
-  }
-
-  /* ───────── PARCERIA / CTA (sidebar dark inspirado) ───────── */
-  /* ───────── RDG ORIGEM ───────── */
-  .rdg-origem {
-    background: var(--paper);
-    border-bottom: 1px solid var(--line);
-    padding: 28px 40px;
-    margin-top: 68px;
-  }
-  .rdg-origem-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .rdg-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 14px 5px 8px;
-    background: var(--atacado-light);
-    border: 1px solid rgba(113,63,42,0.18);
-    border-radius: 99px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .rdg-badge-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--atacado);
-  }
-  .rdg-badge-label {
-    font-family: var(--sans);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--atacado);
-  }
-  .rdg-divider {
-    width: 1px; height: 28px;
-    background: var(--line);
-    flex-shrink: 0;
-  }
-  .rdg-text {
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--ink-soft);
-    line-height: 1.6;
-    flex: 1;
-    min-width: 200px;
-  }
-  .rdg-text strong {
-    color: var(--ink);
-    font-weight: 600;
-  }
-  @media (max-width: 600px) {
-    .rdg-origem { padding: 20px 16px; }
-    .rdg-divider { display: none; }
-  }
-
-  .partnership {
-    padding: 120px 40px;
-    background: var(--sidebar);
-    color: var(--paper);
-    position: relative;
-    overflow: hidden;
-  }
-  .partnership::before {
-    content: '';
-    position: absolute;
-    top: -100px; right: -100px;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(204, 166, 127, 0.12), transparent 65%);
-    pointer-events: none;
-  }
-  .partnership::after {
-    content: '';
-    position: absolute;
-    bottom: -120px;
-    right: -80px;
-    width: 600px;
-    height: 600px;
-    background-image: url('axicon-logo.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    /* SVG já é branco, apenas controla opacidade */
-    opacity: 0.05;
-    pointer-events: none;
-  }
-  .partnership-inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-  }
-  .partnership .section-label { color: var(--accent); }
-  .partnership .section-label::before {
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-  .partnership-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: clamp(40px, 5.5vw, 76px);
-    line-height: 1.05;
-    letter-spacing: -0.015em;
-    color: var(--paper);
-    margin-bottom: 64px;
-    max-width: 1100px;
-  }
-  .partnership-title em {
-    font-style: italic;
-    color: var(--accent);
-    font-weight: 400;
-  }
-  .partnership-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    margin-bottom: 60px;
-    padding-top: 48px;
-    border-top: 1px solid rgba(204, 166, 127, 0.18);
-  }
-  .pstat {
-    border-left: 1px solid rgba(204, 166, 127, 0.18);
-    padding-left: 28px;
-  }
-  .pstat:first-child { border-left: none; padding-left: 0; }
-  .pstat-value {
-    font-family: var(--serif);
-    font-size: 48px;
-    font-weight: 400;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 16px;
-    letter-spacing: -0.01em;
-  }
-  .pstat-label {
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.6;
-    font-weight: 500;
-  }
-
-  /* Bloco de qualificações da proposta (substitui CTA antigo) */
-  .proposal-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    max-width: 980px;
-  }
-  .proposal-meta-row {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 40px;
-    align-items: baseline;
-    padding: 28px 0;
-    border-top: 1px solid rgba(204, 166, 127, 0.18);
-  }
-  .proposal-meta-row:last-child {
-    border-bottom: 1px solid rgba(204, 166, 127, 0.18);
-  }
-  .pm-lbl {
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 700;
-  }
-  .pm-val {
-    font-family: var(--serif);
-    font-size: 20px;
-    line-height: 1.5;
-    color: var(--paper);
-    font-weight: 400;
-    font-style: italic;
-  }
-  @media (max-width: 880px) {
-    .proposal-meta-row { grid-template-columns: 1fr; gap: 12px; padding: 24px 0; }
-    .pm-val { font-size: 17px; }
-  }
-
-  @media (max-width: 880px) {
-    .partnership { padding: 80px 20px; }
-    .partnership-grid { grid-template-columns: 1fr; gap: 32px; }
-    .pstat { border-left: none; padding-left: 0; padding-top: 24px; border-top: 1px solid rgba(204, 166, 127, 0.18); }
-    .pstat:first-child { border-top: none; padding-top: 0; }
-  }
-
-  /* ───────── FOOTER ───────── */
-  footer {
-    background: var(--atacado-dark);
-    color: var(--paper);
-    padding: 70px 40px 32px;
-  }
-  .footer-inner { max-width: 1320px; margin: 0 auto; }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px;
-    margin-bottom: 48px;
-  }
-  .footer-brand .logo-mark {
-    margin-bottom: 24px;
-  }
-  .footer-tagline {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 22px;
-    line-height: 1.4;
-    color: rgba(255,255,255,0.75);
-    max-width: 380px;
-    font-weight: 300;
-  }
-  .footer-col h4 {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 20px;
-    font-weight: 700;
-  }
-  .footer-col p, .footer-col a {
-    display: block;
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-    font-size: 13px;
-    line-height: 1.9;
-    transition: color 0.25s;
-  }
-  .footer-col a:hover { color: var(--accent); }
-  .footer-bottom {
-    padding-top: 32px;
-    border-top: 1px solid rgba(204, 166, 127, 0.18);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    font-weight: 500;
-  }
-  @media (max-width: 880px) {
-    footer { padding: 50px 20px 24px; }
-    .footer-grid { grid-template-columns: 1fr; gap: 36px; }
-    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* ───────── EXTRA SMALL (< 480px) ───────── */
-  @media (max-width: 480px) {
-    .section-title { font-size: clamp(28px, 8vw, 40px); }
-    .thesis { padding: 64px 16px; }
-    .thesis-inner { gap: 32px; }
-    .products { padding: 64px 16px; }
-    .flow-left, .flow-right { padding: 48px 16px; }
-    .cases { padding: 64px 16px; }
-    .ecosystem { padding: 64px 16px; }
-    .team { padding: 64px 16px; }
-    .projection { padding: 64px 16px; }
-    .partnership { padding: 64px 16px; }
-    .hero { padding: 96px 16px 48px; }
-    .hero-inner { gap: 32px; }
-    .hero-doc { padding: 20px 16px; }
-    .hero-doc-row { grid-template-columns: 80px 1fr; gap: 12px; }
-    .kpi-value { font-size: 42px; }
-    .case-card { padding: 24px 20px; }
-    .partner-card { padding: 24px 20px; }
-    .proj-bar { width: 48px; }
-    .proj-chart { height: 180px; }
-    .footer-grid { gap: 28px; }
-  }
-
-  /* ───────── REVEAL ───────── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.9s ease-out, transform 0.9s ease-out;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-d1 { transition-delay: 0.1s; }
-  .reveal-d2 { transition-delay: 0.2s; }
-  .reveal-d3 { transition-delay: 0.3s; }
-  .reveal-d4 { transition-delay: 0.4s; }
-
-</style>
+<title>Institucional · Tese, Time e Projeção — Áxicon Soluções Financeiras</title>
+<meta name="description" content="A tese da Áxicon, o time, a rede de parceiros (R$ 200 bi+) e a projeção MMXXVI.">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- TOPBAR (estilo intranet, branca, breadcrumb) -->
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-mark"><img src="axicon-logo.svg" alt="Áxicon"></div>
-    <div class="breadcrumb" data-i18n="breadcrumb">SOLUÇÕES FINANCEIRAS / <span>PROPOSTA INSTITUCIONAL</span></div>
+<!-- TICKER -->
+<div class="market-ticker">
+  <div class="ticker-track">
+    <span>
+      <span><span class="ticker-label">USD/BRL</span><span id="t-usd">—</span></span>
+      <span><span class="ticker-label">EUR/BRL</span><span id="t-eur">—</span></span>
+      <span><span class="ticker-label">GBP/BRL</span><span id="t-gbp">—</span></span>
+      <span><span class="ticker-label">BTC/USD</span><span id="t-btc">—</span></span>
+      <span><span class="ticker-label">JPY/BRL</span><span id="t-jpy">—</span></span>
+      <span><span class="ticker-label">CHF/BRL</span><span id="t-chf">—</span></span>
+      <span><span class="ticker-label">CAD/BRL</span><span id="t-cad">—</span></span>
+      <span><span class="ticker-label">AUD/BRL</span><span id="t-aud">—</span></span>
+    </span>
+    <span aria-hidden="true">
+      <span><span class="ticker-label">USD/BRL</span><span class="t-usd2">—</span></span>
+      <span><span class="ticker-label">EUR/BRL</span><span class="t-eur2">—</span></span>
+      <span><span class="ticker-label">GBP/BRL</span><span class="t-gbp2">—</span></span>
+      <span><span class="ticker-label">BTC/USD</span><span class="t-btc2">—</span></span>
+      <span><span class="ticker-label">JPY/BRL</span><span class="t-jpy2">—</span></span>
+      <span><span class="ticker-label">CHF/BRL</span><span class="t-chf2">—</span></span>
+      <span><span class="ticker-label">CAD/BRL</span><span class="t-cad2">—</span></span>
+      <span><span class="ticker-label">AUD/BRL</span><span class="t-aud2">—</span></span>
+    </span>
   </div>
-  <nav class="topbar-nav">
-    <a href="#tese" data-i18n="nav.thesis">Tese</a>
-    <a href="#negocios" data-i18n="nav.cases">Negócios</a>
-    <a href="#produtos" data-i18n="nav.products">Produtos</a>
-    <a href="#fluxo" data-i18n="nav.flow">Fluxo</a>
-    <a href="#ecossistema" data-i18n="nav.ecosystem">Ecossistema</a>
-    <a href="#time" data-i18n="nav.team">Time</a>
-    <a href="#parceiros" data-i18n="nav.partners">Parceiros</a>
-    <a href="#projecao" data-i18n="nav.projection">Projeção 2026</a>
+</div>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <img src="assets/logo-full-black.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
+  </a>
+  <div class="nav-menu">
+    <a href="/">Home</a>
+    <a href="/institucional.html" class="active">Institucional</a>
+    <a href="#parceiros">Parceiros</a>
+    <a href="#ecossistema">Ecossistema</a>
+    <a href="#projecao">Projeção 2026</a>
+  </div>
+  <div class="nav-right">
     <div class="lang-toggle">
-      <button class="lang-btn active" data-lang="pt">PT</button>
-      <span class="lang-divider">·</span>
-      <button class="lang-btn" data-lang="en">EN</button>
+      <span data-lang="pt">PT</span><span class="sep">·</span><span data-lang="en" class="inactive">EN</span>
     </div>
-  </nav>
-  <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-</div>
-
-<!-- MENU MOBILE -->
-<div class="mobile-menu" id="mobile-menu">
-  <a href="#tese" data-i18n="nav.thesis">Tese</a>
-  <a href="#negocios" data-i18n="nav.cases">Negócios</a>
-  <a href="#produtos" data-i18n="nav.products">Produtos</a>
-  <a href="#fluxo" data-i18n="nav.flow">Fluxo</a>
-  <a href="#ecossistema" data-i18n="nav.ecosystem">Ecossistema</a>
-  <a href="#time" data-i18n="nav.team">Time</a>
-  <a href="#parceiros" data-i18n="nav.partners">Parceiros</a>
-  <a href="#projecao" data-i18n="nav.projection">Projeção 2026</a>
-  <div class="lang-toggle">
-    <button class="lang-btn" id="mob-pt" data-lang="pt">PT</button>
-    <span class="lang-divider">·</span>
-    <button class="lang-btn" id="mob-en" data-lang="en">EN</button>
+    <a href="https://wa.me/5544991147236?text=Olá,%20tudo%20bem?%20Vim%20pelo%20site%20da%20Áxicon..." class="nav-cta" target="_blank" rel="noopener">Fale conosco</a>
   </div>
-</div>
+</nav>
 
-<!-- HERO ("Bom dia, *visitante.*") -->
-<!-- RDG ORIGEM -->
-<div class="rdg-origem">
-  <div class="rdg-origem-inner">
-    <div class="rdg-badge">
-      <span class="rdg-badge-dot"></span>
-      <span class="rdg-badge-label">Empresa Originadora</span>
-    </div>
-    <div class="rdg-divider"></div>
-    <p class="rdg-text">A <strong>Áxicon Soluções Financeiras</strong> nasceu a partir da <strong>RDG Consultoria</strong> — empresa de consultoria empresarial e financeira fundada em Maringá-PR, com atuação em reestruturação, planejamento estratégico e acesso a capital para médias e grandes empresas. A Áxicon é o braço especializado em crédito estruturado e operações de mercado de capitais do grupo RDG.</p>
+<header class="page-hero has-image page-hero-bg-4">
+  <div>
+    <div class="page-hero-eyebrow">Institucional · Sobre a Áxicon</div>
+    <h1 class="h-hero">Profundidade técnica,<br><em>execução comprovada.</em></h1>
+    <p class="page-hero-lede">Time formado por executivos com passagem por instituições financeiras de referência. Tese, time, ecossistema geográfico, parceiros e projeção 2026 — o que sustenta a operação.</p>
   </div>
-</div>
-
-<section class="hero">
-  <div class="hero-inner">
-    <div>
-      <div class="hero-greeting reveal" data-i18n="hero.greeting">Proposta Institucional</div>
-      <h1 class="reveal reveal-d1" data-i18n="hero.title">A inteligência financeira não deveria ter <em>um endereço fixo.</em></h1>
-      <p class="hero-sub reveal reveal-d2" data-i18n="hero.sub">Por muito tempo, o acesso às melhores estratégias, ao capital inteligente e à governança de elite ficou restrito a poucos quilômetros quadrados do país. A Áxicon opera como o elo entre o capital institucional e a economia real do interior do Brasil.</p>
-      <div class="hero-doc reveal reveal-d3">
-        <div class="hero-doc-row"><span class="hero-doc-lbl" data-i18n="hero.doc.lbl1">Documento</span><span class="hero-doc-val" data-i18n="hero.doc.val1">Plano de Negócios · 2026</span></div>
-        <div class="hero-doc-row"><span class="hero-doc-lbl" data-i18n="hero.doc.lbl2">Emissor</span><span class="hero-doc-val" data-i18n="hero.doc.val2">Áxicon Soluções Financeiras</span></div>
-        <div class="hero-doc-row"><span class="hero-doc-lbl" data-i18n="hero.doc.lbl3">Confidencialidade</span><span class="hero-doc-val" data-i18n="hero.doc.val3">Uso restrito ao destinatário</span></div>
-      </div>
-    </div>
-    <aside class="hero-card reveal reveal-d2">
-      <div class="hero-card-label" data-i18n="hero.card.label">Track Record · 120 dias</div>
-      <h3 data-i18n="hero.card.title">Estruturamos <em>R$ 5 bi</em> em operações desde a fundação em 2021.</h3>
-      <div class="hero-card-meta">
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row1lbl">Volume transacionado</span><span class="val">R$ 5 bi</span></div>
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row2lbl">Polos estratégicos</span><span class="val" data-i18n="hero.card.row2val">5 regiões</span></div>
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row3lbl">Ticket internacional</span><span class="val" data-i18n="hero.card.row3val">A partir de USD 5 mi</span></div>
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row4lbl">Operações nacionais</span><span class="val" data-i18n="hero.card.row4val">Sem teto definido</span></div>
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row5lbl">Modelo</span><span class="val">Success Fee</span></div>
-      </div>
-      <div class="hero-card-footer">
-        <div class="hcf-item">
-          <span class="hcf-label" data-i18n="hcf.l1">Fundação</span>
-          <span class="hcf-val">2021</span>
-        </div>
-        <div class="hcf-item">
-          <span class="hcf-label" data-i18n="hcf.l2">Sede</span>
-          <span class="hcf-val">Maringá, PR</span>
-        </div>
-        <div class="hcf-item">
-          <span class="hcf-label" data-i18n="hcf.l3">Atuação</span>
-          <span class="hcf-val" data-i18n="hcf.v3">Nacional</span>
-        </div>
-      </div>
-    </aside>
-  </div>
-</section>
-
-<!-- KPIs -->
-<section class="kpis">
-  <div class="kpis-inner">
-    <div class="kpi reveal">
-      <div class="kpi-label" data-i18n="kpi1.lbl">Volume Transacionado</div>
-      <div class="kpi-value">R$ 5<span class="unit">bi</span></div>
-      <div class="kpi-foot" data-i18n="kpi1.foot">Em operações estruturadas</div>
-    </div>
-    <div class="kpi reveal reveal-d1">
-      <div class="kpi-label" data-i18n="kpi2.lbl">Ciclo de Tração</div>
-      <div class="kpi-value">120<span class="unit" data-i18n="kpi2.unit">dias</span></div>
-      <div class="kpi-foot" data-i18n="kpi2.foot">De execução acelerada</div>
-    </div>
-    <div class="kpi reveal reveal-d2">
-      <div class="kpi-label" data-i18n="kpi3.lbl">Polos Estratégicos</div>
-      <div class="kpi-value">5<span class="unit" data-i18n="kpi3.unit">regiões</span></div>
-      <div class="kpi-foot" data-i18n="kpi3.foot">Sul · Sudeste · Centro-Oeste · NE · Norte</div>
-    </div>
-    <div class="kpi reveal reveal-d3">
-      <div class="kpi-label" data-i18n="kpi4.lbl">Ticket Internacional</div>
-      <div class="kpi-value">USD 5<span class="unit">mi+</span></div>
-      <div class="kpi-foot" data-i18n="kpi4.foot">Valor mínimo por operação</div>
+  <div class="page-hero-meta">
+    Áxicon · MMXXVI
+    <div class="page-hero-meta-row">
+      <span><strong>30+ anos</strong>Mercado financeiro</span>
+      <span><strong>10</strong>Cidades · 6 UF</span>
+      <span><strong>R$ 200 bi</strong>Rede de parceiros</span>
     </div>
   </div>
-</section>
+</header>
 
-<!-- TESE -->
-<section class="thesis" id="tese">
-  <div class="thesis-inner">
-    <aside>
-      <div class="section-label reveal" data-i18n="thesis.label">A Tese · 01</div>
-      <h2 class="section-title reveal reveal-d1" data-i18n="thesis.title">Falamos a língua do interior <em>com o sotaque do mercado de capitais.</em></h2>
-      <p class="section-lead reveal reveal-d2" data-i18n="thesis.lead">Nossa estratégia não se limita à concessão de crédito, mas à exportação de governança para empresas regionais. Conectamos o capital institucional à economia real onde o PIB brasileiro é gerado com maior vigor.</p>
-    </aside>
-    <div>
-      <div class="pillars">
-        <div class="pillar reveal">
-          <div class="pillar-num">01</div>
-          <div>
-            <div class="pillar-title" data-i18n="thesis.p1.title">Democratização do High-Finance</div>
-            <div class="pillar-text" data-i18n="thesis.p1.text">Traduzimos estruturas complexas da Faria Lima — FIDC, Dívida Privada, Home Equity, Project Finance — para a realidade do empresário regional, removendo o teto geográfico que impede o crescimento em escala.</div>
-          </div>
-        </div>
-        <div class="pillar reveal reveal-d1">
-          <div class="pillar-num">02</div>
-          <div>
-            <div class="pillar-title" data-i18n="thesis.p2.title">Desbloqueio de Potencial</div>
-            <div class="pillar-text" data-i18n="thesis.p2.text">Identificamos ativos e fluxos de caixa subutilizados que, sob a ótica bancária tradicional, seriam ignorados — mas que dentro de uma modelagem personalizada se tornam garantias robustas para captação de recursos.</div>
-          </div>
-        </div>
-        <div class="pillar reveal reveal-d2">
-          <div class="pillar-num">03</div>
-          <div>
-            <div class="pillar-title" data-i18n="thesis.p3.title">Eficiência Operacional</div>
-            <div class="pillar-text" data-i18n="thesis.p3.text">Arquitetura baseada em agilidade e tecnologia para garantir que a distância física nunca se traduza em morosidade processual. Atendimento high-touch em escala nacional, com discrição e relacionamento de longo prazo.</div>
-          </div>
-        </div>
+<div class="breadcrumbs"><div class="container"><a href="/">Home</a><span class="sep">/</span><span>Institucional</span></div></div>
+
+<!-- TESE COMPLETA -->
+<section id="tese" class="section s-light">
+  <div class="container">
+    <div class="section-label">A Tese · 01</div>
+    <h2 class="h-1" style="max-width: 880px; margin-bottom: 32px;">
+      Falamos a língua do interior <em>com o sotaque do mercado de capitais.</em>
+    </h2>
+    <p class="body-text" style="margin-bottom: 56px;">
+      Nossa estratégia não se limita à concessão de crédito, mas à exportação de governança para empresas regionais. Conectamos o capital institucional à economia real onde o PIB brasileiro é gerado com maior vigor. A Áxicon é o elo — não apenas o intermediário.
+    </p>
+    <div class="cards-wrap grid-3">
+      <div class="card">
+        <div class="card-num">01</div>
+        <h3 class="h-3">Democratização do <em>High-Finance</em></h3>
+        <p>Traduzimos estruturas complexas da Faria Lima — FIDC, Dívida Privada, Home Equity, Project Finance — para a realidade do empresário regional, removendo o teto geográfico que impede o crescimento em escala.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRODUTOS -->
-<section class="cases" id="negocios">
-  <div class="cases-header">
-    <div class="reveal">
-      <div class="section-label" data-i18n="cases.label">Negócios Estruturados · 02</div>
-      <h2 class="section-title" data-i18n="cases.title">Operações em <em>execução.</em></h2>
-    </div>
-    <p class="section-lead reveal reveal-d1" data-i18n="cases.lead">Uma seleção das operações em curso na carteira Áxicon — exemplos do tipo de complexidade, ticket e setor que a mesa estrutura ao longo do ciclo 2026.</p>
-  </div>
-
-  <div class="cases-grid">
-
-    <article class="case-card reveal">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case1.num">Caso 01</span>
-        <span class="case-tag" data-i18n="case1.tag">Agronegócio</span>
+      <div class="card">
+        <div class="card-num">02</div>
+        <h3 class="h-3">Desbloqueio de <em>Potencial</em></h3>
+        <p>Identificamos ativos e fluxos de caixa subutilizados que, sob a ótica bancária tradicional, seriam ignorados — mas que dentro de uma modelagem personalizada se tornam garantias robustas para captação de recursos.</p>
       </div>
-      <h3 class="case-title" data-i18n="case1.title">Ampliação e modernização de <em>grupo agrícola</em>.</h3>
-      <p class="case-desc" data-i18n="case1.desc">Estruturação de operação para expansão de capacidade produtiva e modernização de ativos rurais. Captação alinhada ao ciclo do agronegócio, com garantias reais sobre propriedades produtivas.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case1.lbl1">Ticket</div>
-          <div class="case-stat-val">R$ 800<span class="unit" data-i18n="case1.unit">milhões</span></div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case1.lbl2">Finalidade</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case1.val2">Ampliação & Modernização</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tA.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tA.s2">Análise do negócio</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tA.s3">Vistoria da propriedade</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tA.s4">Assinatura do contrato</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tA.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">~50<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal reveal-d1">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case2.num">Caso 02</span>
-        <span class="case-tag" data-i18n="case2.tag">Tecnologia · Call Centers</span>
-      </div>
-      <h3 class="case-title" data-i18n="case2.title">Quando a análise certa <em>multiplica</em> o ticket.</h3>
-      <p class="case-desc" data-i18n="case2.desc">Empresa de tecnologia especializada em call centers de alto rendimento, com mais de dois mil colaboradores, procurou a mesa em busca de capital de giro para expandir suas operações. O cliente chegou com uma demanda inicial de R$ 8 milhões — mas, após mergulho aprofundado nos números, na geração de caixa e no plano de expansão, a equipe identificou capacidade de absorção muito superior. A operação foi reestruturada e o ticket elevado para R$ 60 milhões, alinhando o funding à real ambição do negócio.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case2.lbl1">Ticket Estruturado</div>
-          <div class="case-stat-val">R$ 60<span class="unit" data-i18n="case2.unit">milhões</span></div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case2.lbl2">Demanda Inicial</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case2.val2">R$ 8 mi → R$ 60 mi</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tC.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tC.s2">Análise aprofundada<span class="qualifier">elevação de ticket</span></span>
-            <span class="case-step-time">10–15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tC.s3">Due diligence operacional</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tC.s4">Assinatura do contrato</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tC.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">50–55<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case3.num">Caso 03</span>
-        <span class="case-tag" data-i18n="case3.tag">Mineração · Cross-Border</span>
-      </div>
-      <h3 class="case-title" data-i18n="case3.title">Funding internacional para uma <em>mineradora multimineral</em>.</h3>
-      <p class="case-desc" data-i18n="case3.desc">Mineradora de grande porte, com portfólio diversificado em diferentes commodities minerais e ativos operacionais consolidados, mobilizou a Áxicon para estruturar funding internacional voltado à abertura e ao desenvolvimento de novas frentes de lavra. A operação cross-border foi modelada em moeda forte, com cronograma de desembolso atrelado aos marcos de CAPEX e estrutura jurídica adequada à escala e à complexidade do projeto.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case3.lbl1">Ticket Internacional</div>
-          <div class="case-stat-val">USD 150<span class="unit" data-i18n="case3.unit">milhões</span></div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case3.lbl2">Finalidade</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case3.val2">Expansão · Novas Minas</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tD.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tD.s2">Análise técnica e geológica</span>
-            <span class="case-step-time">15–20<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tD.s3">Estruturação cross-border</span>
-            <span class="case-step-time">20<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tD.s4">Assinatura do contrato</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tD.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">65–70<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal reveal-d1">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case4.num">Caso 04</span>
-        <span class="case-tag" data-i18n="case4.tag">Construção · Norte</span>
-      </div>
-      <h3 class="case-title" data-i18n="case4.title">Crédito sob medida onde o <em>mercado não chega</em>.</h3>
-      <p class="case-desc" data-i18n="case4.desc">Construtora e incorporadora consolidada no extremo norte do país buscava funding para um portfólio de obras de grande porte — em uma região onde, historicamente, soluções personalizadas de crédito raramente chegam. A Áxicon estruturou uma operação dedicada, com cronograma de desembolso ancorado nas etapas construtivas e garantias atreladas aos ativos do empreendimento, levando inteligência financeira de capital ao Amapá nos mesmos padrões praticados no Sul-Sudeste.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case4.lbl1">Ticket</div>
-          <div class="case-stat-val">R$ 57<span class="unit" data-i18n="case4.unit">milhões</span></div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case4.lbl2">Localização</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case4.val2">Amapá · Norte</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tB.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tB.s2">Análise do negócio</span>
-            <span class="case-step-time">2–5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tB.s3">Registro em cartório</span>
-            <span class="case-step-time">10–30<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tB.s4">Assinatura do contrato</span>
-            <span class="case-step-time">2<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tB.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">24–47<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-  </div>
-</section>
-
-<section class="products" id="produtos">
-  <div class="products-header">
-    <div class="reveal">
-      <div class="section-label" data-i18n="products.label">Produtos & Serviços · 03</div>
-      <h2 class="section-title" data-i18n="products.title">Soluções modeladas para <em>cada estágio</em> do capital.</h2>
-    </div>
-    <p class="section-lead reveal reveal-d1" data-i18n="products.lead">Conectamos capital às oportunidades por meio de uma rede exclusiva de parceiros líderes. Cada operação é estruturada com agilidade no desembolso e excelência na execução.</p>
-  </div>
-  <div class="products-grid">
-    <article class="product reveal">
-      <div class="product-tag" data-i18n="prod1.tag">01 · Consórcios</div>
-      <h3 class="product-title" data-i18n="prod1.title">Consórcios Estratégicos</h3>
-      <p class="product-desc" data-i18n="prod1.desc">Inteligência estratégica e as menores taxas do mercado para acelerar a conquista do plano, com eficiência máxima desde o início.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-    <article class="product reveal reveal-d1">
-      <div class="product-tag" data-i18n="prod2.tag">02 · Home Equity</div>
-      <h3 class="product-title" data-i18n="prod2.title">ConsorEquity</h3>
-      <p class="product-desc" data-i18n="prod2.desc">Converta seu patrimônio imobiliário em liquidez imediata através de taxas reduzidas e prazos alongados. Crédito estruturado com imóvel como alavanca.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-    <article class="product reveal reveal-d2">
-      <div class="product-tag" data-i18n="prod3.tag">03 · Pessoa Jurídica</div>
-      <h3 class="product-title" data-i18n="prod3.title">Crédito PJ</h3>
-      <p class="product-desc" data-i18n="prod3.desc">Alavancagem estratégica com as menores taxas do mercado para otimizar o fluxo de caixa. Viabilize a expansão do seu negócio com agilidade.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-    <article class="product reveal">
-      <div class="product-tag" data-i18n="prod4.tag">04 · Construção</div>
-      <h3 class="product-title" data-i18n="prod4.title">ConsorBuild</h3>
-      <p class="product-desc" data-i18n="prod4.desc">Engenharia financeira para construir ou reformar com custo zero de juros e previsibilidade. Transforme seu projeto em realidade de forma inteligente.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-    <article class="product reveal reveal-d1">
-      <div class="product-tag" data-i18n="prod5.tag">05 · Agronegócio</div>
-      <h3 class="product-title" data-i18n="prod5.title">Crédito Agro</h3>
-      <p class="product-desc" data-i18n="prod5.desc">Fomento especializado para o agronegócio, conectando o produtor às melhores oportunidades de custeio, com soluções para todo o ciclo do campo.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-    <article class="product reveal reveal-d2">
-      <div class="product-tag" data-i18n="prod6.tag">06 · Cross-Border</div>
-      <h3 class="product-title" data-i18n="prod6.title">Crédito Internacional</h3>
-      <p class="product-desc" data-i18n="prod6.desc">Estrutura de crédito com capital estrangeiro para expansão patrimonial, aquisições e investimentos estratégicos em USD/EUR.</p>
-      <span class="product-arrow" data-i18n="prod.more">Saiba mais →</span>
-    </article>
-  </div>
-</section>
-
-<!-- FLUXO DE ATENDIMENTO -->
-<section class="flow" id="fluxo">
-  <div class="flow-left">
-    <div class="flow-section-label" data-i18n="flow.label">Fluxo · 03</div>
-    <h2 class="flow-title" data-i18n="flow.title">Fluxo de Atendimento</h2>
-    <div class="flow-narrative">
-      <p data-i18n="flow.p1">A Áxicon especializou-se em conectar o capital às oportunidades por meio de uma rede exclusiva de parceiros líderes de mercado. Através de uma seleção minuciosa, modelamos soluções que priorizam a agilidade no desembolso e a excelência na estruturação.</p>
-      <p data-i18n="flow.p2">Nosso objetivo é garantir que cada cliente acesse as melhores condições disponíveis, usufruindo de uma assessoria que preza pela alta performance e pela máxima eficiência em cada etapa da jornada financeira.</p>
-    </div>
-  </div>
-  <div class="flow-right">
-    <div class="flow-step reveal">
-      <div class="flow-step-num">1</div>
-      <div class="flow-step-content">
-        <h3 data-i18n="flow.s1.title">Demanda do Cliente</h3>
-        <p data-i18n="flow.s1.text">Identificamos a demanda do nosso cliente, colhendo todas as informações necessárias para análise do negócio.</p>
-      </div>
-    </div>
-    <div class="flow-step reveal reveal-d1">
-      <div class="flow-step-num">2</div>
-      <div class="flow-step-content">
-        <h3 data-i18n="flow.s2.title">Áxicon Soluções Financeiras</h3>
-        <p data-i18n="flow.s2.text">Utilizamos as informações para uma análise profunda para filtrar o(s) parceiro(s) que atendem com a melhor eficiência a demanda.</p>
-      </div>
-    </div>
-    <div class="flow-step reveal reveal-d2">
-      <div class="flow-step-num">3</div>
-      <div class="flow-step-content">
-        <h3 data-i18n="flow.s3.title">Parceiros</h3>
-        <p data-i18n="flow.s3.text">Nossos parceiros analisam todas as informações e formalizam uma proposta para apresentarmos a nossos clientes com as melhores condições.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- NEGÓCIOS ESTRUTURADOS (CASES) -->
-<!-- ECOSSISTEMA / MAPA -->
-<section class="ecosystem" id="ecossistema">
-  <div class="ecosystem-header">
-    <div class="reveal">
-      <div class="section-label" data-i18n="eco.label">Ecossistema Geográfico · 05</div>
-      <h2 class="section-title" data-i18n="eco.title">Presença <em>onde a economia real</em> acontece.</h2>
-    </div>
-    <p class="section-lead reveal reveal-d1" data-i18n="eco.lead">Atuamos em pontos críticos da cadeia produtiva nacional — conectando Sul, Sudeste, Centro-Oeste e Nordeste em uma única malha de inteligência financeira.</p>
-  </div>
-
-  <div class="map-container">
-    <div class="map-wrapper reveal">
-      <svg viewBox="0 0 500 525" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Gradiente sutil para o Brasil -->
-          <linearGradient id="brazilFill" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#F7F3EE" stop-opacity="1"/>
-            <stop offset="100%" stop-color="#EFE9E0" stop-opacity="1"/>
-          </linearGradient>
-          <!-- Sombra suave -->
-          <filter id="brazilShadow" x="-10%" y="-10%" width="120%" height="120%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
-            <feOffset dx="0" dy="2" result="offsetblur"/>
-            <feComponentTransfer><feFuncA type="linear" slope="0.15"/></feComponentTransfer>
-            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <!-- Halo accent para regiões ativas -->
-          <radialGradient id="haloActive">
-            <stop offset="0%" stop-color="#CCA67F" stop-opacity="0.55"/>
-            <stop offset="60%" stop-color="#CCA67F" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="#CCA67F" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-
-        <!-- Compass minimalista -->
-        <g transform="translate(450, 70)" opacity="0.5">
-          <circle r="20" fill="none" stroke="#713F2A" stroke-width="0.5"/>
-          <text y="-26" text-anchor="middle" fill="#713F2A" font-family="Montserrat" font-size="9" letter-spacing="2" font-weight="700">N</text>
-          <polygon points="0,-15 -2.5,0 0,-4 2.5,0" fill="#713F2A"/>
-          <polygon points="0,15 -2.5,0 0,4 2.5,0" fill="#713F2A" opacity="0.35"/>
-        </g>
-
-        <!-- ═══════════════ HALOS DE REGIÃO ATIVA (atrás da silhueta) ═══════════════ -->
-        <!-- Halo Amapá: Macapá -->
-        <ellipse cx="330" cy="82" rx="36" ry="32" fill="url(#haloActive)" data-region="amapa" class="halo"/>
-        <!-- Halo Bahia/Piauí: cobre L. E. Magalhães + Bom Jesus -->
-        <ellipse cx="306" cy="220" rx="50" ry="55" fill="url(#haloActive)" data-region="bahia" class="halo"/>
-        <!-- Halo Mato Grosso/MS: Pontes e Lacerda -->
-        <ellipse cx="180" cy="280" rx="50" ry="48" fill="url(#haloActive)" data-region="mato" class="halo"/>
-        <!-- Halo Minas Gerais: São Lourenço -->
-        <ellipse cx="306" cy="352" rx="42" ry="40" fill="url(#haloActive)" data-region="minas" class="halo"/>
-        <!-- Halo São Paulo: Sorocaba -->
-        <ellipse cx="285" cy="368" rx="38" ry="35" fill="url(#haloActive)" data-region="saopaulo" class="halo"/>
-        <!-- Halo Paraná (sede): cobre Maringá, Londrina, Cianorte, Naviraí -->
-        <ellipse cx="240" cy="365" rx="58" ry="42" fill="url(#haloActive)" data-region="parana" class="halo halo-sede"/>
-
-        <!-- ═══════════════ SILHUETA DO BRASIL (path único, fiel ao contorno real) ═══════════════ -->
-        <path class="brazil-shape"
-              d="M 172.1 40 Q 193 44.4 213.8 48.8 Q 229.3 48.8 244.8 48.8 Q 253.7 65.9 262.5 83 Q 278 97.3 293.5 111.5 Q 304.6 120 315.7 128.6 Q 340 131.5 364.4 134.3 Q 379 145.7 393.7 157.1 Q 395.5 168.5 397.2 179.9 Q 396.8 185.6 396.3 191.3 Q 393.7 199.9 391 208.4 Q 383.5 217 375.9 225.5 Q 370.2 237 364.4 248.4 Q 362.2 265.5 360 282.6 Q 357.4 296.9 354.7 311.1 Q 351.6 322.5 348.5 333.9 Q 345.4 342.5 342.3 351 Q 333.5 355.6 324.6 360.1 Q 316.6 361.3 308.6 362.4 Q 305.5 367 302.4 371.5 Q 293.5 375.5 284.7 379.5 Q 280.3 385.2 275.8 390.9 Q 275.4 396.6 274.9 402.3 Q 275.4 408 275.8 413.7 Q 270.5 422.3 265.2 430.8 Q 261.7 439.4 258.1 447.9 Q 251.5 456.5 244.8 465 Q 238.6 475 232.4 485 Q 216.5 466.5 200.5 447.9 Q 209.4 428 218.2 408 Q 220 399.5 221.8 390.9 Q 217.8 373.8 213.8 356.7 Q 205 348.2 196.1 339.6 Q 193.9 331.1 191.7 322.5 Q 189.5 311.1 187.2 299.7 Q 178.4 288.3 169.5 276.9 Q 169.5 262.7 169.5 248.4 Q 160.7 237 151.8 225.5 Q 138.5 222.7 125.2 219.8 Q 109.7 217 94.2 214.1 Q 76.5 211.3 58.8 208.4 Q 56.6 197 54.3 185.6 Q 58.8 174.2 63.2 162.8 Q 74.3 145.7 85.3 128.6 Q 87.6 114.4 89.8 100.1 Q 96.5 91.6 103.1 83 Q 107.5 74.5 111.9 65.9 Q 125.2 60.2 138.5 54.5 Q 149.6 51.7 160.7 48.8 Q 166.4 44.4 172.1 40 Z"
-              fill="url(#brazilFill)"
-              stroke="#713F2A"
-              stroke-width="1"
-              stroke-linejoin="round"
-              filter="url(#brazilShadow)"/>
-
-        <!-- ═══════════════ LINHAS DE CONEXÃO desde MARINGÁ (sede) ═══════════════ -->
-        <line x1="245.4" y1="367.3" x2="299.7" y2="238" class="pin-line"/>
-        <line x1="245.4" y1="367.3" x2="312.5" y2="203.6" class="pin-line"/>
-        <line x1="245.4" y1="367.3" x2="179.8" y2="273.7" class="pin-line"/>
-        <line x1="245.4" y1="367.3" x2="285.1" y2="368.1" class="pin-line"/>
-        <line x1="245.4" y1="367.3" x2="306.4" y2="352.3" class="pin-line"/>
-        <line x1="245.4" y1="367.3" x2="330" y2="82" class="pin-line"/>
-
-        <!-- ═══════════════ PINS NAS COORDENADAS REAIS ═══════════════ -->
-
-        <!-- MARINGÁ (sede) -->
-        <g class="pin-group active" data-region="parana">
-          <circle class="pin-pulse" cx="245.4" cy="367.3" r="7"/>
-          <circle class="pin-dot pin-sede" cx="245.4" cy="367.3" r="9"/>
-          <circle class="pin-dot-inner" cx="245.4" cy="367.3" r="3.5" fill="#FFFFFF"/>
-          <text class="pin-label" x="245.4" y="350" font-weight="700">MARINGÁ · SEDE</text>
-        </g>
-
-        <!-- LONDRINA -->
-        <g class="pin-group" data-region="parana">
-          <circle class="pin-pulse" cx="252.2" cy="365.9" r="5" style="animation-delay:.4s"/>
-          <circle class="pin-dot" cx="252.2" cy="365.9" r="5"/>
-          <text class="pin-label" x="268" y="363" text-anchor="start">Londrina</text>
-        </g>
-
-        <!-- CIANORTE -->
-        <g class="pin-group" data-region="parana">
-          <circle class="pin-pulse" cx="239.5" cy="370" r="5" style="animation-delay:.7s"/>
-          <circle class="pin-dot" cx="239.5" cy="370" r="5"/>
-          <text class="pin-label" x="222" y="385" text-anchor="end">Cianorte</text>
-        </g>
-
-        <!-- SOROCABA -->
-        <g class="pin-group" data-region="saopaulo">
-          <circle class="pin-pulse" cx="285.1" cy="368.1" r="5" style="animation-delay:.3s"/>
-          <circle class="pin-dot" cx="285.1" cy="368.1" r="6"/>
-          <text class="pin-label" x="285.1" y="386">Sorocaba</text>
-        </g>
-
-        <!-- MACAPÁ -->
-        <g class="pin-group" data-region="amapa">
-          <circle class="pin-pulse" cx="330" cy="82" r="5" style="animation-delay:.1s"/>
-          <circle class="pin-dot" cx="330" cy="82" r="6"/>
-          <text class="pin-label" x="330" y="70">Macapá</text>
-        </g>
-
-        <!-- LUÍS EDUARDO MAGALHÃES -->
-        <g class="pin-group" data-region="bahia">
-          <circle class="pin-pulse" cx="299.7" cy="238" r="5" style="animation-delay:.2s"/>
-          <circle class="pin-dot" cx="299.7" cy="238" r="6"/>
-          <text class="pin-label" x="299.7" y="226">L. E. Magalhães</text>
-        </g>
-
-        <!-- BOM JESUS -->
-        <g class="pin-group" data-region="bahia">
-          <circle class="pin-pulse" cx="312.5" cy="203.6" r="5" style="animation-delay:.6s"/>
-          <circle class="pin-dot" cx="312.5" cy="203.6" r="5"/>
-          <text class="pin-label" x="312.5" y="191">Bom Jesus</text>
-        </g>
-
-        <!-- PONTES E LACERDA -->
-        <g class="pin-group" data-region="mato">
-          <circle class="pin-pulse" cx="179.8" cy="273.7" r="5" style="animation-delay:.5s"/>
-          <circle class="pin-dot" cx="179.8" cy="273.7" r="6"/>
-          <text class="pin-label" x="179.8" y="262">Pontes e Lacerda</text>
-        </g>
-
-        <!-- NAVIRAÍ -->
-        <g class="pin-group" data-region="mato">
-          <circle class="pin-pulse" cx="225.4" cy="363.1" r="5" style="animation-delay:.8s"/>
-          <circle class="pin-dot" cx="225.4" cy="363.1" r="5"/>
-          <text class="pin-label" x="208" y="378" text-anchor="end">Naviraí</text>
-        </g>
-
-        <!-- SÃO LOURENÇO -->
-        <g class="pin-group" data-region="minas">
-          <circle class="pin-pulse" cx="306.4" cy="352.3" r="5" style="animation-delay:.9s"/>
-          <circle class="pin-dot" cx="306.4" cy="352.3" r="6"/>
-          <text class="pin-label" x="322" y="350" text-anchor="start">São Lourenço</text>
-        </g>
-
-        <!-- Coordenadas decorativas -->
-        <text x="30" y="280" fill="#713F2A" opacity="0.35" font-family="Montserrat" font-size="8" letter-spacing="1.5" font-weight="500">15°S</text>
-        <text x="430" y="430" fill="#713F2A" opacity="0.35" font-family="Montserrat" font-size="8" letter-spacing="1.5" font-weight="500">45°W</text>
-
-        <!-- Rodapé do mapa -->
-        <g transform="translate(40, 495)">
-          <text fill="#713F2A" opacity="0.6" font-family="Montserrat" font-size="9" letter-spacing="3" font-weight="700">REPÚBLICA FEDERATIVA DO BRASIL</text>
-          <text y="14" fill="#555" opacity="0.5" font-family="Montserrat" font-size="7.5" letter-spacing="2" font-weight="500">9 CIDADES · 5 ESTADOS · 4 REGIÕES</text>
-        </g>
-      </svg>
-    </div>
-
-    <div class="map-legend reveal reveal-d1">
-      <div class="region-card active" data-region="parana">
-        <div class="region-name" data-i18n="eco.r1.name">Paraná · Sede</div>
-        <div class="region-cities">Maringá, Londrina, Cianorte</div>
-        <div class="region-focus" data-i18n="eco.r1.focus">Tecnologia · Indústria · Vestuário e Avicultura</div>
-      </div>
-      <div class="region-card" data-region="saopaulo">
-        <div class="region-name">São Paulo</div>
-        <div class="region-cities">Sorocaba</div>
-        <div class="region-focus" data-i18n="eco.r2.focus">Polo Industrial e Serviços</div>
-      </div>
-      <div class="region-card" data-region="bahia">
-        <div class="region-name">Bahia & Piauí</div>
-        <div class="region-cities">L. E. Magalhães, Bom Jesus</div>
-        <div class="region-focus" data-i18n="eco.r3.focus">Grandes Polos Agrícolas</div>
-      </div>
-      <div class="region-card" data-region="mato">
-        <div class="region-name">Mato Grosso & MS</div>
-        <div class="region-cities">Pontes e Lacerda, Naviraí</div>
-        <div class="region-focus" data-i18n="eco.r4.focus">Agronegócio e Pecuária</div>
-      </div>
-      <div class="region-card" data-region="minas">
-        <div class="region-name">Minas Gerais</div>
-        <div class="region-cities">São Lourenço</div>
-        <div class="region-focus" data-i18n="eco.r5.focus">Polo Regional Multissetorial</div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <h3 class="h-3">Eficiência <em>Operacional</em></h3>
+        <p>Arquitetura baseada em agilidade e tecnologia para garantir que a distância física nunca se traduza em morosidade processual. Atendimento high-touch em escala nacional, com discrição e relacionamento de longo prazo.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- TIME -->
-<section class="team" id="time">
-  <div class="team-inner">
-    <div class="team-header">
-      <div class="reveal">
-        <div class="section-label" data-i18n="team.label">Nosso Time · 06</div>
-        <h2 class="section-title" data-i18n="team.title">Profundidade técnica, <em>execução comprovada.</em></h2>
-      </div>
-      <p class="section-lead reveal reveal-d1" data-i18n="team.lead">Time formado por executivos com passagem por instituições financeiras de referência — somando mais de 30 anos de experiência em operações estruturadas e atendimento de alta renda.</p>
-    </div>
+<section id="time" class="section s-dark">
+  <div class="container">
+    <div class="section-label">Nosso Time · 02</div>
+    <h2 class="h-1" style="max-width: 880px; margin-bottom: 24px;">
+      Os profissionais por trás da <em>mesa.</em>
+    </h2>
+    <p class="body-text" style="margin-bottom: 56px;">
+      Time formado por executivos com passagem por instituições financeiras de referência — somando mais de 30 anos de experiência em operações estruturadas, atendimento de alta renda e marketing institucional.
+    </p>
     <div class="team-grid">
-      <article class="person reveal">
-        <div class="person-avatar"><img src="team-rafael.jpg" alt="Rafael Dias Gonçalves"></div>
-        <h3 class="person-name">Rafael Dias Gonçalves</h3>
-        <div class="person-role" data-i18n="team.p1.role">Sócio Fundador<br>Diretor Comercial de Atacado</div>
-        <p class="person-bio" data-i18n="team.p1.bio">Mais de 20 anos liderando times comerciais e estruturando operações pelo Brasil — Assaí Atacadista, Triângulo Consórcios, ACIM Maringá, Banco BMG. Vasto know-how em consultoria empresarial e estruturação.</p>
-      </article>
-      <article class="person reveal reveal-d1">
-        <div class="person-avatar"><img src="team-bruno.jpg" alt="Bruno R. O. Barreto"></div>
-        <h3 class="person-name">Bruno R. O. Barreto</h3>
-        <div class="person-role" data-i18n="team.p2.role">Gerente Operacional<br>e de Parcerias</div>
-        <p class="person-bio" data-i18n="team.p2.bio">Mais de 6 anos no mercado financeiro com foco em assessoria de alta renda. Passagens por Sicoob e XP Investimentos. Certificado Ancord AI, CPA e EIP.</p>
-      </article>
-      <article class="person reveal reveal-d2">
-        <div class="person-avatar"><img src="team-renan.jpg" alt="Renan Rideki Han"></div>
-        <h3 class="person-name">Renan Rideki Han</h3>
-        <div class="person-role" data-i18n="team.p3.role">Gerente de Branding<br>e Marketing</div>
-        <p class="person-bio" data-i18n="team.p3.bio">Mais de 8 anos em Marketing, Eventos e Comunicação. Cria experiências de marca que conectam empresas e públicos. Liderou projetos nas Redes Gazin, Grupo GTF, Nação Digital e Yamaha.</p>
-      </article>
+      <div class="team-card">
+        <img class="team-photo" src="assets/team-rafael.jpg" alt="Rafael Dias Gonçalves">
+        <h3 class="team-name">Rafael Dias <em>Gonçalves</em></h3>
+        <div class="team-role">Sócio Fundador · Diretor Comercial</div>
+        <p class="team-bio">Mais de 20 anos liderando times comerciais e estruturando operações pelo Brasil — Assaí Atacadista, Triângulo Consórcios, ACIM Maringá, Banco BMG. Vasto know-how em consultoria empresarial e estruturação de crédito.</p>
+      </div>
+      <div class="team-card">
+        <img class="team-photo" src="assets/team-bruno.jpg" alt="Bruno R. O. Barreto">
+        <h3 class="team-name">Bruno R. O. <em>Barreto</em></h3>
+        <div class="team-role">Gerente Operacional · Parcerias</div>
+        <p class="team-bio">Mais de 6 anos no mercado financeiro com foco em assessoria de alta renda. Passagens por Sicoob e XP Investimentos. Certificado Ancord AI, CPA e EIP. Conduz o relacionamento com parceiros e a estruturação operacional.</p>
+      </div>
+      <div class="team-card">
+        <img class="team-photo" src="assets/team-renan.jpg" alt="Renan Rideki Han">
+        <h3 class="team-name">Renan Rideki <em>Han</em></h3>
+        <div class="team-role">Gerente Branding · Marketing</div>
+        <p class="team-bio">Mais de 8 anos em Marketing, Eventos e Comunicação. Cria experiências de marca que conectam empresas e públicos. Liderou projetos nas Redes Gazin, Grupo GTF, Nação Digital e Yamaha.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSSISTEMA GEOGRÁFICO -->
+<section id="ecossistema" class="section s-light">
+  <div class="container">
+    <div class="section-label">Ecossistema Geográfico · 03</div>
+    <h2 class="h-1" style="max-width: 780px; margin-bottom: 24px;">
+      Da sede em Maringá, <em>conectamos polos.</em>
+    </h2>
+    <p class="body-text" style="margin-bottom: 56px;">
+      Cada polo é escolhido por uma combinação de atividade econômica produtiva, demanda real por crédito estruturado e relacionamento de longo prazo com empresas-âncora locais. A presença não é geográfica — é setorial. Atuamos em <em style="font-style:italic;color:var(--c-primary);">10 cidades · 6 estados · 4 regiões</em>.
+    </p>
+    <div class="eco-grid">
+      <svg class="eco-map" viewBox="0 0 500 500">
+        <path d="M 295,70 Q 320,72 332,90 Q 348,98 358,108 Q 380,108 395,128 Q 410,158 420,188 Q 430,225 425,265 Q 420,302 410,332 Q 400,360 380,390 Q 360,420 330,440 Q 295,455 260,455 Q 220,460 185,450 Q 150,440 125,420 Q 100,395 90,365 Q 80,330 85,295 Q 90,260 100,225 Q 115,190 135,165 Q 160,140 190,125 Q 220,110 255,100 Q 278,90 295,70 Z" fill="rgba(113,63,42,0.06)" stroke="rgba(113,63,42,0.2)" stroke-width="0.7"></path>
+        <line x1="220" y1="335" x2="212" y2="320" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="232" y2="350" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="265" y2="318" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="320" y2="265" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="305" y2="240" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="195" y2="270" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="190" y2="380" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="295" y2="315" stroke="rgba(113,63,42,0.25)" stroke-width="0.5" stroke-dasharray="2,3"></line>
+        <line x1="220" y1="335" x2="310" y2="100" stroke="rgba(113,63,42,0.3)" stroke-width="0.6" stroke-dasharray="2,3"></line>
+        <circle cx="310" cy="100" r="14" fill="rgba(124,77,51,0.08)"></circle>
+        <circle cx="310" cy="100" r="5" fill="none" stroke="#7C4D33" stroke-width="1.2" opacity="0.7"></circle>
+        <circle cx="310" cy="100" r="3" fill="#7C4D33"></circle>
+        <text x="308" y="86" fill="#1a1410" font-family="JetBrains Mono" font-size="9" letter-spacing="1.5" font-weight="500" text-anchor="end">MACAPÁ</text>
+        <circle cx="220" cy="335" r="6" fill="none" stroke="#713F2A" stroke-width="1.5" opacity="0.5"></circle>
+        <circle cx="220" cy="335" r="5" fill="#713F2A"></circle>
+        <text x="232" y="338" fill="#713F2A" font-family="JetBrains Mono" font-size="9" letter-spacing="1.5" font-weight="500">MARINGÁ · SEDE</text>
+        <circle cx="212" cy="320" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="148" y="319" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Londrina</text>
+        <circle cx="232" cy="350" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="240" y="356" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Cianorte</text>
+        <circle cx="265" cy="318" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="272" y="316" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Sorocaba</text>
+        <circle cx="305" cy="240" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="312" y="240" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">L.E. Magalhães</text>
+        <circle cx="320" cy="265" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="327" y="266" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Bom Jesus</text>
+        <circle cx="195" cy="270" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="100" y="270" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Pontes e Lacerda</text>
+        <circle cx="190" cy="380" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="148" y="384" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">Naviraí</text>
+        <circle cx="295" cy="315" r="2.5" fill="#713F2A" opacity="0.85"></circle><text x="302" y="315" fill="rgba(42,24,16,0.6)" font-family="JetBrains Mono" font-size="7">São Lourenço</text>
+        <g transform="translate(440, 110)">
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="rgba(113,63,42,0.4)" stroke-width="0.5"></line>
+          <line x1="-12" y1="0" x2="12" y2="0" stroke="rgba(113,63,42,0.4)" stroke-width="0.5"></line>
+          <text x="0" y="-16" fill="rgba(113,63,42,0.6)" font-family="JetBrains Mono" font-size="8" text-anchor="middle">N</text>
+        </g>
+        <text x="250" y="485" fill="rgba(42,24,16,0.4)" font-family="JetBrains Mono" font-size="7" text-anchor="middle" letter-spacing="1.5">10 CIDADES · 6 ESTADOS · 4 REGIÕES</text>
+      </svg>
+      <div class="eco-list">
+        <div class="eco-row">
+          <div class="eco-region">Paraná · Sede</div>
+          <div>
+            <div class="eco-cities">Maringá, Londrina, <em>Cianorte</em></div>
+            <div class="eco-sector">Tecnologia · Indústria · Vestuário e Avicultura</div>
+          </div>
+        </div>
+        <div class="eco-row">
+          <div class="eco-region">São Paulo</div>
+          <div>
+            <div class="eco-cities"><em>Sorocaba</em></div>
+            <div class="eco-sector">Polo Industrial · Serviços</div>
+          </div>
+        </div>
+        <div class="eco-row">
+          <div class="eco-region">Bahia · Piauí</div>
+          <div>
+            <div class="eco-cities">L. E. Magalhães, <em>Bom Jesus</em></div>
+            <div class="eco-sector">MATOPIBA · Grandes Polos Agrícolas</div>
+          </div>
+        </div>
+        <div class="eco-row">
+          <div class="eco-region">MT · MS</div>
+          <div>
+            <div class="eco-cities">Pontes e Lacerda, <em>Naviraí</em></div>
+            <div class="eco-sector">Agronegócio · Pecuária</div>
+          </div>
+        </div>
+        <div class="eco-row">
+          <div class="eco-region">Minas Gerais</div>
+          <div>
+            <div class="eco-cities"><em>São Lourenço</em></div>
+            <div class="eco-sector">Polo Regional Multissetorial</div>
+          </div>
+        </div>
+        <div class="eco-row">
+          <div class="eco-region">Amapá · Norte</div>
+          <div>
+            <div class="eco-cities"><em>Macapá</em></div>
+            <div class="eco-sector">Construção · Project Finance no extremo Norte</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 72px; padding-top: 56px; border-top: 1px solid var(--line-light-2);">
+      <div class="section-label">Setores por região</div>
+      <h3 class="h-2" style="max-width: 780px; margin-bottom: 32px;">Cada polo, <em>uma vocação.</em></h3>
+      <table class="compare-table">
+        <thead>
+          <tr><th>Região</th><th>Cidade-âncora</th><th>Vocação produtiva</th><th>Instrumentos</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="serif">Sul · <em>PR</em></td><td>Maringá</td><td>Tecnologia · Indústria · Sede</td><td>FIDC · CCB · Cross-border</td></tr>
+          <tr><td class="serif">Sul · <em>PR</em></td><td>Cianorte</td><td>Vestuário · Avicultura</td><td>Antecipação · FIDC</td></tr>
+          <tr><td class="serif">Sudeste · <em>SP</em></td><td>Sorocaba</td><td>Polo industrial · Serviços</td><td>Dívida privada · Equity</td></tr>
+          <tr><td class="serif">Nordeste · <em>BA/PI</em></td><td>L. E. Magalhães</td><td>MATOPIBA · grão</td><td>CRA · Custeio safra</td></tr>
+          <tr><td class="serif">Centro-Oeste · <em>MT/MS</em></td><td>Pontes e Lacerda · Naviraí</td><td>Pecuária · Grão</td><td>CRA · Investimento</td></tr>
+          <tr><td class="serif">Sudeste · <em>MG</em></td><td>São Lourenço</td><td>Regional multissetorial</td><td>Home Equity · PJ</td></tr>
+          <tr><td class="serif">Norte · <em>AP</em></td><td>Macapá</td><td>Construção · Project Finance</td><td>Dívida estruturada · CCB</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
 <!-- PARCEIROS -->
-<section class="partners" id="parceiros">
-  <div class="partners-inner">
-    <div class="partners-header">
-      <div class="reveal">
-        <div class="section-label" data-i18n="partners.label">Rede de Parceiros · 07</div>
-        <h2 class="section-title" data-i18n="partners.title">Curadoria de <em>capital institucional.</em></h2>
-      </div>
-      <p class="section-lead reveal reveal-d1" data-i18n="partners.lead">Nossa rede combina conglomerados financeiros consolidados, fintechs especializadas e securitizadoras — somando mais de R$ 200 bilhões em operações estruturadas.</p>
-    </div>
+<section id="parceiros" class="section s-light-2">
+  <div class="container">
+    <div class="section-label">Rede de Parceiros · 04</div>
+    <h2 class="h-1" style="max-width: 780px; margin-bottom: 24px;">
+      Curadoria de <em>capital institucional.</em>
+    </h2>
+    <p class="body-text" style="margin-bottom: 48px;">
+      Nossa rede combina conglomerados financeiros consolidados, fintechs especializadas e securitizadoras — somando mais de <em style="font-style:italic;color:var(--c-primary);">R$ 200 bilhões</em> em operações estruturadas e cedidas.
+    </p>
     <div class="partners-grid">
-      <div class="partner reveal">
-        <div class="partner-name">Multiplike</div>
-        <div class="partner-desc" data-i18n="partner1.desc">25 anos · R$ 70 bi em créditos cedidos · FIDC e Securitizadora</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/multiplike.png" alt="Multiplike" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Multi<em>plike</em></h3>
+          <div class="partner-highlight">R$ 70 bi cedidos · 25 anos</div>
+          <p class="partner-bio">Securitizadora e gestora de FIDCs com presença consolidada no Brasil há mais de duas décadas. Originou e cedeu mais de R$ 70 bilhões em ativos, com infraestrutura para estruturar operações de qualquer escala — da originação à securitização.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d1">
-        <div class="partner-name">Trinus</div>
-        <div class="partner-desc" data-i18n="partner2.desc">15+ anos no imobiliário · R$ 50 bi em VGV · 500 mil unidades</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/trinus.png" alt="Trinus" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Trinus</h3>
+          <div class="partner-highlight">R$ 50 bi em VGV · 500 mil unidades</div>
+          <p class="partner-bio">Maior administradora independente de consórcios do país. Mais de 500 mil unidades contempladas, R$ 50 bilhões em valor geral de vendas e 15 anos de operação ininterrupta. Parceira-âncora da linha de Consórcios Estratégicos.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d2">
-        <div class="partner-name">Pontte</div>
-        <div class="partner-desc" data-i18n="partner3.desc">Fintech CGI/Home Equity · Jornada 100% online · Taxas competitivas</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/ecoagro.png" alt="Ecoagro" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Eco<em>agro</em></h3>
+          <div class="partner-highlight">R$ 80 bi em CRAs · R$ 6,5 bi sob gestão</div>
+          <p class="partner-bio">Securitizadora especialista em agronegócio, com R$ 80 bilhões em CRAs emitidos e R$ 6,5 bilhões sob gestão. Estrutura operações ao longo de todo o ciclo da cadeia produtiva agrícola — do custeio safra ao investimento de longo prazo.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d3">
-        <div class="partner-name">Ecoagro</div>
-        <div class="partner-desc" data-i18n="partner4.desc">R$ 80 bi em CRAs · R$ 6,5 bi sob gestão · Agronegócio</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/cashme.png" alt="CashMe" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Cash<em>Me</em></h3>
+          <div class="partner-highlight">Grupo Cyrela · R$ 5,1 bi em crédito</div>
+          <p class="partner-bio">Fintech de crédito do Grupo Cyrela, especializada em home equity. Mais de R$ 5,1 bilhões em crédito originado, com prazos até 240 meses e taxas competitivas. Solução-chave para destravar liquidez sobre patrimônio imobiliário.</p>
+        </div>
       </div>
-      <div class="partner reveal">
-        <div class="partner-name">Cash Me</div>
-        <div class="partner-desc" data-i18n="partner5.desc">Fintech do Grupo Cyrela · R$ 5,1 bi em crédito · Home Equity até 240 meses</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/hubc.png" alt="Hub Capital Inteligente" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Hub <em>Capital Inteligente</em></h3>
+          <div class="partner-highlight">Médio e grande porte · Soluções estruturadas</div>
+          <p class="partner-bio">Plataforma de capital inteligente focada em empresas de médio e grande porte. Estrutura soluções financeiras sob medida — da originação ao funding — com curadoria técnica em cada operação e foco em complexidade que escapa do crédito bancário tradicional.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d1">
-        <div class="partner-name">Creditas</div>
-        <div class="partner-desc" data-i18n="partner6.desc">Plataforma de crédito com garantia · CGI, veicular e consignado · Escala nacional</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/inteligencia.png" alt="Inteligência Comercial" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Inteligência <em>Comercial</em></h3>
+          <div class="partner-highlight">Originação · Análise estratégica</div>
+          <p class="partner-bio">Parceira em originação comercial e análise estratégica. Mapeia oportunidades de capital nos polos produtivos do interior brasileiro, conectando demanda real às mesas estruturadoras e qualificando o pipeline antes da modelagem.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d2">
-        <div class="partner-name">Hub-C</div>
-        <div class="partner-desc" data-i18n="partner7.desc">Soluções estruturadas · Crédito estratégico · Médio e grande porte</div>
+
+      <div class="partner-card">
+        <div class="partner-logo">
+          <img src="assets/partners/oporto.png" alt="Oporto Fort Group" style="width:100%;height:100%;object-fit:contain;padding:18px 24px;">
+        </div>
+        <div class="partner-content">
+          <h3 class="partner-name">Oporto <em>Fort Group</em></h3>
+          <div class="partner-highlight">Operação cross-border · Capital multimoedas</div>
+          <p class="partner-bio">Conglomerado internacional com presença em múltiplos países entre Europa, África e Américas. Acesso a capital em moeda forte e estruturação cross-border para empresas brasileiras com ambição global — ticket internacional a partir de USD 5 milhões.</p>
+        </div>
       </div>
-      <div class="partner reveal reveal-d3">
-        <div class="partner-name">Oporto Fort Group</div>
-        <div class="partner-desc">Grupo financeiro internacional · Estruturação de capital · Operações cross-border</div>
+
+      <div class="partner-card">
+        <div class="partner-logo plus">+</div>
+        <div class="partner-content">
+          <h3 class="partner-name muted">Rede ampliada</h3>
+          <div class="partner-highlight">Conforme demanda da operação</div>
+          <p class="partner-bio">Parcerias acessadas caso a caso, conforme o perfil técnico da operação — bancos múltiplos, family offices, asset managers e fundos especializados. A rede formal listada acima é o núcleo; a estrutura completa é ativada sob medida.</p>
+        </div>
       </div>
-      <div class="partner reveal">
-        <div class="partner-name">Ouribank</div>
-        <div class="partner-desc">Banco múltiplo · Câmbio, crédito e investimentos · Soluções para empresas e investidores</div>
-      </div>
+
     </div>
   </div>
 </section>
 
 <!-- PROJEÇÃO 2026 -->
-<section class="projection" id="projecao">
-  <div class="projection-inner">
-    <div class="projection-header">
-      <div class="reveal">
-        <div class="section-label" data-i18n="proj.label">Projeção 2026 · 08</div>
-        <h2 class="section-title" data-i18n="proj.title">A meta para o próximo ciclo: <em>R$ 5 bilhões liquidados.</em></h2>
+<section id="projecao" class="section s-light">
+  <div class="container">
+    <div class="section-label">Projeção MMXXVI · 05</div>
+    <h2 class="h-1" style="max-width: 880px; margin-bottom: 24px;">
+      A meta para o próximo ciclo: <em>R$ 1 bilhão liquidado.</em>
+    </h2>
+    <p class="body-text" style="margin-bottom: 56px;">
+      Após R$ 1,9 bilhão originados nos primeiros 120 dias de operação, o plano de negócios 2026 projeta a consolidação da Áxicon como referência nacional em crédito estruturado, com foco em conversão e liquidação efetiva das operações.
+    </p>
+    <div class="proj-compare">
+      <div class="proj-box proj-box-light">
+        <div class="proj-box-label">Originado · 120 dias · 2025</div>
+        <div class="proj-box-value">R$ 1,9 <em>bi</em></div>
       </div>
-      <p class="section-lead reveal reveal-d1" data-i18n="proj.lead">O plano de negócios 2026 projeta a consolidação da Áxicon como referência nacional em crédito estruturado, com foco em conversão e liquidação efetiva das operações.</p>
-    </div>
-
-    <div class="projection-hero reveal">
-      <div>
-        <div class="proj-meta-label" data-i18n="proj.metalbl">Meta Consolidada · 2026</div>
-        <div class="proj-target">R$ 5<em>bi</em></div>
-        <div class="proj-target-sub" data-i18n="proj.metasub">em operações liquidadas e desembolsadas ao longo do ano.</div>
-      </div>
-      <div class="proj-chart">
-        <div class="proj-bar actual" style="height: 60%;">
-          <div class="proj-bar-value">R$ 5 bi</div>
-          <div class="proj-bar-label" data-i18n="proj.bar1.lbl">Originado</div>
-          <div class="proj-bar-period" data-i18n="proj.bar1.period">120 dias · 2025</div>
-        </div>
-        <div class="proj-bar target" style="height: 92%;">
-          <div class="proj-bar-value">R$ 5 bi</div>
-          <div class="proj-bar-label" data-i18n="proj.bar2.lbl">Liquidado · Meta</div>
-          <div class="proj-bar-period" data-i18n="proj.bar2.period">12 meses · 2026</div>
-        </div>
+      <div class="proj-box proj-box-dark">
+        <div class="proj-box-label">Meta liquidada · 12 meses · 2026</div>
+        <div class="proj-box-value">R$ 1 <em>bi</em></div>
       </div>
     </div>
-
-    <div class="proj-pillars">
-      <article class="proj-pillar reveal">
-        <div class="proj-pillar-num" data-i18n="proj.f1.num">Frente 01</div>
-        <h3 class="proj-pillar-title" data-i18n="proj.f1.title">Expansão de Volume</h3>
-        <p class="proj-pillar-text" data-i18n="proj.f1.text">Aumento da taxa de conversão de operações originadas para liquidadas através de processos refinados de due diligence e estruturação. Foco em operações de médio e grande porte.</p>
-        <div class="proj-pillar-stat" data-i18n="proj.f1.stat">R$ 5 bi liquidados</div>
-      </article>
-      <article class="proj-pillar reveal reveal-d1">
-        <div class="proj-pillar-num" data-i18n="proj.f2.num">Frente 02</div>
-        <h3 class="proj-pillar-title" data-i18n="proj.f2.title">Tickets Internacionais</h3>
-        <p class="proj-pillar-text" data-i18n="proj.f2.text">Ampliação da carteira em moeda forte (USD/EUR) através de novos veículos de funding institucional, com operações cross-border a partir de USD 5 milhões.</p>
-        <div class="proj-pillar-stat" data-i18n="proj.f2.stat">USD 5 mi+ por operação</div>
-      </article>
-      <article class="proj-pillar reveal reveal-d2">
-        <div class="proj-pillar-num" data-i18n="proj.f3.num">Frente 03</div>
-        <h3 class="proj-pillar-title" data-i18n="proj.f3.title">Novos Produtos</h3>
-        <p class="proj-pillar-text" data-i18n="proj.f3.text">Consolidação do portfólio com expansão de Crédito Agro, Project Finance e estruturação de operações de Dívida Privada para clientes do interior do Brasil.</p>
-        <div class="proj-pillar-stat" data-i18n="proj.f3.stat">6 linhas estruturadas</div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- SÍNTESE DA PROPOSTA -->
-<section class="partnership" id="sintese">
-  <div class="partnership-inner">
-    <div class="section-label reveal" data-i18n="syn.label">Síntese da Proposta · 09</div>
-    <h2 class="partnership-title reveal reveal-d1" data-i18n="syn.title">Estrutura desenhada para <em>expandir exposição ao Brasil</em> através de garantias reais e projetos de alta performance.</h2>
-    <div class="partnership-grid">
-      <div class="pstat reveal">
-        <div class="pstat-value">R$ 50mi+</div>
-        <div class="pstat-label" data-i18n="syn.s1">Filtro de Faturamento<br>para demandas internacionais</div>
+    <div class="cards-wrap grid-3">
+      <div class="card">
+        <div class="card-eyebrow">Frente 01</div>
+        <h3 class="h-3">Expansão de <em>Volume</em></h3>
+        <p>Aumento da taxa de conversão de operações originadas para liquidadas através de processos refinados de due diligence e estruturação. Foco em operações de médio e grande porte.</p>
+        <span class="card-link" style="margin-top:18px;">R$ 1 bi liquidado</span>
       </div>
-      <div class="pstat reveal reveal-d1">
-        <div class="pstat-value">USD 5mi+</div>
-        <div class="pstat-label" data-i18n="syn.s2">Mínimo para operações<br>internacionais</div>
+      <div class="card">
+        <div class="card-eyebrow">Frente 02</div>
+        <h3 class="h-3">Tickets <em>Internacionais</em></h3>
+        <p>Ampliação da carteira em moeda forte (USD/EUR) através de novos veículos de funding institucional, com operações cross-border a partir de USD 5 milhões.</p>
+        <span class="card-link" style="margin-top:18px;">USD 5 mi+ por operação</span>
       </div>
-      <div class="pstat reveal reveal-d2">
-        <div class="pstat-value">Success Fee</div>
-        <div class="pstat-label" data-i18n="syn.s3">Remuneração após<br>liquidação e desembolso</div>
-      </div>
-    </div>
-    <div class="proposal-meta reveal reveal-d3">
-      <div class="proposal-meta-row">
-        <span class="pm-lbl" data-i18n="syn.m1.lbl">Atuação Comercial</span>
-        <span class="pm-val" data-i18n="syn.m1.val">Originação, análise preliminar de garantias e estruturação do dossiê do cliente.</span>
-      </div>
-      <div class="proposal-meta-row">
-        <span class="pm-lbl" data-i18n="syn.m2.lbl">Compliance</span>
-        <span class="pm-val" data-i18n="syn.m2.val">Operações sob marcos regulatórios nacionais e internacionais para trânsito de capitais.</span>
-      </div>
-      <div class="proposal-meta-row">
-        <span class="pm-lbl" data-i18n="syn.m3.lbl">Garantias</span>
-        <span class="pm-val" data-i18n="syn.m3.val">Hard assets (imóveis urbanos, comerciais, industriais e rurais), recebíveis performados e Project Finance.</span>
+      <div class="card">
+        <div class="card-eyebrow">Frente 03</div>
+        <h3 class="h-3">Novos <em>Produtos</em></h3>
+        <p>Consolidação do portfólio com expansão de Crédito Agro, Project Finance e estruturação de operações de Dívida Privada para clientes do interior do Brasil.</p>
+        <span class="card-link" style="margin-top:18px;">6 linhas estruturadas</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-grid">
+<!-- SÍNTESE -->
+<section class="synthesis">
+  <div class="container">
+    <div class="synthesis-label">Síntese da Proposta · 06</div>
+    <p class="synthesis-text">
+      Estrutura desenhada para <em>expandir exposição ao Brasil</em> através de garantias reais e projetos de alta performance.
+    </p>
+    <div class="synthesis-grid">
+      <div class="synthesis-cell">
+        <div class="synthesis-cell-value">R$ 50<em>mi+</em></div>
+        <div class="synthesis-cell-label">Filtro de Faturamento<br>para demandas internacionais</div>
+      </div>
+      <div class="synthesis-cell">
+        <div class="synthesis-cell-value">USD 5<em>mi+</em></div>
+        <div class="synthesis-cell-label">Mínimo para operações<br>internacionais</div>
+      </div>
+      <div class="synthesis-cell">
+        <div class="synthesis-cell-value">Success<em>Fee</em></div>
+        <div class="synthesis-cell-label">Remuneração após<br>liquidação e desembolso</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-stripe">
+  <h3>Conheceu a Áxicon. <em>Vamos conversar?</em></h3>
+  <div class="cta-stripe-actions">
+    <a href="https://wa.me/5544991147236?text=Olá,%20tudo%20bem?%20Vim%20pelo%20site%20da%20Áxicon..." target="_blank" rel="noopener" class="btn btn-primary">WhatsApp →</a>
+    <a href="/" class="link-arrow">Ver linhas de crédito</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
       <div class="footer-brand">
-        <div class="logo-mark invert" style="height:56px; margin-bottom:24px;"><img src="axicon-logo.svg" alt="Áxicon"></div>
-        <div class="footer-tagline" data-i18n="foot.tagline">"A inteligência financeira não deveria ter um endereço fixo."</div>
+        <img src="assets/logo-full-white.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
       </div>
-      <div class="footer-col">
-        <h4 data-i18n="foot.h1">Sede</h4>
-        <p data-i18n="foot.h1.p1">Áxicon Soluções Financeiras</p>
-        <p>Av. Gastão Vidiga, 1006</p>
-        <p data-i18n="foot.h1.p3">Maringá, PR — Brasil</p>
-      </div>
-      <div class="footer-col">
-        <h4 data-i18n="foot.h2">Identificação</h4>
-        <p data-i18n="foot.h2.p1">Plano de Negócios 2026</p>
-        <p data-i18n="foot.h2.p2">Edição Institucional</p>
-        <p data-i18n="foot.h2.p3">Versão 1.0</p>
-      </div>
-      <div class="footer-col">
-        <h4 data-i18n="foot.h3">Confidencialidade</h4>
-        <p data-i18n="foot.h3.p1">Documento de uso restrito ao destinatário, sujeito a sigilo profissional.</p>
-      </div>
+      <p class="footer-tag"><em>"A inteligência financeira não deveria ter um endereço fixo."</em></p>
     </div>
-    <div class="footer-bottom">
-      <div data-i18n="foot.copy">© 2026 Áxicon Soluções Financeiras</div>
-      <div data-i18n="foot.tag2">Crédito estruturado · Brasil</div>
+    <div>
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/institucional.html">Institucional</a></li>
+        <li><a href="#parceiros">Parceiros</a></li>
+        <li><a href="#ecossistema">Ecossistema</a></li>
+        <li><a href="#projecao">Projeção 2026</a></li>
+      </ul>
     </div>
+    <div>
+      <h4>Sede</h4>
+      <p>Av. Gastão Vidiga, 1006<br>Maringá · PR · Brasil</p>
+    </div>
+    <div>
+      <h4>Contato</h4>
+      <p>
+        <a href="mailto:contato@axicon.com.br">contato@axicon.com.br</a><br>
+        <a href="https://wa.me/5544991147236">+55 (44) 99114-7236</a><br>
+        <a href="https://www.instagram.com/axicon.solucoes/" target="_blank">@axicon.solucoes</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© MMXXVI · Áxicon Soluções Financeiras</span>
+    <span>Crédito estruturado · Brasil</span>
   </div>
 </footer>
 
-<script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+<a href="https://wa.me/5544991147236?text=Olá,%20tudo%20bem?%20Vim%20pelo%20site%20da%20Áxicon..." class="wa-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
 
-  // Map interaction
-  const regionCards = document.querySelectorAll('.region-card');
-  const pins = document.querySelectorAll('.pin-group');
-  const halos = document.querySelectorAll('.halo[data-region]');
-
-  function highlightRegion(region) {
-    regionCards.forEach(c => c.classList.toggle('active', c.dataset.region === region));
-    pins.forEach(p => p.classList.toggle('active', p.dataset.region === region));
-    halos.forEach(h => h.classList.toggle('highlight', h.dataset.region === region));
-  }
-
-  regionCards.forEach(card => {
-    card.addEventListener('mouseenter', () => highlightRegion(card.dataset.region));
-  });
-
-  pins.forEach(pin => {
-    pin.addEventListener('mouseenter', () => highlightRegion(pin.dataset.region));
-  });
-
-  halos.forEach(halo => {
-    halo.addEventListener('mouseenter', () => highlightRegion(halo.dataset.region));
-  });
-
-  // ═══════════════ SISTEMA DE TRADUÇÃO PT/EN ═══════════════
-  const translations = {
-    en: {
-      // Topbar / Nav
-      'breadcrumb': 'FINANCIAL SOLUTIONS / <span>INSTITUTIONAL PROPOSAL</span>',
-      'nav.thesis': 'Thesis',
-      'nav.products': 'Products',
-      'nav.flow': 'Process',
-      'nav.cases': 'Deals',
-      'nav.ecosystem': 'Ecosystem',
-      'nav.team': 'Team',
-      'nav.partners': 'Partners',
-      'nav.projection': '2026 Outlook',
-
-      // Hero
-      'hero.greeting': 'Institutional Proposal',
-      'hero.title': 'Financial intelligence should not have <em>a fixed address.</em>',
-      'hero.sub': 'For too long, access to the best strategies, smart capital and elite governance has been confined to a few square kilometers of Brazil. Áxicon operates as the link between institutional capital and the real economy of the country\'s interior.',
-      'hero.doc.lbl1': 'Document',
-      'hero.doc.val1': 'Business Plan · 2026',
-      'hero.doc.lbl2': 'Issuer',
-      'hero.doc.val2': 'Áxicon Soluções Financeiras',
-      'hero.doc.lbl3': 'Confidentiality',
-      'hero.doc.val3': 'Restricted to the addressee',
-      'hero.card.label': 'Track Record · 120 days',
-      'hero.card.title': 'We have structured <em>R$ 1.9 bn</em> in operations since inception.',
-      'hero.card.row1lbl': 'Transacted volume',
-      'hero.card.row2lbl': 'Strategic hubs',
-      'hero.card.row2val': '6 regions',
-      'hero.card.row3lbl': 'International ticket',
-      'hero.card.row3val': 'From USD 5 mi',
-      'hero.card.row4lbl': 'Domestic operations',
-      'hero.card.row4val': 'No defined cap',
-      'hero.card.row5lbl': 'Model',
-      'hcf.l1': 'Founded',
-      'hcf.l2': 'HQ',
-      'hcf.l3': 'Coverage',
-      'hcf.v3': 'Nationwide',
-
-      // KPIs
-      'kpi1.lbl': 'Transacted Volume',
-      'kpi1.foot': 'In structured operations',
-      'kpi2.lbl': 'Traction Cycle',
-      'kpi2.unit': 'days',
-      'kpi2.foot': 'Of accelerated execution',
-      'kpi3.lbl': 'Strategic Hubs',
-      'kpi3.unit': 'regions',
-      'kpi3.foot': 'South · Southeast · Midwest · NE · North',
-      'kpi4.lbl': 'International Ticket',
-      'kpi4.foot': 'Minimum value per operation',
-
-      // Thesis
-      'thesis.label': 'The Thesis · 01',
-      'thesis.title': 'We speak the language of the interior <em>with the accent of capital markets.</em>',
-      'thesis.lead': 'Our strategy is not limited to providing credit, but to exporting governance to regional companies. We connect institutional capital to the real economy where Brazilian GDP is generated with the greatest vigor.',
-      'thesis.p1.title': 'Democratizing High-Finance',
-      'thesis.p1.text': 'We translate complex Faria Lima structures — FIDC, Private Debt, Home Equity, Project Finance — into the reality of the regional entrepreneur, removing the geographic ceiling that prevents growth at scale.',
-      'thesis.p2.title': 'Unlocking Potential',
-      'thesis.p2.text': 'We identify underused assets and cash flows that traditional banking would ignore — but which, within a personalized modeling, become robust collateral for capital raising.',
-      'thesis.p3.title': 'Operational Efficiency',
-      'thesis.p3.text': 'Architecture based on agility and technology to ensure that physical distance never translates into procedural slowness. High-touch service at national scale, with discretion and long-term relationships.',
-
-      // Products
-      'products.label': 'Products & Services · 02',
-      'products.title': 'Solutions modeled for <em>every stage</em> of capital.',
-      'products.lead': 'We connect capital to opportunities through an exclusive network of leading partners. Each operation is structured with disbursement agility and excellence in execution.',
-      'prod1.tag': '01 · Consortia',
-      'prod1.title': 'Strategic Consortia',
-      'prod1.desc': 'Strategic intelligence and the lowest market rates to accelerate plan execution, with maximum efficiency from the start.',
-      'prod2.tag': '02 · Home Equity',
-      'prod2.title': 'ConsorEquity',
-      'prod2.desc': 'Turn your real estate equity into immediate liquidity through reduced rates and extended terms. Structured credit using property as leverage.',
-      'prod3.tag': '03 · Corporate',
-      'prod3.title': 'Corporate Credit',
-      'prod3.desc': 'Strategic leverage with the lowest market rates to optimize cash flow. Enable your business expansion with agility.',
-      'prod4.tag': '04 · Construction',
-      'prod4.title': 'ConsorBuild',
-      'prod4.desc': 'Financial engineering to build or renovate with zero interest cost and predictability. Turn your project into reality intelligently.',
-      'prod5.tag': '05 · Agribusiness',
-      'prod5.title': 'Agro Credit',
-      'prod5.desc': 'Specialized funding for agribusiness, connecting producers to the best financing opportunities, with solutions for the full agricultural cycle.',
-      'prod6.tag': '06 · Cross-Border',
-      'prod6.title': 'International Credit',
-      'prod6.desc': 'Credit structure with foreign capital for patrimonial expansion, acquisitions and strategic investments in USD/EUR.',
-      'prod.more': 'Learn more →',
-
-      // Cases
-      'cases.label': 'Structured Deals · 04',
-      'cases.title': 'Operations in <em>execution.</em>',
-      'cases.lead': 'A selection of operations underway in the Áxicon portfolio — examples of the complexity, ticket size and sector profile the desk structures throughout the 2026 cycle.',
-      // Flow section
-      'flow.label': 'Process · 03',
-      'flow.title': 'Service Process',
-      'flow.p1': 'Áxicon specializes in connecting capital to opportunities through an exclusive network of market-leading partners. Through meticulous selection, we model solutions that prioritize disbursement agility and structuring excellence.',
-      'flow.p2': 'Our goal is to ensure that every client accesses the best available conditions, benefiting from advisory services committed to high performance and maximum efficiency at every stage of the financial journey.',
-      'flow.s1.title': 'Client Demand',
-      'flow.s1.text': 'We identify the client\'s demand, gathering all the information necessary for business analysis.',
-      'flow.s2.title': 'Áxicon Financial Solutions',
-      'flow.s2.text': 'We use the information for an in-depth analysis to filter the partner(s) that best meet the demand with maximum efficiency.',
-      'flow.s3.title': 'Partners',
-      'flow.s3.text': 'Our partners analyze all the information and formalize a proposal that we present to our clients with the best conditions.',
-      // Case timelines (shared)
-      'case.timeline.lbl': 'Operation Timeline',
-      'case.total.lbl': 'Total Estimated Timeline',
-      'case.unit.days': 'days',
-      // Timeline A (Cases 1 & 4 - asset-backed with property survey)
-      'case.tA.s1': 'Documentation<span class="qualifier">depending on client</span>',
-      'case.tA.s2': 'Business analysis',
-      'case.tA.s3': 'Property survey',
-      'case.tA.s4': 'Contract signing',
-      'case.tA.s5': 'Settlement <span class="qualifier">1st tranche</span>',
-      // Timeline B (Cases 2 & 3 - capital markets with notary registration)
-      'case.tB.s1': 'Documentation<span class="qualifier">depending on client</span>',
-      'case.tB.s2': 'Business analysis',
-      'case.tB.s3': 'Notary registration',
-      'case.tB.s4': 'Contract signing',
-      'case.tB.s5': 'Settlement <span class="qualifier">1st tranche</span>',
-      'case1.num': 'Deal 01',
-      'case1.tag': 'Agribusiness',
-      'case1.title': 'Expansion and modernization of an <em>agricultural group</em>.',
-      'case1.desc': 'Operation structuring for expansion of productive capacity and modernization of rural assets. Funding aligned with the agribusiness cycle, backed by real collateral over productive properties.',
-      'case1.lbl1': 'Ticket',
-      'case1.unit': 'million',
-      'case1.lbl2': 'Purpose',
-      'case1.val2': 'Expansion & Modernization',
-      'case2.num': 'Deal 02',
-      'case2.tag': 'Real Estate',
-      'case2.title': 'Structuring of a <em>CRI</em> for a developer.',
-      'case2.desc': 'Issuance of Real Estate Receivables Certificate for a developer operating in the Maringá-PR axis, enabling long-term funding through capital markets backed by performed receivables.',
-      'case2.lbl1': 'Instrument',
-      'case2.lbl2': 'Location',
-      'case3.num': 'Deal 03',
-      'case3.tag': 'Project Finance',
-      'case3.title': 'Construction funding for <em>developer in Amapá</em>.',
-      'case3.desc': 'Funding structure to enable construction in a strategic Northern region. Operation designed with disbursement schedule tied to construction milestones and asset-backed collateral.',
-      'case3.lbl1': 'Modality',
-      'case3.val1': 'Construction Funding',
-      'case3.lbl2': 'Location',
-      'case3.val2': 'Amapá · North',
-      'case4.num': 'Deal 04',
-      'case4.tag': 'Industry · Cross-Border',
-      'case4.title': 'Restructuring of <em>Canadian furniture industry</em>.',
-      'case4.desc': 'Cross-border operation for expansion and restructuring of a Canadian furniture and design company with manufacturing operations in Brazil. Funding combining local expertise and international capital.',
-      'case4.lbl1': 'Sector',
-      'case4.val1': 'Furniture & Design',
-      'case4.lbl2': 'Origin',
-      'case4.val2': 'Canada → Brazil',
-
-      // Ecosystem
-      'eco.label': 'Geographic Ecosystem · 05',
-      'eco.title': 'Presence <em>where the real economy</em> happens.',
-      'eco.lead': 'We operate at critical points in the national productive chain — connecting South, Southeast, Midwest and Northeast into a single intelligence network.',
-      'eco.r1.name': 'Paraná · Headquarters',
-      'eco.r1.focus': 'Technology · Industry · Apparel and Poultry',
-      'eco.r2.focus': 'Industrial and Services Hub',
-      'eco.r3.focus': 'Major Agricultural Hubs',
-      'eco.r4.focus': 'Agribusiness and Cattle',
-      'eco.r5.focus': 'Multisectoral Regional Hub',
-
-      // Team
-      'team.label': 'Our Team · 06',
-      'team.title': 'Technical depth, <em>proven execution.</em>',
-      'team.lead': 'Team formed by executives with experience at top financial institutions — totaling over 30 years in structured operations and high-net-worth advisory.',
-      'team.p1.role': 'Founding Partner<br>Wholesale Commercial Director',
-      'team.p1.bio': 'Over 20 years leading commercial teams and structuring operations across Brazil — Assaí Atacadista, Triângulo Consórcios, ACIM Maringá, Banco BMG. Deep know-how in corporate consulting and structuring.',
-      'team.p2.role': 'Operations &<br>Partnerships Manager',
-      'team.p2.bio': 'Over 6 years in financial markets focused on high-net-worth advisory. Experience at Sicoob and XP Investimentos. Certified Ancord AI, CPA and EIP.',
-      'team.p3.role': 'Branding & Marketing<br>Manager',
-      'team.p3.bio': 'Over 8 years in Marketing, Events and Communication. Creates brand experiences that connect companies and audiences. Led projects at Redes Gazin, Grupo GTF, Nação Digital and Yamaha.',
-
-      // Partners
-      'partners.label': 'Partner Network · 07',
-      'partners.title': 'Curating <em>institutional capital.</em>',
-      'partners.lead': 'Our network combines established financial conglomerates, specialized fintechs and securitizers — totaling over R$ 200 billion in structured operations.',
-      'partner1.desc': '25 years · R$ 70 bn in assigned credits · FIDC and Securitizer',
-      'partner2.desc': '15+ years in real estate · R$ 50 bn in GSV · 500k units',
-      'partner3.desc': 'Real Estate Equity Fintech · 100% online journey · Competitive rates',
-      'partner4.desc': 'R$ 80 bn in CRAs · R$ 6.5 bn under management · Agribusiness',
-      'partner5.desc': 'Cyrela Group Fintech · R$ 5.1 bn in credit · Home Equity up to 240 months',
-      'partner6.desc': 'Asset-backed credit platform · Home Equity, auto and payroll · National scale',
-      'partner7.desc': 'Structured solutions · Strategic credit · Mid and large cap',
-
-      // Projection 2026
-      'proj.label': '2026 Outlook · 08',
-      'proj.title': 'The goal for the next cycle: <em>R$ 1 billion settled.</em>',
-      'proj.lead': 'After R$ 1.9 billion originated in the first 120 days of operation, the 2026 business plan projects the consolidation of Áxicon as a national reference in structured credit, with focus on conversion and effective settlement of operations.',
-      'proj.metalbl': 'Consolidated Goal · 2026',
-      'proj.metasub': 'in settled and disbursed operations throughout the year.',
-      'proj.bar1.lbl': 'Originated',
-      'proj.bar1.period': '120 days · 2025',
-      'proj.bar2.lbl': 'Settled · Goal',
-      'proj.bar2.period': '12 months · 2026',
-      'proj.f1.num': 'Front 01',
-      'proj.f1.title': 'Volume Expansion',
-      'proj.f1.text': 'Increase in conversion rate from originated to settled operations through refined due diligence and structuring processes. Focus on mid and large cap operations.',
-      'proj.f1.stat': 'R$ 1 bn settled',
-      'proj.f2.num': 'Front 02',
-      'proj.f2.title': 'International Tickets',
-      'proj.f2.text': 'Portfolio expansion in hard currency (USD/EUR) through new institutional funding vehicles, with cross-border operations from USD 5 million.',
-      'proj.f2.stat': 'USD 5 mi+ per operation',
-      'proj.f3.num': 'Front 03',
-      'proj.f3.title': 'New Products',
-      'proj.f3.text': 'Portfolio consolidation with expansion of Agro Credit, Project Finance and Private Debt structuring for clients in Brazil\'s interior.',
-      'proj.f3.stat': '6 structured lines',
-
-      // Synthesis
-      'syn.label': 'Proposal Synthesis · 09',
-      'syn.title': 'Structure designed to <em>expand exposure to Brazil</em> through real collateral and high-performance projects.',
-      'syn.s1': 'Revenue Threshold<br>for international demand',
-      'syn.s2': 'Minimum for international<br>operations',
-      'syn.s3': 'Compensation after<br>settlement and disbursement',
-      'syn.m1.lbl': 'Commercial Action',
-      'syn.m1.val': 'Origination, preliminary collateral analysis and structuring of the client dossier.',
-      'syn.m2.lbl': 'Compliance',
-      'syn.m2.val': 'Operations under national and international regulatory frameworks for capital flows.',
-      'syn.m3.lbl': 'Collateral',
-      'syn.m3.val': 'Hard assets (urban, commercial, industrial and rural real estate), performed receivables and Project Finance.',
-
-      // Footer
-      'foot.tagline': '"Financial intelligence should not have a fixed address."',
-      'foot.h1': 'Headquarters',
-      'foot.h1.p1': 'Áxicon Financial Solutions',
-      'foot.h1.p3': 'Maringá, PR — Brazil',
-      'foot.h2': 'Identification',
-      'foot.h2.p1': 'Business Plan 2026',
-      'foot.h2.p2': 'Institutional Edition',
-      'foot.h2.p3': 'Version 1.0',
-      'foot.h3': 'Confidentiality',
-      'foot.h3.p1': 'Document restricted to the addressee, subject to professional confidentiality.',
-      'foot.copy': '© 2026 Áxicon Soluções Financeiras',
-      'foot.tag2': 'Structured credit · Brazil'
-    }
-  };
-
-  // Salva os textos originais em PT na primeira execução
-  const originalTexts = {};
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    originalTexts[el.dataset.i18n] = el.innerHTML;
-  });
-
-  function switchLang(lang) {
-    document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : 'pt-BR');
-
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.dataset.i18n;
-      if (lang === 'en' && translations.en[key]) {
-        el.innerHTML = translations.en[key];
-      } else if (originalTexts[key]) {
-        el.innerHTML = originalTexts[key];
-      }
-    });
-
-    // Atualiza estado dos botões
-    document.querySelectorAll('.lang-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.lang === lang);
-    });
-  }
-
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchLang(btn.dataset.lang));
-  });
-
-  // Hamburger menu
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobile-menu');
-  hamburger.addEventListener('click', () => {
-    const open = mobileMenu.classList.toggle('open');
-    hamburger.classList.toggle('open', open);
-    hamburger.setAttribute('aria-expanded', open);
-  });
-  mobileMenu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      mobileMenu.classList.remove('open');
-      hamburger.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', false);
-    });
-  });
-</script>
-
+<script src="shared.js"></script>
 </body>
 </html>
