@@ -1574,6 +1574,67 @@
   }
 
   /* ───────── PARCERIA / CTA (sidebar dark inspirado) ───────── */
+  /* ───────── RDG ORIGEM ───────── */
+  .rdg-origem {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 28px 40px;
+    margin-top: 68px;
+  }
+  .rdg-origem-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .rdg-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px 5px 8px;
+    background: var(--atacado-light);
+    border: 1px solid rgba(113,63,42,0.18);
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .rdg-badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--atacado);
+  }
+  .rdg-badge-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--atacado);
+  }
+  .rdg-divider {
+    width: 1px; height: 28px;
+    background: var(--line);
+    flex-shrink: 0;
+  }
+  .rdg-text {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    flex: 1;
+    min-width: 200px;
+  }
+  .rdg-text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  @media (max-width: 600px) {
+    .rdg-origem { padding: 20px 16px; }
+    .rdg-divider { display: none; }
+  }
+
   .partnership {
     padding: 120px 40px;
     background: var(--sidebar);
@@ -1814,9 +1875,9 @@
   </div>
   <nav class="topbar-nav">
     <a href="#tese" data-i18n="nav.thesis">Tese</a>
+    <a href="#negocios" data-i18n="nav.cases">Negócios</a>
     <a href="#produtos" data-i18n="nav.products">Produtos</a>
     <a href="#fluxo" data-i18n="nav.flow">Fluxo</a>
-    <a href="#negocios" data-i18n="nav.cases">Negócios</a>
     <a href="#ecossistema" data-i18n="nav.ecosystem">Ecossistema</a>
     <a href="#time" data-i18n="nav.team">Time</a>
     <a href="#parceiros" data-i18n="nav.partners">Parceiros</a>
@@ -1835,9 +1896,9 @@
 <!-- MENU MOBILE -->
 <div class="mobile-menu" id="mobile-menu">
   <a href="#tese" data-i18n="nav.thesis">Tese</a>
+  <a href="#negocios" data-i18n="nav.cases">Negócios</a>
   <a href="#produtos" data-i18n="nav.products">Produtos</a>
   <a href="#fluxo" data-i18n="nav.flow">Fluxo</a>
-  <a href="#negocios" data-i18n="nav.cases">Negócios</a>
   <a href="#ecossistema" data-i18n="nav.ecosystem">Ecossistema</a>
   <a href="#time" data-i18n="nav.team">Time</a>
   <a href="#parceiros" data-i18n="nav.partners">Parceiros</a>
@@ -1850,6 +1911,18 @@
 </div>
 
 <!-- HERO ("Bom dia, *visitante.*") -->
+<!-- RDG ORIGEM -->
+<div class="rdg-origem">
+  <div class="rdg-origem-inner">
+    <div class="rdg-badge">
+      <span class="rdg-badge-dot"></span>
+      <span class="rdg-badge-label">Empresa Originadora</span>
+    </div>
+    <div class="rdg-divider"></div>
+    <p class="rdg-text">A <strong>Áxicon Soluções Financeiras</strong> nasceu a partir da <strong>RDG Consultoria</strong> — empresa de consultoria empresarial e financeira fundada em Maringá-PR, com atuação em reestruturação, planejamento estratégico e acesso a capital para médias e grandes empresas. A Áxicon é o braço especializado em crédito estruturado e operações de mercado de capitais do grupo RDG.</p>
+  </div>
+</div>
+
 <section class="hero">
   <div class="hero-inner">
     <div>
@@ -1864,10 +1937,10 @@
     </div>
     <aside class="hero-card reveal reveal-d2">
       <div class="hero-card-label" data-i18n="hero.card.label">Track Record · 120 dias</div>
-      <h3 data-i18n="hero.card.title">Estruturamos <em>R$ 1,9 bi</em> em operações desde a fundação.</h3>
+      <h3 data-i18n="hero.card.title">Estruturamos <em>R$ 5 bi</em> em operações desde a fundação em 2021.</h3>
       <div class="hero-card-meta">
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row1lbl">Volume transacionado</span><span class="val">R$ 1,9 bi</span></div>
-        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row2lbl">Polos estratégicos</span><span class="val" data-i18n="hero.card.row2val">6 regiões</span></div>
+        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row1lbl">Volume transacionado</span><span class="val">R$ 5 bi</span></div>
+        <div class="meta-row"><span class="lbl" data-i18n="hero.card.row2lbl">Polos estratégicos</span><span class="val" data-i18n="hero.card.row2val">5 regiões</span></div>
         <div class="meta-row"><span class="lbl" data-i18n="hero.card.row3lbl">Ticket internacional</span><span class="val" data-i18n="hero.card.row3val">A partir de USD 5 mi</span></div>
         <div class="meta-row"><span class="lbl" data-i18n="hero.card.row4lbl">Operações nacionais</span><span class="val" data-i18n="hero.card.row4val">Sem teto definido</span></div>
         <div class="meta-row"><span class="lbl" data-i18n="hero.card.row5lbl">Modelo</span><span class="val">Success Fee</span></div>
@@ -1875,7 +1948,7 @@
       <div class="hero-card-footer">
         <div class="hcf-item">
           <span class="hcf-label" data-i18n="hcf.l1">Fundação</span>
-          <span class="hcf-val">2024</span>
+          <span class="hcf-val">2021</span>
         </div>
         <div class="hcf-item">
           <span class="hcf-label" data-i18n="hcf.l2">Sede</span>
@@ -1895,7 +1968,7 @@
   <div class="kpis-inner">
     <div class="kpi reveal">
       <div class="kpi-label" data-i18n="kpi1.lbl">Volume Transacionado</div>
-      <div class="kpi-value">R$ 1,9<span class="unit">bi</span></div>
+      <div class="kpi-value">R$ 5<span class="unit">bi</span></div>
       <div class="kpi-foot" data-i18n="kpi1.foot">Em operações estruturadas</div>
     </div>
     <div class="kpi reveal reveal-d1">
@@ -1905,7 +1978,7 @@
     </div>
     <div class="kpi reveal reveal-d2">
       <div class="kpi-label" data-i18n="kpi3.lbl">Polos Estratégicos</div>
-      <div class="kpi-value">6<span class="unit" data-i18n="kpi3.unit">regiões</span></div>
+      <div class="kpi-value">5<span class="unit" data-i18n="kpi3.unit">regiões</span></div>
       <div class="kpi-foot" data-i18n="kpi3.foot">Sul · Sudeste · Centro-Oeste · NE · Norte</div>
     </div>
     <div class="kpi reveal reveal-d3">
@@ -1953,10 +2026,236 @@
 </section>
 
 <!-- PRODUTOS -->
+<section class="cases" id="negocios">
+  <div class="cases-header">
+    <div class="reveal">
+      <div class="section-label" data-i18n="cases.label">Negócios Estruturados · 02</div>
+      <h2 class="section-title" data-i18n="cases.title">Operações em <em>execução.</em></h2>
+    </div>
+    <p class="section-lead reveal reveal-d1" data-i18n="cases.lead">Uma seleção das operações em curso na carteira Áxicon — exemplos do tipo de complexidade, ticket e setor que a mesa estrutura ao longo do ciclo 2026.</p>
+  </div>
+
+  <div class="cases-grid">
+
+    <article class="case-card reveal">
+      <div class="case-meta">
+        <span class="case-num" data-i18n="case1.num">Caso 01</span>
+        <span class="case-tag" data-i18n="case1.tag">Agronegócio</span>
+      </div>
+      <h3 class="case-title" data-i18n="case1.title">Ampliação e modernização de <em>grupo agrícola</em>.</h3>
+      <p class="case-desc" data-i18n="case1.desc">Estruturação de operação para expansão de capacidade produtiva e modernização de ativos rurais. Captação alinhada ao ciclo do agronegócio, com garantias reais sobre propriedades produtivas.</p>
+      <div class="case-stats">
+        <div>
+          <div class="case-stat-lbl" data-i18n="case1.lbl1">Ticket</div>
+          <div class="case-stat-val">R$ 800<span class="unit" data-i18n="case1.unit">milhões</span></div>
+        </div>
+        <div>
+          <div class="case-stat-lbl" data-i18n="case1.lbl2">Finalidade</div>
+          <div class="case-stat-val" style="font-size:17px;" data-i18n="case1.val2">Ampliação & Modernização</div>
+        </div>
+      </div>
+      <div class="case-timeline">
+        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
+        <div class="case-steps">
+          <div class="case-step">
+            <span class="case-step-num">01</span>
+            <span class="case-step-name" data-i18n="case.tA.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
+            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">02</span>
+            <span class="case-step-name" data-i18n="case.tA.s2">Análise do negócio</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">03</span>
+            <span class="case-step-name" data-i18n="case.tA.s3">Vistoria da propriedade</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">04</span>
+            <span class="case-step-name" data-i18n="case.tA.s4">Assinatura do contrato</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">05</span>
+            <span class="case-step-name" data-i18n="case.tA.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
+            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+        </div>
+        <div class="case-total">
+          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
+          <span class="case-total-val">~50<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="case-card reveal reveal-d1">
+      <div class="case-meta">
+        <span class="case-num" data-i18n="case2.num">Caso 02</span>
+        <span class="case-tag" data-i18n="case2.tag">Tecnologia · Call Centers</span>
+      </div>
+      <h3 class="case-title" data-i18n="case2.title">Quando a análise certa <em>multiplica</em> o ticket.</h3>
+      <p class="case-desc" data-i18n="case2.desc">Empresa de tecnologia especializada em call centers de alto rendimento, com mais de dois mil colaboradores, procurou a mesa em busca de capital de giro para expandir suas operações. O cliente chegou com uma demanda inicial de R$ 8 milhões — mas, após mergulho aprofundado nos números, na geração de caixa e no plano de expansão, a equipe identificou capacidade de absorção muito superior. A operação foi reestruturada e o ticket elevado para R$ 60 milhões, alinhando o funding à real ambição do negócio.</p>
+      <div class="case-stats">
+        <div>
+          <div class="case-stat-lbl" data-i18n="case2.lbl1">Ticket Estruturado</div>
+          <div class="case-stat-val">R$ 60<span class="unit" data-i18n="case2.unit">milhões</span></div>
+        </div>
+        <div>
+          <div class="case-stat-lbl" data-i18n="case2.lbl2">Demanda Inicial</div>
+          <div class="case-stat-val" style="font-size:17px;" data-i18n="case2.val2">R$ 8 mi → R$ 60 mi</div>
+        </div>
+      </div>
+      <div class="case-timeline">
+        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
+        <div class="case-steps">
+          <div class="case-step">
+            <span class="case-step-num">01</span>
+            <span class="case-step-name" data-i18n="case.tC.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
+            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">02</span>
+            <span class="case-step-name" data-i18n="case.tC.s2">Análise aprofundada<span class="qualifier">elevação de ticket</span></span>
+            <span class="case-step-time">10–15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">03</span>
+            <span class="case-step-name" data-i18n="case.tC.s3">Due diligence operacional</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">04</span>
+            <span class="case-step-name" data-i18n="case.tC.s4">Assinatura do contrato</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">05</span>
+            <span class="case-step-name" data-i18n="case.tC.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
+            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+        </div>
+        <div class="case-total">
+          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
+          <span class="case-total-val">50–55<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="case-card reveal">
+      <div class="case-meta">
+        <span class="case-num" data-i18n="case3.num">Caso 03</span>
+        <span class="case-tag" data-i18n="case3.tag">Mineração · Cross-Border</span>
+      </div>
+      <h3 class="case-title" data-i18n="case3.title">Funding internacional para uma <em>mineradora multimineral</em>.</h3>
+      <p class="case-desc" data-i18n="case3.desc">Mineradora de grande porte, com portfólio diversificado em diferentes commodities minerais e ativos operacionais consolidados, mobilizou a Áxicon para estruturar funding internacional voltado à abertura e ao desenvolvimento de novas frentes de lavra. A operação cross-border foi modelada em moeda forte, com cronograma de desembolso atrelado aos marcos de CAPEX e estrutura jurídica adequada à escala e à complexidade do projeto.</p>
+      <div class="case-stats">
+        <div>
+          <div class="case-stat-lbl" data-i18n="case3.lbl1">Ticket Internacional</div>
+          <div class="case-stat-val">USD 150<span class="unit" data-i18n="case3.unit">milhões</span></div>
+        </div>
+        <div>
+          <div class="case-stat-lbl" data-i18n="case3.lbl2">Finalidade</div>
+          <div class="case-stat-val" style="font-size:17px;" data-i18n="case3.val2">Expansão · Novas Minas</div>
+        </div>
+      </div>
+      <div class="case-timeline">
+        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
+        <div class="case-steps">
+          <div class="case-step">
+            <span class="case-step-num">01</span>
+            <span class="case-step-name" data-i18n="case.tD.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
+            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">02</span>
+            <span class="case-step-name" data-i18n="case.tD.s2">Análise técnica e geológica</span>
+            <span class="case-step-time">15–20<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">03</span>
+            <span class="case-step-name" data-i18n="case.tD.s3">Estruturação cross-border</span>
+            <span class="case-step-time">20<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">04</span>
+            <span class="case-step-name" data-i18n="case.tD.s4">Assinatura do contrato</span>
+            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">05</span>
+            <span class="case-step-name" data-i18n="case.tD.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
+            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+        </div>
+        <div class="case-total">
+          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
+          <span class="case-total-val">65–70<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="case-card reveal reveal-d1">
+      <div class="case-meta">
+        <span class="case-num" data-i18n="case4.num">Caso 04</span>
+        <span class="case-tag" data-i18n="case4.tag">Construção · Norte</span>
+      </div>
+      <h3 class="case-title" data-i18n="case4.title">Crédito sob medida onde o <em>mercado não chega</em>.</h3>
+      <p class="case-desc" data-i18n="case4.desc">Construtora e incorporadora consolidada no extremo norte do país buscava funding para um portfólio de obras de grande porte — em uma região onde, historicamente, soluções personalizadas de crédito raramente chegam. A Áxicon estruturou uma operação dedicada, com cronograma de desembolso ancorado nas etapas construtivas e garantias atreladas aos ativos do empreendimento, levando inteligência financeira de capital ao Amapá nos mesmos padrões praticados no Sul-Sudeste.</p>
+      <div class="case-stats">
+        <div>
+          <div class="case-stat-lbl" data-i18n="case4.lbl1">Ticket</div>
+          <div class="case-stat-val">R$ 57<span class="unit" data-i18n="case4.unit">milhões</span></div>
+        </div>
+        <div>
+          <div class="case-stat-lbl" data-i18n="case4.lbl2">Localização</div>
+          <div class="case-stat-val" style="font-size:17px;" data-i18n="case4.val2">Amapá · Norte</div>
+        </div>
+      </div>
+      <div class="case-timeline">
+        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
+        <div class="case-steps">
+          <div class="case-step">
+            <span class="case-step-num">01</span>
+            <span class="case-step-name" data-i18n="case.tB.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
+            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">02</span>
+            <span class="case-step-name" data-i18n="case.tB.s2">Análise do negócio</span>
+            <span class="case-step-time">2–5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">03</span>
+            <span class="case-step-name" data-i18n="case.tB.s3">Registro em cartório</span>
+            <span class="case-step-time">10–30<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">04</span>
+            <span class="case-step-name" data-i18n="case.tB.s4">Assinatura do contrato</span>
+            <span class="case-step-time">2<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+          <div class="case-step">
+            <span class="case-step-num">05</span>
+            <span class="case-step-name" data-i18n="case.tB.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
+            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+          </div>
+        </div>
+        <div class="case-total">
+          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
+          <span class="case-total-val">24–47<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
 <section class="products" id="produtos">
   <div class="products-header">
     <div class="reveal">
-      <div class="section-label" data-i18n="products.label">Produtos & Serviços · 02</div>
+      <div class="section-label" data-i18n="products.label">Produtos & Serviços · 03</div>
       <h2 class="section-title" data-i18n="products.title">Soluções modeladas para <em>cada estágio</em> do capital.</h2>
     </div>
     <p class="section-lead reveal reveal-d1" data-i18n="products.lead">Conectamos capital às oportunidades por meio de uma rede exclusiva de parceiros líderes. Cada operação é estruturada com agilidade no desembolso e excelência na execução.</p>
@@ -2037,232 +2336,6 @@
 </section>
 
 <!-- NEGÓCIOS ESTRUTURADOS (CASES) -->
-<section class="cases" id="negocios">
-  <div class="cases-header">
-    <div class="reveal">
-      <div class="section-label" data-i18n="cases.label">Negócios Estruturados · 04</div>
-      <h2 class="section-title" data-i18n="cases.title">Operações em <em>execução.</em></h2>
-    </div>
-    <p class="section-lead reveal reveal-d1" data-i18n="cases.lead">Uma seleção das operações em curso na carteira Áxicon — exemplos do tipo de complexidade, ticket e setor que a mesa estrutura ao longo do ciclo 2026.</p>
-  </div>
-
-  <div class="cases-grid">
-
-    <article class="case-card reveal">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case1.num">Caso 01</span>
-        <span class="case-tag" data-i18n="case1.tag">Agronegócio</span>
-      </div>
-      <h3 class="case-title" data-i18n="case1.title">Ampliação e modernização de <em>grupo agrícola</em>.</h3>
-      <p class="case-desc" data-i18n="case1.desc">Estruturação de operação para expansão de capacidade produtiva e modernização de ativos rurais. Captação alinhada ao ciclo do agronegócio, com garantias reais sobre propriedades produtivas.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case1.lbl1">Ticket</div>
-          <div class="case-stat-val">R$ 800<span class="unit" data-i18n="case1.unit">milhões</span></div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case1.lbl2">Finalidade</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case1.val2">Ampliação & Modernização</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tA.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tA.s2">Análise do negócio</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tA.s3">Vistoria da propriedade</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tA.s4">Assinatura do contrato</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tA.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">~50<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal reveal-d1">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case2.num">Caso 02</span>
-        <span class="case-tag" data-i18n="case2.tag">Imobiliário</span>
-      </div>
-      <h3 class="case-title" data-i18n="case2.title">Estruturação de <em>CRI</em> para construtora.</h3>
-      <p class="case-desc" data-i18n="case2.desc">Emissão de Certificado de Recebíveis Imobiliários para construtora atuante no eixo Maringá-PR, viabilizando funding de longo prazo via mercado de capitais a partir de recebíveis performados.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case2.lbl1">Instrumento</div>
-          <div class="case-stat-val" style="font-size:18px;">CRI</div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case2.lbl2">Localização</div>
-          <div class="case-stat-val" style="font-size:17px;">Maringá · PR</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tB.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tB.s2">Análise do negócio</span>
-            <span class="case-step-time">2–5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tB.s3">Registro em cartório</span>
-            <span class="case-step-time">10–30<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tB.s4">Assinatura do contrato</span>
-            <span class="case-step-time">2<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tB.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">24–47<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case3.num">Caso 03</span>
-        <span class="case-tag" data-i18n="case3.tag">Project Finance</span>
-      </div>
-      <h3 class="case-title" data-i18n="case3.title">Funding de obra para <em>construtora no Amapá</em>.</h3>
-      <p class="case-desc" data-i18n="case3.desc">Estruturação de funding para viabilização de obra em região estratégica do Norte. Operação desenhada com cronograma de desembolso atrelado às etapas construtivas e garantias sobre o ativo.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case3.lbl1">Modalidade</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case3.val1">Funding de Obra</div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case3.lbl2">Localização</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case3.val2">Amapá · Norte</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tB.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tB.s2">Análise do negócio</span>
-            <span class="case-step-time">2–5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tB.s3">Registro em cartório</span>
-            <span class="case-step-time">10–30<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tB.s4">Assinatura do contrato</span>
-            <span class="case-step-time">2<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tB.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">24–47<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-    <article class="case-card reveal reveal-d1">
-      <div class="case-meta">
-        <span class="case-num" data-i18n="case4.num">Caso 04</span>
-        <span class="case-tag" data-i18n="case4.tag">Indústria · Cross-Border</span>
-      </div>
-      <h3 class="case-title" data-i18n="case4.title">Reestruturação de <em>indústria moveleira canadense</em>.</h3>
-      <p class="case-desc" data-i18n="case4.desc">Operação cross-border para ampliação e reestruturação de empresa de movelaria e design canadense com operação fabril no Brasil. Captação combinando expertise local e capital internacional.</p>
-      <div class="case-stats">
-        <div>
-          <div class="case-stat-lbl" data-i18n="case4.lbl1">Setor</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case4.val1">Movelaria & Design</div>
-        </div>
-        <div>
-          <div class="case-stat-lbl" data-i18n="case4.lbl2">Origem</div>
-          <div class="case-stat-val" style="font-size:17px;" data-i18n="case4.val2">Canadá → Brasil</div>
-        </div>
-      </div>
-      <div class="case-timeline">
-        <div class="case-timeline-label" data-i18n="case.timeline.lbl">Cronograma da Operação</div>
-        <div class="case-steps">
-          <div class="case-step">
-            <span class="case-step-num">01</span>
-            <span class="case-step-name" data-i18n="case.tA.s1">Documentação<span class="qualifier">a depender do cliente</span></span>
-            <span class="case-step-time">5<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">02</span>
-            <span class="case-step-name" data-i18n="case.tA.s2">Análise do negócio</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">03</span>
-            <span class="case-step-name" data-i18n="case.tA.s3">Vistoria da propriedade</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">04</span>
-            <span class="case-step-name" data-i18n="case.tA.s4">Assinatura do contrato</span>
-            <span class="case-step-time">10<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-          <div class="case-step">
-            <span class="case-step-num">05</span>
-            <span class="case-step-name" data-i18n="case.tA.s5">Liquidação <span class="qualifier">1ª tranche</span></span>
-            <span class="case-step-time">15<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-          </div>
-        </div>
-        <div class="case-total">
-          <span class="case-total-lbl" data-i18n="case.total.lbl">Prazo Total Estimado</span>
-          <span class="case-total-val">~50<span class="time-unit" data-i18n="case.unit.days">dias</span></span>
-        </div>
-      </div>
-    </article>
-
-  </div>
-</section>
-
 <!-- ECOSSISTEMA / MAPA -->
 <section class="ecosystem" id="ecossistema">
   <div class="ecosystem-header">
@@ -2523,6 +2596,14 @@
         <div class="partner-name">Hub-C</div>
         <div class="partner-desc" data-i18n="partner7.desc">Soluções estruturadas · Crédito estratégico · Médio e grande porte</div>
       </div>
+      <div class="partner reveal reveal-d3">
+        <div class="partner-name">Oporto Fort Group</div>
+        <div class="partner-desc">Grupo financeiro internacional · Estruturação de capital · Operações cross-border</div>
+      </div>
+      <div class="partner reveal">
+        <div class="partner-name">Ouribank</div>
+        <div class="partner-desc">Banco múltiplo · Câmbio, crédito e investimentos · Soluções para empresas e investidores</div>
+      </div>
     </div>
   </div>
 </section>
@@ -2533,25 +2614,25 @@
     <div class="projection-header">
       <div class="reveal">
         <div class="section-label" data-i18n="proj.label">Projeção 2026 · 08</div>
-        <h2 class="section-title" data-i18n="proj.title">A meta para o próximo ciclo: <em>R$ 1 bilhão liquidado.</em></h2>
+        <h2 class="section-title" data-i18n="proj.title">A meta para o próximo ciclo: <em>R$ 5 bilhões liquidados.</em></h2>
       </div>
-      <p class="section-lead reveal reveal-d1" data-i18n="proj.lead">Após R$ 1,9 bilhão originados nos primeiros 120 dias de operação, o plano de negócios 2026 projeta a consolidação da Áxicon como referência nacional em crédito estruturado, com foco em conversão e liquidação efetiva das operações.</p>
+      <p class="section-lead reveal reveal-d1" data-i18n="proj.lead">O plano de negócios 2026 projeta a consolidação da Áxicon como referência nacional em crédito estruturado, com foco em conversão e liquidação efetiva das operações.</p>
     </div>
 
     <div class="projection-hero reveal">
       <div>
         <div class="proj-meta-label" data-i18n="proj.metalbl">Meta Consolidada · 2026</div>
-        <div class="proj-target">R$ 1<em>bi</em></div>
+        <div class="proj-target">R$ 5<em>bi</em></div>
         <div class="proj-target-sub" data-i18n="proj.metasub">em operações liquidadas e desembolsadas ao longo do ano.</div>
       </div>
       <div class="proj-chart">
         <div class="proj-bar actual" style="height: 60%;">
-          <div class="proj-bar-value">R$ 1,9 bi</div>
+          <div class="proj-bar-value">R$ 5 bi</div>
           <div class="proj-bar-label" data-i18n="proj.bar1.lbl">Originado</div>
           <div class="proj-bar-period" data-i18n="proj.bar1.period">120 dias · 2025</div>
         </div>
         <div class="proj-bar target" style="height: 92%;">
-          <div class="proj-bar-value">R$ 1 bi</div>
+          <div class="proj-bar-value">R$ 5 bi</div>
           <div class="proj-bar-label" data-i18n="proj.bar2.lbl">Liquidado · Meta</div>
           <div class="proj-bar-period" data-i18n="proj.bar2.period">12 meses · 2026</div>
         </div>
@@ -2563,7 +2644,7 @@
         <div class="proj-pillar-num" data-i18n="proj.f1.num">Frente 01</div>
         <h3 class="proj-pillar-title" data-i18n="proj.f1.title">Expansão de Volume</h3>
         <p class="proj-pillar-text" data-i18n="proj.f1.text">Aumento da taxa de conversão de operações originadas para liquidadas através de processos refinados de due diligence e estruturação. Foco em operações de médio e grande porte.</p>
-        <div class="proj-pillar-stat" data-i18n="proj.f1.stat">R$ 1 bi liquidado</div>
+        <div class="proj-pillar-stat" data-i18n="proj.f1.stat">R$ 5 bi liquidados</div>
       </article>
       <article class="proj-pillar reveal reveal-d1">
         <div class="proj-pillar-num" data-i18n="proj.f2.num">Frente 02</div>

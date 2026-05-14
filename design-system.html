@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Áxicon · Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    /* ── VAREJO ── */
+    --v-primary:   #001489;
+    --v-secondary: #2B367B;
+    --v-accent:    #CCA67F;
+    --v-light:     #EEF0F8;
+    --v-dark:      #000D52;
+    /* ── ATACADO ── */
+    --a-primary:   #713F2A;
+    --a-secondary: #7C4D33;
+    --a-accent:    #DAB58F;
+    --a-light:     #F7F3EE;
+    --a-dark:      #4A2918;
+    /* ── GLOBAL ── */
+    --sec:         #CCA67F;
+    --dark-bg:     #0a0a0a;
+    --sidebar-bg:  #111111;
+    --sidebar-bdr: #1a1a1a;
+    --white:       #FFFFFF;
+    --ink:         #1a1a1a;
+    --muted:       #888888;
+    --light-bdr:   #dddddd;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    /* ── RADIUS ── */
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+    /* ── TYPE ── */
+    --ft: 'Georgia','Times New Roman',serif;
+    --sn: 'Montserrat','Helvetica Neue',sans-serif;
+  }
+  body { font-family: var(--sn); background: #f4f5f8; color: var(--ink); line-height: 1.5; }
+
+  /* ── SECTION WRAPPER ── */
+  .ds-section { max-width: 1100px; margin: 0 auto 60px; padding: 0 24px; }
+  .ds-section-title { font-size: 11px; letter-spacing: 3px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .ds-section-heading { font-size: 28px; font-weight: 800; color: var(--ink); font-family: var(--ft); margin-bottom: 32px; border-bottom: 2px solid #eee; padding-bottom: 16px; }
+  .ds-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; align-items: flex-start; }
+  .ds-label { font-size: 10px; letter-spacing: 2px; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+
+  /* ── HERO ── */
+  .hero { background: var(--dark-bg); padding: 64px 24px; text-align: center; margin-bottom: 60px; }
+  .hero svg { display: block; margin: 0 auto 24px; }
+  .hero h1 { font-size: 13px; letter-spacing: 4px; color: rgba(255,255,255,0.4); font-family: var(--sn); }
+
+  /* ── COLOR SWATCHES ── */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .swatch { border-radius: var(--r-md); overflow: hidden; box-shadow: var(--card-shadow); }
+  .swatch-color { height: 72px; }
+  .swatch-info { background: white; padding: 10px 12px; }
+  .swatch-name { font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .swatch-hex  { font-size: 10px; color: var(--muted); font-family: monospace; }
+
+  /* ── TYPE SCALE ── */
+  .type-row { background: white; border-radius: var(--r-md); padding: 20px 24px; margin-bottom: 10px; display: flex; align-items: baseline; gap: 24px; box-shadow: var(--card-shadow); }
+  .type-meta { font-size: 10px; color: var(--muted); letter-spacing: 1px; min-width: 120px; flex-shrink: 0; }
+
+  /* ── BUTTON GRID ── */
+  .btn-grid { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: var(--r-sm); border: none; font-size: 13px; font-weight: 700; cursor: pointer; font-family: var(--sn); letter-spacing: 0.5px; transition: all .2s; text-decoration: none; }
+  .btn-primary-v  { background: linear-gradient(135deg, var(--v-dark), var(--v-primary)); color: white; }
+  .btn-primary-a  { background: linear-gradient(135deg, var(--a-dark), var(--a-primary)); color: white; }
+  .btn-outline-v  { background: white; color: var(--v-primary); border: 1.5px solid var(--v-primary); }
+  .btn-outline-a  { background: white; color: var(--a-primary); border: 1.5px solid var(--a-primary); }
+  .btn-ghost      { background: rgba(0,0,0,0.04); color: var(--ink); border: 1.5px solid var(--light-bdr); }
+  .btn-gold       { background: var(--sec); color: var(--ink); }
+  .btn-danger     { background: #b71c1c; color: white; }
+  .btn-sm         { padding: 7px 14px; font-size: 12px; }
+  .btn-lg         { padding: 13px 32px; font-size: 15px; border-radius: 10px; }
+
+  /* ── CHIP / TAG ── */
+  .chip { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; }
+  .chip-v    { background: rgba(0,20,137,0.1); color: var(--v-primary); }
+  .chip-a    { background: rgba(113,63,42,0.1); color: var(--a-primary); }
+  .chip-gold { background: rgba(204,166,127,0.2); color: #8B6914; }
+  .chip-green{ background: rgba(76,175,80,0.12); color: #2e7d32; }
+  .chip-red  { background: rgba(183,28,28,0.1); color: #b71c1c; }
+
+  /* ── SEGMENT BUTTONS ── */
+  .seg-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg-btn { padding: 8px 16px; border-radius: var(--r-sm); border: 1.5px solid var(--light-bdr); background: white; color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 400; font-family: var(--sn); transition: all .2s; }
+  .seg-btn.active-v { border-color: var(--v-primary); background: rgba(0,20,137,0.08); color: var(--v-primary); font-weight: 700; }
+  .seg-btn.active-a { border-color: var(--a-primary); background: rgba(113,63,42,0.08); color: var(--a-primary); font-weight: 700; }
+
+  /* ── FORM INPUTS ── */
+  .input-wrap { position: relative; margin-bottom: 16px; }
+  .field-label { font-size: 11px; font-weight: 700; color: var(--v-primary); letter-spacing: 0.8px; margin-bottom: 5px; display: block; }
+  .field-label-a { color: var(--a-primary); }
+  .input { width: 100%; padding: 10px 14px; border: 1.5px solid #ddd; border-radius: var(--r-sm); font-size: 14px; outline: none; font-family: var(--sn); background: #fafaf8; }
+  .input:focus { border-color: var(--v-primary); }
+  .input-prefix { display: flex; align-items: center; border: 1.5px solid #ddd; border-radius: var(--r-sm); overflow: hidden; background: #fafaf8; }
+  .input-pre-label { padding: 10px 12px; font-size: 11px; color: var(--muted); background: #f0ede8; border-right: 1px solid #ddd; white-space: nowrap; }
+  .input-pre-field { border: none; background: transparent; padding: 10px 12px; font-size: 14px; width: 100%; outline: none; font-family: var(--sn); }
+
+  /* ── CARDS ── */
+  .card { background: white; border-radius: var(--r-lg); padding: 24px; box-shadow: var(--card-shadow); }
+  .card-v { border-left: 4px solid var(--v-primary); }
+  .card-a { border-left: 4px solid var(--a-primary); }
+  .card-gold { border-left: 4px solid var(--sec); }
+
+  /* ── KPI CARD ── */
+  .kpi { background: white; border-radius: var(--r-md); padding: 18px 20px; box-shadow: var(--card-shadow); }
+  .kpi-label { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
+  .kpi-value { font-size: 24px; font-weight: 800; font-family: var(--ft); }
+  .kpi-sub   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ── VOLUME BANNER ── */
+  .vol-banner { background: linear-gradient(135deg, var(--v-dark), var(--v-primary)); border-radius: var(--r-md); padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+  .vol-label  { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 2px; font-weight: 700; margin-bottom: 4px; }
+  .vol-value  { font-size: 28px; font-weight: 800; color: white; font-family: var(--ft); }
+
+  /* ── CRM CARD ── */
+  .crm-card { background: white; border-radius: var(--r-md); margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden; }
+  .crm-card-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  .crm-card-body   { padding: 12px 18px 18px; border-top: 1px solid #f0f0f0; }
+  .crm-prop-row    { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+
+  /* ── SIDEBAR PREVIEW ── */
+  .sidebar-preview { background: #111; border-radius: var(--r-lg); padding: 20px 16px; color: white; min-width: 220px; }
+  .sidebar-section-label { font-size: 9px; color: #444; letter-spacing: 2px; padding: 6px 8px; font-weight: 700; }
+  .sidebar-item { width: 100%; padding: 10px 12px; border-radius: var(--r-sm); background: transparent; color: #888; text-align: left; cursor: pointer; font-size: 13px; font-weight: 400; display: flex; align-items: center; gap: 10px; margin-bottom: 2px; border: none; }
+  .sidebar-item.active-v { background: rgba(0,20,137,0.25); color: #CCA67F; font-weight: 700; }
+  .sidebar-item.active-a { background: rgba(113,63,42,0.25); color: #DAB58F; font-weight: 700; }
+  .sidebar-item.active-admin { background: rgba(183,28,28,0.25); color: #ef9a9a; font-weight: 700; }
+
+  /* ── HEADER NAVY ── */
+  .header-navy { background: var(--v-primary); border-radius: var(--r-lg); padding: 0 28px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .header-step-btn { padding: 6px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; font-family: var(--sn); letter-spacing: 1px; text-transform: uppercase; color: white; border: 1px solid rgba(255,255,255,0.15); background: transparent; opacity: 0.6; }
+  .header-step-btn.active { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); opacity: 1; }
+
+  /* ── LOGIN CARD ── */
+  .login-card { background: #111; border-radius: var(--r-xl); padding: 48px; max-width: 380px; border: 1px solid #222; }
+  .login-google-btn { width: 100%; padding: 13px; background: white; color: var(--ink); border: none; border-radius: var(--r-md); font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
+
+  /* ── PROPOSAL PREVIEW ── */
+  .proposal-page { background: white; border-radius: var(--r-xl); padding: 48px; max-width: 680px; box-shadow: 0 8px 40px rgba(0,0,0,.08); }
+  .proposal-header-bar { height: 4px; border-radius: 2px; margin-bottom: 32px; }
+
+  /* ── STEP CARD (régua) ── */
+  .step-card { background: white; border-radius: var(--r-md); padding: 16px 18px; box-shadow: var(--card-shadow); margin-bottom: 10px; display: flex; align-items: center; gap: 14px; }
+  .step-day  { width: 44px; height: 44px; border-radius: 10px; background: rgba(0,20,137,0.08); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--v-primary); flex-shrink: 0; }
+  .step-day.active { background: var(--v-primary); color: white; }
+
+  /* ── INFO BOXES ── */
+  .info-box-v { background: rgba(0,20,137,0.05); border: 1px solid rgba(0,20,137,0.15); border-radius: 10px; padding: 14px 16px; }
+  .info-box-a { background: rgba(113,63,42,0.05); border: 1px solid rgba(113,63,42,0.15); border-radius: 10px; padding: 14px 16px; }
+  .info-box-blue { background: rgba(100,130,200,0.06); border: 1px solid rgba(100,130,200,0.2); border-radius: 10px; padding: 12px 16px; }
+
+  /* ── ROLE BADGE ── */
+  .role-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .role-admin    { background: rgba(183,28,28,0.1); color: #b71c1c; }
+  .role-assessor { background: rgba(113,63,42,0.1); color: var(--a-primary); }
+  .role-consultor{ background: rgba(0,20,137,0.1);  color: var(--v-primary); }
+
+  /* ── AVAILABILITY DOT ── */
+  .dot-green  { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; display: inline-block; }
+  .dot-orange { width: 8px; height: 8px; border-radius: 50%; background: #ff9800; display: inline-block; }
+
+  /* ── MATERIAL CARD ── */
+  .material-card { background: white; border-radius: var(--r-lg); padding: 20px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 12px; }
+
+  /* ── SIM BOX ── */
+  .sim-box { background: #f8f5f0; border-radius: var(--r-sm); padding: 10px 12px; }
+  .sim-box-label { font-size: 10px; color: #999; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .sim-box-value { font-size: 15px; font-weight: 800; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: #eee; margin: 40px 0; }
+  .spacer { height: 20px; }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <svg width="240" height="56" viewBox="0 0 240 56" fill="none">
+    <path d="M8 46 L24 8 L40 46" stroke="white" stroke-width="2.8" stroke-linecap="butt" stroke-linejoin="miter" fill="none"/>
+    <path d="M14 32 L34 32" stroke="white" stroke-width="2.2" stroke-linecap="butt"/>
+    <path d="M21 8 L27 8" stroke="white" stroke-width="2.8" stroke-linecap="butt"/>
+    <path d="M42 10 C22 10 15 21 15 28 C15 37 22 48 42 48" stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M42 10 L36 10" stroke="white" stroke-width="3" stroke-linecap="butt"/>
+    <path d="M42 48 L36 48" stroke="white" stroke-width="3" stroke-linecap="butt"/>
+    <line x1="58" y1="12" x2="58" y2="44" stroke="white" stroke-width="0.8" opacity="0.4"/>
+    <text x="68" y="30" font-family="Georgia,serif" font-size="17" fill="white" letter-spacing="6" font-weight="400">ÁXICON</text>
+    <text x="69" y="44" font-family="Georgia,serif" font-size="9.5" fill="white" letter-spacing="1.5" opacity="0.6">Soluções Financeiras</text>
+  </svg>
+  <h1>DESIGN SYSTEM · v1.0</h1>
+</div>
+
+<!-- ══ 1. PALETAS ═════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">01</div>
+  <div class="ds-section-heading">Paletas de Cor</div>
+
+  <div class="ds-label">VAREJO · Home Equity & Consórcios</div>
+  <div class="swatch-grid" style="margin-bottom:28px">
+    <div class="swatch"><div class="swatch-color" style="background:#000D52"></div><div class="swatch-info"><div class="swatch-name">Dark</div><div class="swatch-hex">#000D52</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#001489"></div><div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#001489</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#2B367B"></div><div class="swatch-info"><div class="swatch-name">Secondary</div><div class="swatch-hex">#2B367B</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#CCA67F"></div><div class="swatch-info"><div class="swatch-name">Accent</div><div class="swatch-hex">#CCA67F</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#EEF0F8"></div><div class="swatch-info"><div class="swatch-name">Light</div><div class="swatch-hex">#EEF0F8</div></div></div>
+  </div>
+
+  <div class="ds-label">ATACADO · Crédito Estruturado</div>
+  <div class="swatch-grid" style="margin-bottom:28px">
+    <div class="swatch"><div class="swatch-color" style="background:#4A2918"></div><div class="swatch-info"><div class="swatch-name">Dark</div><div class="swatch-hex">#4A2918</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#713F2A"></div><div class="swatch-info"><div class="swatch-name">Primary</div><div class="swatch-hex">#713F2A</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#7C4D33"></div><div class="swatch-info"><div class="swatch-name">Secondary</div><div class="swatch-hex">#7C4D33</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#DAB58F"></div><div class="swatch-info"><div class="swatch-name">Accent</div><div class="swatch-hex">#DAB58F</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#F7F3EE"></div><div class="swatch-info"><div class="swatch-name">Light</div><div class="swatch-hex">#F7F3EE</div></div></div>
+  </div>
+
+  <div class="ds-label">NEUTROS & SISTEMA</div>
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#0a0a0a"></div><div class="swatch-info"><div class="swatch-name">Dark BG</div><div class="swatch-hex">#0a0a0a</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#111111"></div><div class="swatch-info"><div class="swatch-name">Sidebar</div><div class="swatch-hex">#111111</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1a1a1a"></div><div class="swatch-info"><div class="swatch-name">Ink</div><div class="swatch-hex">#1a1a1a</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#888888"></div><div class="swatch-info"><div class="swatch-name">Muted</div><div class="swatch-hex">#888888</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#CCA67F"></div><div class="swatch-info"><div class="swatch-name">Gold SEC</div><div class="swatch-hex">#CCA67F</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#FFFFFF;border:1px solid #eee"></div><div class="swatch-info"><div class="swatch-name">White</div><div class="swatch-hex">#FFFFFF</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#b71c1c"></div><div class="swatch-info"><div class="swatch-name">Admin Red</div><div class="swatch-hex">#b71c1c</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#4caf50"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#4caf50</div></div></div>
+  </div>
+</div>
+
+<!-- ══ 2. TIPOGRAFIA ══════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">02</div>
+  <div class="ds-section-heading">Tipografia</div>
+
+  <div class="type-row">
+    <div class="type-meta">Display · 32px · 800<br>The Seasons / Georgia</div>
+    <div style="font-family:'Georgia',serif;font-size:32px;font-weight:800;color:#1a1a1a">Soluções Financeiras</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">H1 · 24px · 800<br>The Seasons / Georgia</div>
+    <div style="font-family:'Georgia',serif;font-size:24px;font-weight:800;color:#1a1a1a">Home Equity · Painel</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">H2 · 20px · 800<br>The Seasons / Georgia</div>
+    <div style="font-family:'Georgia',serif;font-size:20px;font-weight:800;color:#1a1a1a">Crédito Estruturado</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">H3 · 16px · 700<br>Montserrat</div>
+    <div style="font-size:16px;font-weight:700;color:#1a1a1a">Empresa: Grumar Alimentos</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Body · 14px · 400<br>Montserrat</div>
+    <div style="font-size:14px;color:#1a1a1a">Descrição completa da proposta e condições gerais da operação de crédito.</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Small · 12px · 400<br>Montserrat</div>
+    <div style="font-size:12px;color:#888">Setor · Atualizado em 30/04/2026</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Label · 10px · 700<br>Montserrat · uppercase</div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:#001489;text-transform:uppercase">VAREJO · DIAGNÓSTICO</div>
+  </div>
+  <div class="type-row">
+    <div class="type-meta">Micro · 9px · 700<br>Montserrat · uppercase</div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#888;text-transform:uppercase">📁 MATERIAIS</div>
+  </div>
+</div>
+
+<!-- ══ 3. BOTÕES ══════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">03</div>
+  <div class="ds-section-heading">Botões</div>
+
+  <div class="ds-label">PRIMÁRIOS</div>
+  <div class="btn-grid">
+    <button class="btn btn-primary-v btn-lg">+ Nova Proposta HE</button>
+    <button class="btn btn-primary-a btn-lg">+ Novo Diagnóstico</button>
+    <button class="btn btn-gold btn-lg">⬆ Fazer Upload</button>
+  </div>
+
+  <div class="ds-label">MÉDIOS</div>
+  <div class="btn-grid">
+    <button class="btn btn-primary-v">+ Nova Proposta</button>
+    <button class="btn btn-primary-a">+ Novo Diagnóstico</button>
+    <button class="btn btn-outline-v">🤝 Consórcios</button>
+    <button class="btn btn-outline-a">Ver Proposta</button>
+    <button class="btn btn-ghost">← Voltar</button>
+    <button class="btn btn-danger">Excluir</button>
+  </div>
+
+  <div class="ds-label">PEQUENOS</div>
+  <div class="btn-grid">
+    <button class="btn btn-primary-v btn-sm">Ver</button>
+    <button class="btn btn-outline-v btn-sm">Reabrir</button>
+    <button class="btn btn-outline-a btn-sm">Editar</button>
+    <button class="btn btn-ghost btn-sm">Copiar</button>
+    <button class="btn btn-gold btn-sm">⬇ Baixar</button>
+  </div>
+
+  <div class="ds-label">SEGMENTOS (seletores)</div>
+  <div class="seg-row" style="margin-bottom:12px">
+    <button class="seg-btn active-v">Todos</button>
+    <button class="seg-btn">🏠 Varejo</button>
+    <button class="seg-btn">📊 Atacado</button>
+  </div>
+  <div class="seg-row">
+    <button class="seg-btn active-v">🧊 Frio</button>
+    <button class="seg-btn">🌡 Morno</button>
+    <button class="seg-btn">🔥 Quente</button>
+    <button class="seg-btn active-v">💬 WhatsApp</button>
+    <button class="seg-btn">📧 E-mail</button>
+    <button class="seg-btn">📞 Ligação</button>
+    <button class="seg-btn">💼 LinkedIn</button>
+  </div>
+</div>
+
+<!-- ══ 4. TAGS & BADGES ════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">04</div>
+  <div class="ds-section-heading">Tags & Badges</div>
+
+  <div class="ds-row" style="align-items:center;gap:12px">
+    <span class="chip chip-v">VAREJO</span>
+    <span class="chip chip-a">ATACADO</span>
+    <span class="chip chip-gold">GERAL</span>
+    <span class="chip chip-green">ATIVO</span>
+    <span class="chip chip-red">INATIVO</span>
+    <span class="role-badge role-admin">Admin</span>
+    <span class="role-badge role-assessor">Assessor</span>
+    <span class="role-badge role-consultor">Consultor</span>
+    <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#888"><span class="dot-green"></span>Disponível</span>
+    <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#888"><span class="dot-orange"></span>Em breve</span>
+  </div>
+</div>
+
+<!-- ══ 5. CAMPOS DE FORMULÁRIO ════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">05</div>
+  <div class="ds-section-heading">Formulários</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div>
+      <div class="ds-label" style="margin-bottom:12px">VAREJO (label azul)</div>
+      <div class="input-wrap">
+        <label class="field-label">Nome da Empresa</label>
+        <input class="input" placeholder="Ex: Grumar Alimentos"/>
+      </div>
+      <div class="input-wrap">
+        <label class="field-label">Faturamento Mensal</label>
+        <div class="input-prefix">
+          <span class="input-pre-label">R$</span>
+          <input class="input-pre-field" placeholder="0"/>
+        </div>
+      </div>
+      <div class="input-wrap">
+        <label class="field-label">Observações</label>
+        <textarea class="input" rows="3" placeholder="Contexto adicional..."></textarea>
+      </div>
+    </div>
+    <div>
+      <div class="ds-label" style="margin-bottom:12px">ATACADO (label marrom)</div>
+      <div class="input-wrap">
+        <label class="field-label field-label-a">Nome da Empresa</label>
+        <input class="input" placeholder="Ex: Multiplike S/A"/>
+      </div>
+      <div class="input-wrap">
+        <label class="field-label field-label-a">Volume de Crédito</label>
+        <div class="input-prefix">
+          <span class="input-pre-label">R$</span>
+          <input class="input-pre-field" placeholder="0"/>
+        </div>
+      </div>
+      <div class="input-wrap">
+        <label class="field-label field-label-a">Setor</label>
+        <select class="input">
+          <option>Agronegócio</option>
+          <option>Indústria</option>
+          <option>Comércio</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 6. CARDS ═══════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">06</div>
+  <div class="ds-section-heading">Cards</div>
+
+  <div class="ds-label">KPI CARDS</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px">
+    <div class="kpi"><div class="kpi-label">EMPRESAS</div><div class="kpi-value" style="color:#1a1a1a">47</div></div>
+    <div class="kpi"><div class="kpi-label">VAREJO</div><div class="kpi-value" style="color:#001489">31</div></div>
+    <div class="kpi"><div class="kpi-label">ATACADO</div><div class="kpi-value" style="color:#713F2A">16</div></div>
+    <div class="kpi"><div class="kpi-label">PROPOSTAS</div><div class="kpi-value" style="color:#4caf50">89</div></div>
+  </div>
+  <div class="vol-banner" style="margin-bottom:32px">
+    <div><div class="vol-label">VOLUME TOTAL EM PROPOSTAS</div><div class="vol-value">R$ 14.780.000</div></div>
+    <div style="font-size:36px;opacity:.3">💼</div>
+  </div>
+
+  <div class="ds-label">CONTEÚDO COM BORDA</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px">
+    <div class="card card-v">
+      <div style="font-size:10px;color:#001489;letter-spacing:2px;font-weight:700;margin-bottom:8px">VAREJO</div>
+      <div style="font-size:18px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif;margin-bottom:6px">Grumar Alimentos</div>
+      <div style="font-size:13px;color:#888;margin-bottom:12px">Alimentício · R$ 250.000</div>
+      <div style="display:flex;gap:8px"><span class="chip chip-v">HOME EQUITY</span><span class="chip chip-green">ATIVO</span></div>
+    </div>
+    <div class="card card-a">
+      <div style="font-size:10px;color:#713F2A;letter-spacing:2px;font-weight:700;margin-bottom:8px">ATACADO</div>
+      <div style="font-size:18px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif;margin-bottom:6px">Multiplike S/A</div>
+      <div style="font-size:13px;color:#888;margin-bottom:12px">Agronegócio · R$ 3.500.000</div>
+      <div style="display:flex;gap:8px"><span class="chip chip-a">CRI/CRA</span><span class="chip chip-green">ATIVO</span></div>
+    </div>
+  </div>
+
+  <div class="ds-label">CRM / LISTA EXPANSÍVEL</div>
+  <div class="crm-card" style="border:1px solid transparent">
+    <div class="crm-card-header">
+      <span class="chip chip-v" style="flex-shrink:0">VAREJO</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:#1a1a1a">Grumar Alimentos LTDA</div>
+        <div style="font-size:12px;color:#aaa">Alimentício · R$ 250.000</div>
+      </div>
+      <div style="font-size:12px;color:#ccc;flex-shrink:0">2026-04-28</div>
+      <div style="font-size:16px;color:#ccc;flex-shrink:0">▾</div>
+    </div>
+    <div class="crm-card-body">
+      <div class="crm-prop-row">
+        <span style="font-size:12px;color:#888;font-family:monospace;flex-shrink:0">AB12CD</span>
+        <span style="font-size:12px;color:#aaa;flex-shrink:0">28/04/2026</span>
+        <span style="font-size:12px;font-weight:600;color:#1a1a1a;flex:1">R$ 250.000</span>
+        <a class="btn btn-primary-v btn-sm" href="#" style="text-decoration:none">Ver</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="ds-label">MATERIAL CARD</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="material-card" style="border-left:4px solid #001489">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(0,20,137,0.08);display:flex;align-items:center;justify-content:center;font-size:22px">🏠</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif">Flyer Casa MCA</div>
+          <span class="chip chip-v" style="margin-top:4px;display:inline-block">Varejo</span>
+        </div>
+        <span class="dot-green"></span>
+      </div>
+      <div style="font-size:13px;color:#888;line-height:1.5">Material de divulgação para crédito imobiliário residencial</div>
+      <button class="btn btn-primary-v" style="width:100%;justify-content:center">⬇ Baixar</button>
+    </div>
+    <div class="material-card" style="border-left:4px solid #CCA67F">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(204,166,127,0.15);display:flex;align-items:center;justify-content:center;font-size:22px">📈</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif">Apresentação Institucional</div>
+          <span class="chip chip-gold" style="margin-top:4px;display:inline-block">Geral</span>
+        </div>
+        <span class="dot-orange"></span>
+      </div>
+      <div style="font-size:13px;color:#888;line-height:1.5">Apresentação oficial da Áxicon Soluções Financeiras</div>
+      <div style="background:#f5f5f5;border-radius:8px;padding:10px;text-align:center;font-size:12px;color:#aaa;font-style:italic">Em breve — aguardando publicação</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. CAIXAS DE INFO ═══════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">07</div>
+  <div class="ds-section-heading">Caixas de Informação</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="info-box-v">
+      <div style="font-size:10px;color:#001489;letter-spacing:2px;font-weight:700;margin-bottom:6px">DICA DO CONSULTOR</div>
+      <p style="font-size:13px;color:#444;line-height:1.7;margin:0">Menos de 3 linhas. Não explique nada ainda. Gere curiosidade. Use o nome do lead.</p>
+    </div>
+    <div class="info-box-blue">
+      <div style="font-size:10px;color:#5070b0;letter-spacing:2px;font-weight:700;margin-bottom:6px">LEMBRE-SE</div>
+      <p style="font-size:12px;color:#5070b0;font-style:italic;margin:0">80% das vendas acontecem no follow-up. Raramente o lead decide na 1ª abordagem.</p>
+    </div>
+    <div class="info-box-a">
+      <div style="font-size:10px;color:#713F2A;letter-spacing:2px;font-weight:700;margin-bottom:6px">PARCEIRO RECOMENDADO</div>
+      <p style="font-size:13px;color:#444;line-height:1.7;margin:0">Trinus.co · R$50k–R$20M · Taxa 1,39%a.m.+IPCA · 180 meses · Carência 3 meses</p>
+    </div>
+    <div style="background:#fde8e8;border:1px solid rgba(244,67,54,0.3);border-radius:10px;padding:14px 16px">
+      <div style="font-size:10px;color:#c62828;letter-spacing:2px;font-weight:700;margin-bottom:6px">ATENÇÃO</div>
+      <p style="font-size:13px;color:#c62828;margin:0">Usuário inativo. Contate o administrador.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 8. SIDEBAR ══════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">08</div>
+  <div class="ds-section-heading">Sidebar · Menu Lateral</div>
+
+  <div class="ds-row">
+    <div class="sidebar-preview" style="width:220px">
+      <!-- Logo -->
+      <div style="padding:0 8px 20px;border-bottom:1px solid #1a1a1a;margin-bottom:16px">
+        <svg width="100" height="24" viewBox="0 0 120 30" fill="none">
+          <path d="M4 22 L11 4 L18 22" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M7 15 L15 15" stroke="white" stroke-width="1.2"/>
+          <path d="M19 5 C10 5 7 10 7 13 C7 17 10 23 19 23" stroke="white" stroke-width="1.5" fill="none"/>
+          <line x1="27" y1="6" x2="27" y2="22" stroke="white" stroke-width="0.6" opacity="0.4"/>
+          <text x="31" y="16" font-family="Georgia,serif" font-size="8" fill="white" letter-spacing="3">ÁXICON</text>
+        </svg>
+      </div>
+
+      <div class="sidebar-section-label">📁 MATERIAIS</div>
+      <button class="sidebar-item">⬇️ Downloads</button>
+      <button class="sidebar-item">✉️ Régua + Gerador IA</button>
+
+      <div class="sidebar-section-label" style="margin-top:8px">🏠 VAREJO</div>
+      <button class="sidebar-item active-v">📋 Painel Varejo</button>
+      <button class="sidebar-item">🏦 Simulação HE</button>
+      <button class="sidebar-item">🤝 Simulação Consórcios</button>
+      <button class="sidebar-item">🎯 Simulador de Estratégia</button>
+
+      <div class="sidebar-section-label" style="margin-top:8px">📊 ATACADO</div>
+      <button class="sidebar-item">📋 Painel Atacado</button>
+      <button class="sidebar-item">➕ Novo Diagnóstico</button>
+
+      <div class="sidebar-section-label" style="margin-top:8px">⚙️ ADMIN</div>
+      <button class="sidebar-item active-admin">📊 Painel Geral</button>
+
+      <!-- Footer -->
+      <div style="margin-top:auto;padding-top:16px;border-top:1px solid #1a1a1a;margin-top:20px;opacity:.3">
+        <svg width="70" height="16" viewBox="0 0 100 24" fill="none">
+          <path d="M3 18 L9 3 L15 18" stroke="white" stroke-width="1.5" fill="none"/>
+          <path d="M5 12 L13 12" stroke="white" stroke-width="1.2"/>
+          <path d="M16 4 C8 4 6 9 6 12 C6 16 8 21 16 21" stroke="white" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+    </div>
+
+    <div style="flex:1">
+      <div style="font-size:12px;color:#888;margin-bottom:12px;font-family:monospace">
+        Estados: default · active-v (varejo) · active-a (atacado) · active-admin
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="sidebar-item" style="background:#111;color:#888;border-radius:8px">📋 Estado padrão</button>
+        <button class="sidebar-item active-v" style="border-radius:8px">📋 Ativo Varejo</button>
+        <button class="sidebar-item active-a" style="border-radius:8px;background:rgba(113,63,42,0.25);color:#DAB58F">📋 Ativo Atacado</button>
+        <button class="sidebar-item active-admin" style="border-radius:8px">📊 Ativo Admin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 9. HEADERS ══════════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">09</div>
+  <div class="ds-section-heading">Headers de Página</div>
+
+  <div class="ds-label">HEADER NAVY (Consórcio + Comunicação)</div>
+  <div class="header-navy" style="margin-bottom:16px;border-radius:16px">
+    <div style="display:flex;align-items:center;gap:18px">
+      <div style="font-size:13px;font-weight:800;color:white;letter-spacing:2px;opacity:.9">ÁXICON</div>
+      <div style="width:1px;height:28px;background:rgba(255,255,255,0.2)"></div>
+      <div style="font-size:11px;color:#CCA67F;letter-spacing:3px;text-transform:uppercase">Varejo</div>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button class="header-step-btn active">CRM</button>
+      <div style="width:14px;height:1px;background:rgba(255,255,255,0.15);align-self:center"></div>
+      <button class="header-step-btn">Diagnóstico</button>
+      <div style="width:14px;height:1px;background:rgba(255,255,255,0.15);align-self:center"></div>
+      <button class="header-step-btn">Cenários</button>
+      <div style="width:14px;height:1px;background:rgba(255,255,255,0.15);align-self:center"></div>
+      <button class="header-step-btn">Proposta</button>
+    </div>
+    <a href="#" style="font-size:12px;color:#CCA67F;text-decoration:none;border:1px solid rgba(255,255,255,0.25);padding:6px 14px;border-radius:20px">← Atacado</a>
+  </div>
+
+  <div class="ds-label">CABEÇALHO DE SEÇÃO (conteúdo)</div>
+  <div style="background:white;border-radius:16px;padding:24px;box-shadow:var(--card-shadow);margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;color:#001489;letter-spacing:2px;font-weight:700">VAREJO</div>
+        <div style="font-size:22px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif">Home Equity · Painel</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a class="btn btn-outline-v" href="#" style="text-decoration:none">🤝 Consórcios</a>
+        <button class="btn btn-primary-v">+ Nova Proposta HE</button>
+      </div>
+    </div>
+  </div>
+  <div style="background:white;border-radius:16px;padding:24px;box-shadow:var(--card-shadow)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;color:#713F2A;letter-spacing:2px;font-weight:700">ATACADO</div>
+        <div style="font-size:22px;font-weight:800;color:#1a1a1a;font-family:Georgia,serif">Crédito Estruturado · Painel</div>
+      </div>
+      <button class="btn btn-primary-a">+ Novo Diagnóstico</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 10. SIMULAÇÃO SIM-BOX ══════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">10</div>
+  <div class="ds-section-heading">Resultado de Simulação</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div>
+      <div class="ds-label" style="margin-bottom:12px">VAREJO (SimBox)</div>
+      <div style="background:#f8f5f0;border-radius:10px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="sim-box"><div class="sim-box-label">Crédito</div><div class="sim-box-value" style="color:#001489">R$ 250.000</div></div>
+        <div class="sim-box"><div class="sim-box-label">Parcela Price</div><div class="sim-box-value" style="color:#001489">R$ 3.420</div></div>
+        <div class="sim-box"><div class="sim-box-label">Total Price</div><div class="sim-box-value" style="color:#001489">R$ 615.600</div></div>
+        <div class="sim-box"><div class="sim-box-label">LTV</div><div class="sim-box-value" style="color:#001489">60%</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="ds-label" style="margin-bottom:12px">ATACADO (ranking parceiro)</div>
+      <div style="background:white;border-radius:12px;padding:16px;box-shadow:var(--card-shadow)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:36px;height:36px;border-radius:8px;background:#713F2A;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0">T</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:700;color:#1a1a1a">Trinus.co</div>
+            <div style="font-size:12px;color:#aaa">Nacional · HomeEquity</div>
+          </div>
+          <div style="font-size:18px;font-weight:800;color:#713F2A">92</div>
+        </div>
+        <div style="height:6px;background:#f0f0f0;border-radius:3px">
+          <div style="height:100%;width:92%;background:#713F2A;border-radius:3px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 11. LOGIN SCREEN ═══════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">11</div>
+  <div class="ds-section-heading">Tela de Login</div>
+
+  <div style="background:#0a0a0a;border-radius:20px;padding:48px;display:flex;align-items:center;justify-content:center">
+    <div class="login-card">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-size:24px;font-weight:800;color:white;font-family:Georgia,serif;margin-bottom:8px">Acesso restrito</div>
+        <div style="font-size:13px;color:#666;line-height:1.6">Faça login com sua conta Google autorizada.</div>
+      </div>
+      <button class="login-google-btn">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.7-8 19.7-20 0-1.3-.1-2.7-.1-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 10-1.9 13.6-5l-6.3-5.2C29.5 35.6 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.6 39.5 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.4-2.4 4.4-4.5 5.8l6.3 5.2C41.5 35.5 44 30.2 44 24c0-1.3-.1-2.7-.4-4z"/></svg>
+        Entrar com Google
+      </button>
+      <div style="margin-top:20px;text-align:center;font-size:11px;color:#444">Acesso liberado apenas para usuários cadastrados.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 12. RÉGUA DE COMUNICAÇÃO ═══════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">12</div>
+  <div class="ds-section-heading">Régua de Comunicação</div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px">
+    <button style="flex:1;text-align:left;padding:14px 18px;border-radius:12px;border:1.5px solid #001489;background:rgba(0,20,137,0.05);cursor:pointer">
+      <div style="font-size:14px;font-weight:700;color:#001489;font-family:Georgia,serif">🏠 Varejo</div>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Solução de Crédito</div>
+    </button>
+    <button style="flex:1;text-align:left;padding:14px 18px;border-radius:12px;border:1.5px solid #ddd;background:white;cursor:pointer">
+      <div style="font-size:14px;font-weight:700;color:#888;font-family:Georgia,serif">🏢 Atacado</div>
+      <div style="font-size:11px;color:#aaa;margin-top:3px">Alavancagem Patrimonial</div>
+    </button>
+  </div>
+
+  <!-- Step card — collapsed -->
+  <div class="step-card" style="border:1px solid transparent">
+    <div class="step-day">D1</div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:14px;font-weight:700;color:#1a1a1a;font-family:Georgia,serif">Primeiro Contato</span>
+        <span style="font-size:11px;background:rgba(0,20,137,0.08);color:#001489;padding:2px 10px;border-radius:10px;font-weight:600">💬 WhatsApp</span>
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:4px">Apresentação inicial leve. O objetivo é gerar curiosidade.</div>
+    </div>
+    <div style="color:#ccc;font-size:12px">▼</div>
+  </div>
+
+  <!-- Step card — expanded -->
+  <div style="background:white;border-radius:14px;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,.05);border:1px solid rgba(0,20,137,0.3)">
+    <div class="crm-card-header">
+      <div class="step-day active">D7</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:14px;font-weight:700;color:#1a1a1a;font-family:Georgia,serif">Follow-up</span>
+          <span style="font-size:11px;background:rgba(0,20,137,0.08);color:#001489;padding:2px 10px;border-radius:10px;font-weight:600">💬 WhatsApp</span>
+        </div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Retomar o contato de forma leve. Sem pressão.</div>
+      </div>
+      <div style="color:#001489;font-size:12px">▲</div>
+    </div>
+    <div style="padding:0 18px 18px;border-top:1px solid #f0f0f0">
+      <div class="info-box-v" style="margin:14px 0 10px">
+        <div style="font-size:10px;color:#001489;letter-spacing:2px;font-weight:700;margin-bottom:6px">DICA DO CONSULTOR</div>
+        <p style="font-size:13px;color:#444;line-height:1.7;margin:0">Curto e direto. Referência ao que foi conversado. Mostre disponibilidade para enviar simulação sem compromisso.</p>
+      </div>
+      <div class="info-box-blue" style="margin-bottom:12px">
+        <div style="font-size:10px;color:#5070b0;letter-spacing:2px;font-weight:700;margin-bottom:6px">LEMBRE-SE</div>
+        <p style="font-size:12px;color:#5070b0;font-style:italic;margin:0">80% das vendas acontecem no follow-up.</p>
+      </div>
+      <button class="btn btn-outline-v">✨ Gerar mensagem para esta etapa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 13. ESPAÇAMENTOS ════════════════════════════════════════════════ -->
+<div class="ds-section">
+  <div class="ds-section-title">13</div>
+  <div class="ds-section-heading">Espaçamento & Radius</div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+    <div style="text-align:center">
+      <div style="height:8px;background:#001489;border-radius:2px;margin-bottom:8px"></div>
+      <div style="font-size:12px;color:#888">4px · micro</div>
+    </div>
+    <div style="text-align:center">
+      <div style="height:16px;background:#001489;border-radius:2px;margin-bottom:8px"></div>
+      <div style="font-size:12px;color:#888">8px · gap</div>
+    </div>
+    <div style="text-align:center">
+      <div style="height:24px;background:#001489;border-radius:2px;margin-bottom:8px"></div>
+      <div style="font-size:12px;color:#888">12–16px · padding</div>
+    </div>
+    <div style="text-align:center">
+      <div style="height:40px;background:#001489;border-radius:2px;margin-bottom:8px"></div>
+      <div style="font-size:12px;color:#888">24–32px · section</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <div style="background:white;border:2px solid #eee;border-radius:8px;width:80px;height:48px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">r-sm 8px</div>
+    <div style="background:white;border:2px solid #eee;border-radius:12px;width:80px;height:48px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">r-md 12px</div>
+    <div style="background:white;border:2px solid #eee;border-radius:16px;width:80px;height:48px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">r-lg 16px</div>
+    <div style="background:white;border:2px solid #eee;border-radius:20px;width:80px;height:48px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888">r-xl 20px</div>
+  </div>
+</div>
+
+<div style="height:60px"></div>
+
+</body>
+</html>
