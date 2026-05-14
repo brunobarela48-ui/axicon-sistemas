@@ -571,8 +571,14 @@ export default function CRM({ inline = false, telaProp, navegarProp, usuarioProp
         setErroSalvar(`Erro ao salvar ${label}: ${msg}`)
       })
     }
-    // Salva blob completo (entidades incluídas como backup — garante recuperação mesmo se tabelas falharem)
-    fetch('/api/crm-dados', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({dados:{...meta,contatos,negocios,atividades,funcionarios,contas,extratos,fornecedores,tarefas}}) }).then(checkSave('blob')).catch(()=>{});
+    // Salva blob completo sem base64 embutido (arquivos ficam nas tabelas dedicadas)
+    const stripBase64 = (v) => {
+      if (typeof v === 'string' && v.startsWith('data:')) return null;
+      if (Array.isArray(v)) return v.map(stripBase64);
+      if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, val]) => [k, stripBase64(val)]));
+      return v;
+    };
+    fetch('/api/crm-dados', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({dados: stripBase64({...meta,contatos,negocios,atividades,funcionarios,contas,extratos,fornecedores,tarefas})}) }).then(checkSave('blob')).catch(()=>{});
     // Também sincroniza cada entidade na sua tabela dedicada (melhor para queries futuras)
     fetch('/api/crm-contatos',    { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contatos})    }).then(checkSave('contatos')).catch(()=>{});
     fetch('/api/crm-negocios',    { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({negocios})    }).then(checkSave('negócios')).catch(()=>{});
@@ -921,7 +927,7 @@ export default function CRM({ inline = false, telaProp, navegarProp, usuarioProp
       {tela==='dashboard' && <Dashboard dados={dadosFiltrados} usuario={usuario} setTela={navegar}/>}
       {tela==='pipeline' && <Pipeline dados={dadosFiltrados} onMover={moverNegocio} onAtualizar={atualizarNegocio} onAdicionar={()=>setModal({tipo:'novo-negocio',defaultConsultorId:meuFuncId})} onRemover={removerNegocio} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} draggedNegocio={draggedNegocio} setDraggedNegocio={setDraggedNegocio} onGerarProposta={onGerarProposta} onTransferirNegocio={transferirNegocio}/>}
       {tela==='contatos' && <Contatos dados={dadosFiltrados} onAdicionar={()=>setModal('novo-contato')} onEditar={(c)=>setModal({tipo:'editar-contato',data:c})} onRemover={removerContato} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrir={(id)=>navegar('contato_detalhe',id)}/>}
-      {tela==='contato_detalhe' && <ContatoDetalhe dados={dadosFiltrados} contatoId={telaParam} onVoltar={()=>navegar('contatos')} onEditar={(c)=>setModal({tipo:'editar-contato',data:c})} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)}/>}
+      {tela==='contato_detalhe' && <ContatoDetalhe dados={dadosFiltrados} contatoId={telaParam} onVoltar={()=>navegar('contatos')} onEditar={(c)=>setModal({tipo:'editar-contato',data:c})} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirNegocio={(id)=>navegar('negocio_detalhe',id)} onAtualizar={atualizarContato}/>}
       {tela==='negocio_detalhe' && <NegocioDetalhe dados={dadosFiltrados} negocioId={telaParam} onVoltar={()=>navegar('pipeline')} onMensagem={(d)=>setModal({tipo:'mensagem',data:d})} onAbrirContato={(id)=>navegar('contato_detalhe',id)} onAtualizar={atualizarNegocio} onAdicionarAtividade={adicionarAtividade} onToggleAtividade={toggleAtividade} onRemoverAtividade={removerAtividade} onAdicionarNota={adicionarAtividade}/>}
       {tela==='atividades' && <Atividades dados={dadosFiltrados} onAdicionar={()=>setModal('nova-atividade')} onToggle={toggleAtividade} onRemover={removerAtividade}/>}
       {tela==='rh' && <RH dados={dados} onAdicionar={()=>setModal('novo-funcionario')} onRemover={removerFuncionario} onAtualizar={atualizarFuncionario} token={authInfo?.token}/>}
@@ -1501,34 +1507,6 @@ function Pipeline({ dados, onMover, onAtualizar, onAdicionar, onRemover, onMensa
           )}
         </div>
 
-        {/* Pré-Proposta — apenas Atacado */}
-        {pipeAtiva === 'atacado' && (
-          <div style={{ marginTop: 8, padding: "10px 12px", background: `${ASSESS.primary}06`, borderRadius: 8, border: `1px solid ${ASSESS.primary}18` }} onClick={e => e.stopPropagation()}>
-            <div style={{ fontSize: 9, letterSpacing: 1.5, color: ASSESS.primary, fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Pré-Proposta</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <div>
-                <div style={{ fontSize: 9, letterSpacing: 1, color: "#888", fontWeight: 600, marginBottom: 3, textTransform: "uppercase" }}>Destinação dos Recursos</div>
-                <select
-                  value={n.campos_extras?.destinacao_recursos || ''}
-                  onChange={e => { e.stopPropagation(); onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), destinacao_recursos: e.target.value } }); }}
-                  style={{ fontSize: 11, padding: "5px 8px", borderRadius: 6, border: "1px solid #EDE8E0", background: "white", color: n.campos_extras?.destinacao_recursos ? "#444" : "#aaa", fontFamily: SN, width: "100%", cursor: "pointer" }}>
-                  <option value="">— Selecionar —</option>
-                  {['Capital de Giro', 'Expansão / Investimento', 'Quitação de Dívidas', 'Antecipação de Recebíveis', 'Estruturação Financeira', 'Outro'].map(o => <option key={o} value={o}>{o}</option>)}
-                </select>
-              </div>
-              <div>
-                <div style={{ fontSize: 9, letterSpacing: 1, color: "#888", fontWeight: 600, marginBottom: 3, textTransform: "uppercase" }}>Garantias</div>
-                <select
-                  value={n.campos_extras?.tipo_garantia || ''}
-                  onChange={e => { e.stopPropagation(); onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), tipo_garantia: e.target.value } }); }}
-                  style={{ fontSize: 11, padding: "5px 8px", borderRadius: 6, border: "1px solid #EDE8E0", background: "white", color: n.campos_extras?.tipo_garantia ? "#444" : "#aaa", fontFamily: SN, width: "100%", cursor: "pointer" }}>
-                  <option value="">— Selecionar —</option>
-                  {['Imóvel', 'Veículo', 'Recebíveis', 'Aval / Fiança', 'Sem Garantia', 'Avaliando'].map(o => <option key={o} value={o}>{o}</option>)}
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Actions */}
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -2355,9 +2333,23 @@ function Contatos({ dados, onAdicionar, onEditar, onRemover, onMensagem, onAbrir
 }
 
 // ── DETALHE DE CONTATO ────────────────────────────────────────────────────────
-function ContatoDetalhe({ dados, contatoId, onVoltar, onEditar, onMensagem, onAbrirNegocio }) {
+function ContatoDetalhe({ dados, contatoId, onVoltar, onEditar, onMensagem, onAbrirNegocio, onAtualizar }) {
   const c = dados.contatos.find(x => x.id === contatoId);
+  const [portalCopiado, setPortalCopiado] = useState(false);
   if (!c) return <div style={{padding:48}}>Contato não encontrado.</div>;
+
+  const portalToken = c.campos_extras?.portal_token;
+  const portalUrl   = portalToken && typeof window !== 'undefined' ? `${window.location.origin}/portal/${portalToken}` : '';
+
+  const gerarPortal = () => {
+    const token = crypto.randomUUID();
+    onAtualizar?.(c.id, { campos_extras: { ...c.campos_extras, portal_token: token } });
+  };
+  const copiarPortal = () => {
+    navigator.clipboard.writeText(portalUrl);
+    setPortalCopiado(true);
+    setTimeout(() => setPortalCopiado(false), 2500);
+  };
 
   const PAL = c.area === 'varejo' ? VAREJO : ASSESS;
   const negs = dados.negocios.filter(n => n.contatoId === c.id);
@@ -2394,8 +2386,17 @@ function ContatoDetalhe({ dados, contatoId, onVoltar, onEditar, onMensagem, onAb
               <div style={{fontSize:13,color:"#888",marginTop:4}}>{c.cargo} · {c.cidade}</div>
             </div>
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
             <AcoesRapidas contato={c} onMensagem={onMensagem}/>
+            {portalToken ? (
+              <button onClick={copiarPortal} title={portalUrl} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:"1.5px solid #2e8a4e40",background:portalCopiado?"#f0fdf4":"white",color:"#2e8a4e",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:SN,transition:"all .2s"}}>
+                {portalCopiado ? '✅ Link copiado!' : '🔗 Link do Portal'}
+              </button>
+            ) : (
+              <button onClick={gerarPortal} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:`1.5px solid ${PAL.primary}30`,background:"white",color:PAL.primary,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:SN}}>
+                🔗 Criar Portal
+              </button>
+            )}
             {onEditar && (
               <button onClick={() => onEditar(c)} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,border:`1.5px solid ${PAL.primary}30`,background:"white",color:PAL.primary,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:SN}}>
                 {I.edit} Editar
@@ -2792,36 +2793,59 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
             )}
           </div>
 
-          {/* Pré-Proposta — apenas Atacado */}
-          {areaNegocio === 'atacado' && (
-            <>
-              <SectionTitle label="Pré-Proposta"/>
-              <div style={{background:"white",borderRadius:14,padding:"22px 24px",border:"1px solid rgba(113,63,42,0.10)",marginBottom:20}}>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                  <div>
-                    <label style={{fontSize:9,letterSpacing:2,color:"#aaa",fontWeight:600,marginBottom:6,textTransform:"uppercase",display:"block"}}>Destinação dos Recursos</label>
-                    <select
-                      value={n.campos_extras?.destinacao_recursos || ''}
-                      onChange={e => onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), destinacao_recursos: e.target.value } })}
-                      style={{width:"100%",padding:"9px 12px",border:"1px solid #e0dbd0",borderRadius:8,fontSize:13,fontFamily:SN,background:"white",color:n.campos_extras?.destinacao_recursos ? "#1a1a1a" : "#aaa"}}>
-                      <option value="">— Selecionar —</option>
-                      {['Capital de Giro','Expansão / Investimento','Quitação de Dívidas','Antecipação de Recebíveis','Estruturação Financeira','Outro'].map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{fontSize:9,letterSpacing:2,color:"#aaa",fontWeight:600,marginBottom:6,textTransform:"uppercase",display:"block"}}>Tipo de Garantia</label>
-                    <select
-                      value={n.campos_extras?.tipo_garantia || ''}
-                      onChange={e => onAtualizar && onAtualizar(n.id, { campos_extras: { ...(n.campos_extras || {}), tipo_garantia: e.target.value } })}
-                      style={{width:"100%",padding:"9px 12px",border:"1px solid #e0dbd0",borderRadius:8,fontSize:13,fontFamily:SN,background:"white",color:n.campos_extras?.tipo_garantia ? "#1a1a1a" : "#aaa"}}>
-                      <option value="">— Selecionar —</option>
-                      {['Imóvel','Veículo','Recebíveis','Aval / Fiança','Sem Garantia','Avaliando'].map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                  </div>
+          {/* Pré-Proposta — resumo na visão geral */}
+          {(() => {
+            const cx = n.campos_extras || {};
+            const imoveis = cx.imoveis || [];
+            const totalImoveis = imoveis.reduce((s, im) => s + (parseFloat(im.valor) || 0), 0);
+            const temDados = cx.destinacao_recursos || cx.tipo_garantia || cx.valor_destinacao || imoveis.length > 0;
+            return (
+              <>
+                <SectionTitle label="Pré-Proposta"/>
+                <div style={{background:"white",borderRadius:14,border:"1px solid rgba(113,63,42,0.10)",marginBottom:20,overflow:"hidden"}}>
+                  {!temDados ? (
+                    <div style={{padding:"20px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                      <span style={{fontSize:13,color:"#aaa"}}>Nenhuma informação preenchida ainda.</span>
+                      <button onClick={()=>switchTab('pre_proposta')} style={{fontSize:11,padding:"5px 12px",borderRadius:6,border:`1px solid ${PAL.primary}30`,background:`${PAL.primary}08`,color:PAL.primary,cursor:"pointer",fontWeight:600,fontFamily:SN,whiteSpace:"nowrap"}}>Preencher</button>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",borderBottom:"1px solid #f5f0e8"}}>
+                        <div style={{padding:"16px 20px",borderRight:"1px solid #f5f0e8"}}>
+                          <div style={{fontSize:9,letterSpacing:1.8,color:"#aaa",fontWeight:600,textTransform:"uppercase",marginBottom:6}}>Crédito Solicitado</div>
+                          <div style={{fontFamily:FT,fontSize:22,fontWeight:300,color:PAL.primary,lineHeight:1}}>{cx.valor_destinacao ? fmtMM(parseFloat(cx.valor_destinacao)) : fmtMM(n.valor)}</div>
+                        </div>
+                        <div style={{padding:"16px 20px",borderRight:"1px solid #f5f0e8"}}>
+                          <div style={{fontSize:9,letterSpacing:1.8,color:"#aaa",fontWeight:600,textTransform:"uppercase",marginBottom:6}}>Destinação</div>
+                          <div style={{fontSize:13,fontWeight:600,color:cx.destinacao_recursos?"#1a1a1a":"#aaa"}}>{cx.destinacao_recursos||"—"}</div>
+                        </div>
+                        <div style={{padding:"16px 20px"}}>
+                          <div style={{fontSize:9,letterSpacing:1.8,color:"#aaa",fontWeight:600,textTransform:"uppercase",marginBottom:6}}>Tipo de Garantia</div>
+                          <div style={{fontSize:13,fontWeight:600,color:cx.tipo_garantia?"#1a1a1a":"#aaa"}}>{cx.tipo_garantia||"—"}{cx.valor_garantia ? <span style={{fontSize:11,fontWeight:400,color:"#888",marginLeft:6}}>· {fmtMM(parseFloat(cx.valor_garantia))}</span> : null}</div>
+                        </div>
+                      </div>
+                      {imoveis.length > 0 && (
+                        <div style={{padding:"14px 20px"}}>
+                          <div style={{fontSize:9,letterSpacing:1.8,color:"#aaa",fontWeight:600,textTransform:"uppercase",marginBottom:10}}>Imóveis ({imoveis.length}) · Total {fmtMM(totalImoveis)}</div>
+                          <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                            {imoveis.map((im,i)=>(
+                              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:12,padding:"6px 10px",background:"#FAF8F3",borderRadius:7}}>
+                                <span style={{color:"#444",fontWeight:500}}>{im.descricao||"Sem descrição"}</span>
+                                <span style={{color:PAL.primary,fontWeight:700,fontFamily:FT,fontSize:14}}>{fmtMM(parseFloat(im.valor)||0)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <div style={{padding:"10px 20px",borderTop:"1px solid #f5f0e8",display:"flex",justifyContent:"flex-end"}}>
+                        <button onClick={()=>switchTab('pre_proposta')} style={{fontSize:11,padding:"5px 12px",borderRadius:6,border:`1px solid ${PAL.primary}30`,background:"transparent",color:PAL.primary,cursor:"pointer",fontWeight:600,fontFamily:SN}}>Editar Pré-Proposta →</button>
+                      </div>
+                    </>
+                  )}
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            );
+          })()}
 
           {/* CAMPOS CUSTOMIZADOS — agrupados por seção, expansíveis */}
           {onAtualizar && (dados.campos_customizados||[]).length > 0 && (() => {
@@ -3187,6 +3211,10 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
                 </select>
               </div>
               <div>
+                <label style={lblStyle}>VALOR DA DESTINAÇÃO (R$)</label>
+                <input type="number" value={n.campos_extras?.valor_destinacao||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),valor_destinacao:e.target.value}})} style={inpStyle} placeholder="0"/>
+              </div>
+              <div>
                 <label style={lblStyle}>TIPO DE GARANTIA</label>
                 <select value={n.campos_extras?.tipo_garantia||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),tipo_garantia:e.target.value}})} style={inpStyle}>
                   <option value="">— Selecionar —</option>
@@ -3196,6 +3224,30 @@ function NegocioDetalhe({ dados, negocioId, onVoltar, onMensagem, onAbrirContato
               <div>
                 <label style={lblStyle}>VALOR DA GARANTIA (R$)</label>
                 <input type="number" value={n.campos_extras?.valor_garantia||''} onChange={e=>onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),valor_garantia:e.target.value}})} style={inpStyle} placeholder="0"/>
+              </div>
+              <div style={{gridColumn:"1/-1"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                  <label style={lblStyle}>IMÓVEIS DISPONÍVEIS COMO GARANTIA</label>
+                  <button onClick={()=>{const imoveis=[...(n.campos_extras?.imoveis||[]),{id:Date.now(),descricao:'',valor:''}];onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),imoveis}});}}
+                    style={{fontSize:11,padding:"4px 10px",borderRadius:6,border:`1px solid ${PAL.primary}30`,background:`${PAL.primary}08`,color:PAL.primary,cursor:"pointer",fontWeight:600,fontFamily:SN,display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap"}}>
+                    + Adicionar Imóvel
+                  </button>
+                </div>
+                {(n.campos_extras?.imoveis||[]).length === 0 && (
+                  <div style={{padding:"14px 16px",background:"#FAF8F3",borderRadius:8,border:"1px dashed #e0d8cc",fontSize:12,color:"#aaa",textAlign:"center"}}>Nenhum imóvel cadastrado</div>
+                )}
+                <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                  {(n.campos_extras?.imoveis||[]).map((im,idx)=>(
+                    <div key={im.id} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 12px",background:"#FAF8F3",borderRadius:8,border:"1px solid #eee8de"}}>
+                      <input value={im.descricao} onChange={e=>{const imoveis=(n.campos_extras?.imoveis||[]).map((x,i)=>i===idx?{...x,descricao:e.target.value}:x);onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),imoveis}});}} style={{...inpStyle,margin:0,fontSize:12}} placeholder="Descrição / Endereço do imóvel"/>
+                      <input type="number" value={im.valor} onChange={e=>{const imoveis=(n.campos_extras?.imoveis||[]).map((x,i)=>i===idx?{...x,valor:e.target.value}:x);onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),imoveis}});}} style={{...inpStyle,margin:0,fontSize:12,width:140}} placeholder="Valor (R$)"/>
+                      <button onClick={()=>{const imoveis=(n.campos_extras?.imoveis||[]).filter((_,i)=>i!==idx);onAtualizar&&onAtualizar(n.id,{campos_extras:{...(n.campos_extras||{}),imoveis}});}}
+                        style={{width:28,height:28,borderRadius:6,border:"1px solid #f0e8e0",background:"white",cursor:"pointer",color:"#cc5555",display:"grid",placeItems:"center",flexShrink:0}}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div>
                 <label style={lblStyle}>FATURAMENTO MÉDIO MENSAL (R$)</label>
@@ -5676,7 +5728,7 @@ function Tarefas({ dados, onAdicionar, onAbrir, onMover, onRemover, onAtualizar 
   const [filtroLista, setFiltroLista] = useState('todas');
   const [filtroResp, setFiltroResp] = useState('todos');
   const [filtroPrior, setFiltroPrior] = useState('todas');
-  const [filtroStatus, setFiltroStatus] = useState('todas');
+  const [filtroStatus, setFiltroStatus] = useState('concluidas');
   const [busca, setBusca] = useState('');
   const [draggedTarefa, setDraggedTarefa] = useState(null);
   const [editandoId, setEditandoId] = useState(null);

@@ -1,6 +1,6 @@
 import { supabaseAdmin as supabase } from '../../lib/supabase-admin'
 
-export const config = { api: { bodyParser: { sizeLimit: '10mb' } } }
+export const config = { api: { bodyParser: { sizeLimit: '50mb' } } }
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
