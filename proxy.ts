@@ -13,16 +13,22 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // www.axiconsolucoes.com and axiconsolucoes.com → institutional homepage (index.html)
-  if (
+  // www.axiconsolucoes.com e axiconsolucoes.com → site institucional
+  const isPublic =
     hostname === 'www.axiconsolucoes.com' ||
     hostname === 'axiconsolucoes.com'
-  ) {
-    if (pathname === '/' || pathname === '') {
-      const url = request.nextUrl.clone()
-      url.pathname = '/index.html'
-      return NextResponse.rewrite(url)
-    }
+  if (isPublic && (pathname === '/' || pathname === '')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/index.html'
+    return NextResponse.rewrite(url)
+  }
+
+  // intranet.axiconsolucoes.com e www.intranet.axiconsolucoes.com → CRM (passa direto)
+  const isIntranet =
+    hostname === 'intranet.axiconsolucoes.com' ||
+    hostname === 'www.intranet.axiconsolucoes.com'
+  if (isIntranet) {
+    return NextResponse.next()
   }
 
   return NextResponse.next()
