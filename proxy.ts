@@ -1,33 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+/**
+ * MAPA DE DOMÍNIOS — Áxicon Soluções Financeiras
+ *
+ * www.axiconsolucoes.com              → site público completo (index.html)
+ * axiconsolucoes.com                  → redireciona para www.axiconsolucoes.com
+ * institucional.axiconsolucoes.com    → LP business plan (institucional.html)
+ * intranet.axiconsolucoes.com         → sistema CRM interno
+ * www.intranet.axiconsolucoes.com     → sistema CRM interno
+ */
 export function proxy(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   const pathname = request.nextUrl.pathname
 
-  // institucional.axiconsolucoes.com → institucional.html
-  if (hostname.startsWith('institucional.')) {
+  // institucional.axiconsolucoes.com → LP / business plan
+  if (hostname === 'institucional.axiconsolucoes.com') {
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
       url.pathname = '/institucional.html'
       return NextResponse.rewrite(url)
     }
+    return NextResponse.next()
   }
 
-  // www.axiconsolucoes.com e axiconsolucoes.com → site institucional
-  const isPublic =
-    hostname === 'www.axiconsolucoes.com' ||
-    hostname === 'axiconsolucoes.com'
-  if (isPublic && (pathname === '/' || pathname === '')) {
+  // www.axiconsolucoes.com → site público completo
+  if (hostname === 'www.axiconsolucoes.com') {
+    if (pathname === '/' || pathname === '') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/index.html'
+      return NextResponse.rewrite(url)
+    }
+    return NextResponse.next()
+  }
+
+  // axiconsolucoes.com (apex) → redireciona para www
+  if (hostname === 'axiconsolucoes.com') {
     const url = request.nextUrl.clone()
-    url.pathname = '/index.html'
-    return NextResponse.rewrite(url)
+    url.host = 'www.axiconsolucoes.com'
+    return NextResponse.redirect(url, 301)
   }
 
-  // intranet.axiconsolucoes.com e www.intranet.axiconsolucoes.com → CRM (passa direto)
-  const isIntranet =
+  // intranet e www.intranet → CRM (passa direto para o Next.js app)
+  if (
     hostname === 'intranet.axiconsolucoes.com' ||
     hostname === 'www.intranet.axiconsolucoes.com'
-  if (isIntranet) {
+  ) {
     return NextResponse.next()
   }
 
