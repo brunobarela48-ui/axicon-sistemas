@@ -3,39 +3,7 @@
    Quiet luxury · Dark editorial · Light/Dark alternado
    ============================================================ */
 
-/* The Seasons (premium) com fallback Cormorant Garamond */
-@font-face {
-  font-family: 'The Seasons';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: local('The Seasons Light'), local('TheSeasons-Light'),
-       url('/fonts/The_Seasons_Light.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'The Seasons';
-  font-style: italic;
-  font-weight: 300;
-  font-display: swap;
-  src: local('The Seasons Light Italic'), local('TheSeasons-LightItalic'),
-       url('/fonts/The_Seasons_Italic.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'The Seasons';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: local('The Seasons Regular'), local('TheSeasons-Regular'),
-       url('/fonts/The_Seasons_Regular.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'The Seasons';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: local('The Seasons Italic'), local('TheSeasons-Italic'),
-       url('/fonts/The_Seasons_Italic.ttf') format('truetype');
-}
+/* Cormorant Garamond + Montserrat + JetBrains Mono via Google Fonts (importado abaixo) */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
@@ -64,7 +32,7 @@
   --f-serif: 'Cormorant Garamond', Georgia, serif;
   --f-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   --f-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
-  --nav-h: 64px;
+  --nav-h: 84px;
   --ticker-h: 32px;
   --pad-section: 90px 32px;
   --max-w: 1440px;
@@ -80,6 +48,7 @@ body {
   background: var(--c-cream);
   overflow-x: hidden;
 }
+/* visited links inherit parent color — evita roxo padrão do browser */
 a:visited { color: inherit; }
 .serif { font-family: var(--f-serif); }
 .mono { font-family: var(--f-mono); }
@@ -121,7 +90,7 @@ a:visited { color: inherit; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+  padding: 22px 32px;
   background: rgba(250, 248, 244, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -131,7 +100,7 @@ a:visited { color: inherit; }
   z-index: 99;
 }
 .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--c-text-light); }
-.nav-brand img.brand-logo { height: 42px; width: auto; display: block; }
+.nav-brand img.brand-logo { height: 56px; width: auto; display: block; }
 .nav-logo {
   width: 26px; height: 26px;
   border: 1px solid var(--c-primary);
@@ -250,8 +219,11 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
   text-decoration: none; padding-bottom: 3px;
   border-bottom: 1px solid var(--c-gold);
 }
+.link-arrow { color: var(--c-text-dark); }
 .s-light .link-arrow, .s-light-2 .link-arrow { color: var(--c-primary); }
-.s-dark .link-arrow, .s-deep .link-arrow { color: var(--c-text-dark); }
+.s-dark .link-arrow, .s-deep .link-arrow,
+.hero .link-arrow, .page-hero .link-arrow { color: var(--c-text-dark); }
+.link-arrow:visited, .link-arrow:active { color: inherit; }
 
 /* KPIs */
 .kpi-strip {
@@ -277,18 +249,20 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
 /* HERO PRINCIPAL */
 .hero {
   position: relative;
-  min-height: 620px;
+  min-height: 78vh;
   background:
-    linear-gradient(180deg, rgba(20, 12, 6, 0.55) 0%, rgba(20, 12, 6, 0.78) 60%, rgba(20, 12, 6, 0.95) 100%),
+    linear-gradient(180deg, rgba(20, 12, 6, 0.55) 0%, rgba(20, 12, 6, 0.80) 60%, rgba(20, 12, 6, 0.97) 100%),
     url('assets/bg-bronze-arc.jpg') center/cover;
-  padding: 110px 32px 90px;
+  padding: 150px 32px 110px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 48px;
   align-items: end;
   color: var(--c-text-dark);
 }
-.hero > div { max-width: 920px; }
+.hero > div { max-width: 1080px; }
+.hero h1.h-hero { font-size: clamp(48px, 7vw, 84px); line-height: 0.96; letter-spacing: -0.035em; }
+.hero h1.h-hero em { font-weight: 400; }
 .hero-meta {
   position: absolute; top: 28px; right: 32px;
   font-family: var(--f-mono); font-size: 9px;
@@ -304,9 +278,9 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
 }
 .hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--c-gold); }
 .hero-lede {
-  font-size: 14px; color: rgba(245, 244, 240, 0.78);
-  line-height: 1.8; max-width: 540px;
-  margin: 26px 0 32px;
+  font-size: 16px; color: rgba(245, 244, 240, 0.82);
+  line-height: 1.75; max-width: 640px;
+  margin: 32px 0 40px;
 }
 .hero-actions { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 .hero-card {
@@ -532,6 +506,9 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
 .case-detail-total-value { font-family: var(--f-serif); font-size: 36px; font-weight: 400; color: var(--c-text-light); letter-spacing: -0.03em; }
 .case-detail-total-value em { font-style: italic; font-size: 0.55em; color: var(--c-text-muted-light); margin-left: 6px; font-weight: 300; }
 
+/* PARCEIROS — slot de logo */
+.partner-card .partner-logo image-slot { width: 100%; height: 100%; display: block; }
+
 /* FLUXO DE ATENDIMENTO */
 .flow-list { display: flex; flex-direction: column; }
 .flow-step {
@@ -594,28 +571,44 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
 }
 .partner-card {
   background: var(--c-cream);
-  padding: 40px 36px;
-  display: grid; grid-template-columns: 220px 1fr;
-  gap: 36px; align-items: center;
+  padding: 44px 40px;
+  display: grid; grid-template-columns: 240px 1fr;
+  gap: 40px; align-items: center;
+  transition: background 0.25s ease;
 }
 .s-light-2 .partner-card { background: var(--c-cream-2); }
+.partner-card:hover { background: var(--c-cream); }
+.s-light-2 .partner-card:hover { background: var(--c-cream); }
 .partner-logo {
-  font-family: var(--f-serif);
-  width: 220px; height: 160px;
-  border: 1px solid var(--c-primary);
+  width: 240px; height: 160px;
+  background: #fff;
+  border: 1px solid var(--line-light-2);
   display: flex; align-items: center; justify-content: center;
-  font-style: italic; font-size: 28px; color: var(--c-primary);
+  padding: 24px 28px;
   position: relative;
   overflow: hidden;
   margin-bottom: 0;
+  transition: border-color 0.25s ease;
 }
-.partner-logo img { width: 100%; height: 100%; object-fit: contain; padding: 16px; }
-.partner-logo.plus { font-size: 72px; color: rgba(204, 166, 127, 0.5); border: 1px dashed rgba(204, 166, 127, 0.35); font-style: normal; }
+.partner-card:hover .partner-logo { border-color: rgba(113, 63, 42, 0.25); }
+.partner-logo.dropzone {
+  /* mantido só para o modo edição via image-slot.js */
+  border: 1px dashed rgba(113, 63, 42, 0.22);
+  background: #fff;
+}
+.partner-logo.plus {
+  font-family: var(--f-serif);
+  font-size: 64px;
+  color: rgba(204, 166, 127, 0.55);
+  border: 1px solid var(--line-light-2);
+  font-style: normal;
+  background: var(--c-cream-2);
+}
 .partner-content { display: flex; flex-direction: column; }
 .partner-name {
-  font-family: var(--f-serif); font-size: 28px; font-weight: 300;
+  font-family: var(--f-serif); font-size: 30px; font-weight: 300;
   letter-spacing: -0.02em; line-height: 1.1;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .partner-name em { font-style: normal; font-weight: 500; color: var(--c-primary); }
 .partner-name.muted { color: rgba(42, 24, 16, 0.55); font-style: normal; font-weight: 300; }
@@ -631,6 +624,82 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
   font-size: 13.5px; line-height: 1.75;
   color: var(--c-text-muted-light); font-weight: 300;
   max-width: 460px;
+}
+.partner-meta { /* legacy — mantido caso reusem em outro lugar */ font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.15em; color: rgba(42, 24, 16, 0.6); text-transform: uppercase; margin-top: 4px; }
+/* old: .partner-logo.plus, .partner-name, .partner-name em, .partner-name.muted — rules above supersede */
+/* old .partner-meta legacy rule retained — partner cards now use .partner-highlight + .partner-bio */
+
+/* ADMINISTRADORAS (CONSÓRCIOS) */
+.admins-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--line-light-2);
+  border: 1px solid var(--line-light-2);
+}
+.admin-card {
+  background: var(--c-cream);
+  padding: 40px 36px 44px;
+  display: flex; flex-direction: column;
+  transition: background 0.25s ease;
+}
+.s-light-2 .admin-card { background: var(--c-cream-2); }
+.admin-card:hover { background: var(--c-cream); }
+.admin-logo {
+  position: relative;
+  width: 100%; height: 120px;
+  background: #fff;
+  border: 1px solid var(--line-light-2);
+  display: flex; align-items: center; justify-content: center;
+  padding: 22px 28px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+.admin-card:hover .admin-logo { border-color: rgba(113, 63, 42, 0.25); }
+.admin-logo img {
+  max-width: 100%; max-height: 100%;
+  width: auto; height: auto;
+  object-fit: contain;
+  display: block;
+}
+.admin-logo .admin-logo-fallback {
+  display: none;
+  font-family: var(--f-serif);
+  font-size: 26px; font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--c-primary);
+  text-align: center;
+}
+.admin-logo.no-image img { display: none; }
+.admin-logo.no-image .admin-logo-fallback { display: block; }
+.admin-num {
+  font-family: var(--f-mono); font-size: 11px;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--c-gold-deep);
+  margin-bottom: 16px;
+}
+.admin-headline {
+  font-family: var(--f-serif); font-size: 28px; font-weight: 300;
+  letter-spacing: -0.02em; line-height: 1.1;
+  margin-bottom: 14px;
+  color: var(--c-text-light);
+}
+.admin-headline em { font-style: normal; font-weight: 500; color: var(--c-primary); }
+.admin-body {
+  font-size: 13.5px; line-height: 1.75;
+  color: var(--c-text-muted-light); font-weight: 300;
+  margin-bottom: 24px;
+}
+.admin-tags {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-light);
+  font-family: var(--f-mono); font-size: 10px;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--c-primary);
+}
+.admin-actions {
+  margin-top: 48px;
+  display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
 }
 
 /* PROJEÇÃO 2026 */
@@ -839,7 +908,7 @@ h1 em, h2 em, h3 em, h4 em { font-style: normal; font-weight: 500; }
   .nav-menu { display: none; }
   .hero, .page-hero { grid-template-columns: 1fr; padding: 80px 20px 60px; }
   .hero-card { display: none; }
-  .grid-2, .grid-3, .grid-4, .news-grid, .partners-grid, .proj-compare, .eco-grid, .team-grid, .synthesis-grid, .product-feature {
+  .grid-2, .grid-3, .grid-4, .news-grid, .partners-grid, .admins-grid, .proj-compare, .eco-grid, .team-grid, .synthesis-grid, .product-feature {
     grid-template-columns: 1fr;
   }
   .product-feature .pf-num { font-size: 64px; }
