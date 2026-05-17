@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Home Equity — Áxicon Soluções Financeiras</title>
+<link rel="icon" type="image/svg+xml" href="/assets/monogram-bronze.svg">
+<link rel="apple-touch-icon" href="/assets/monogram-bronze.svg">
+<meta name="description" content="Simule Home Equity: use o seu imóvel como lastro para liberar crédito com taxa abaixo do crédito pessoal. Análise preliminar em 1 minuto.">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <img src="/assets/logo-full-black.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
+  </a>
+  <div class="nav-menu">
+    <a href="/">Home</a>
+    <a href="/institucional">Institucional</a>
+    <a href="/produtos">Produtos</a>
+    <a href="/cases">Cases</a>
+    <a href="/consorcios">Consórcios</a>
+    <a href="/noticias">Notícias</a>
+    <a href="/simular" class="active">Simular</a>
+  </div>
+  <div class="nav-right">
+    <a href="https://wa.me/5544991147236" class="nav-cta" target="_blank" rel="noopener">Fale conosco</a>
+  </div>
+</nav>
+
+<div class="breadcrumbs"><div class="container"><a href="/">Home</a><span class="sep">/</span><a href="/simular">Simular</a><span class="sep">/</span><span>Home Equity</span></div></div>
+
+<main class="sim-wrap">
+  <div class="sim-eyebrow">Pessoa Física · Home Equity</div>
+  <h1 class="sim-title">Quanto <em>posso liberar</em> usando meu imóvel?</h1>
+  <p class="sim-lede">Home Equity converte patrimônio imobiliário em capital com taxa muito abaixo do crédito pessoal. Preenche os 3 campos abaixo e vê a faixa estimada.</p>
+
+  <!-- FORM -->
+  <section id="form-section" class="sim-form">
+    <div class="sim-field">
+      <label class="sim-field-label" for="valorImovel">Valor estimado do imóvel</label>
+      <input type="text" id="valorImovel" class="sim-input large" placeholder="R$ 1.000.000" inputmode="numeric">
+      <div class="sim-field-hint">Valor de mercado aproximado. Não precisa ser exato.</div>
+    </div>
+
+    <div class="sim-field">
+      <label class="sim-field-label" for="dividas">Dívidas a quitar (opcional)</label>
+      <input type="text" id="dividas" class="sim-input" placeholder="R$ 0" inputmode="numeric">
+      <div class="sim-field-hint">Se tem dívida cara que quer trocar pelo Home Equity, soma aqui.</div>
+    </div>
+
+    <div class="sim-field">
+      <label class="sim-field-label" for="finalidade">Finalidade principal</label>
+      <select id="finalidade" class="sim-select">
+        <option value="">Selecione...</option>
+        <option value="capital_giro">Capital de giro / liquidez</option>
+        <option value="investimento">Investimento / expansão</option>
+        <option value="quitar_dividas">Quitar dívidas caras</option>
+        <option value="imovel">Comprar outro imóvel</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+
+    <div class="sim-field">
+      <label class="sim-field-label">Prazo desejado</label>
+      <input type="range" id="prazo" class="sim-slider" min="60" max="240" value="120" step="12">
+      <div class="sim-slider-value"><span id="prazoLbl">120</span> meses (<span id="prazoAnos">10</span> anos)</div>
+    </div>
+
+    <button class="btn btn-primary" id="calcular" style="width: 100%; padding: 14px; font-size: 11px;">Calcular estimativa →</button>
+  </section>
+
+  <!-- RESULT (hidden until calculate) -->
+  <section id="result-section" style="display:none;">
+    <div class="sim-result">
+      <div class="sim-result-label">Estimativa preliminar</div>
+      <div class="sim-result-value">Entre <em id="faixaBaixa">—</em> e <em id="faixaAlta">—</em></div>
+      <div class="sim-result-sub">Liberados, considerando LTV (loan-to-value) de 50% a 60% do valor do imóvel, descontadas as dívidas a quitar.</div>
+      <div class="sim-result-grid">
+        <div>
+          <div class="sim-result-stat-label">Parcela aproximada</div>
+          <div class="sim-result-stat-value" id="parcelaTxt">—</div>
+        </div>
+        <div>
+          <div class="sim-result-stat-label">Prazo</div>
+          <div class="sim-result-stat-value"><span id="prazoTxt">—</span><em> meses</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-disclaimer">
+      <strong>Importante:</strong> este cálculo usa taxa de referência de mercado (~1,2% a.m.). A Áxicon costuma estruturar Home Equity com spreads abaixo da média, conforme o perfil do imóvel e do tomador. O valor final depende de avaliação do imóvel e análise de crédito.
+    </div>
+
+    <!-- LEAD CAPTURE -->
+    <section id="lead-section" class="sim-lead-form">
+      <h3>Quer um <em>número final</em>?</h3>
+      <p class="lead-sub">Deixa seu contato — em até 24h um consultor analisa seu caso e te retorna com a proposta sob medida.</p>
+      <div id="leadError" class="sim-error" style="display:none;"></div>
+      <div class="sim-field">
+        <label class="sim-field-label" for="leadNome">Nome completo</label>
+        <input type="text" id="leadNome" class="sim-input" placeholder="Como você quer ser chamado">
+      </div>
+      <div class="sim-row">
+        <div class="sim-field">
+          <label class="sim-field-label" for="leadEmail">E-mail</label>
+          <input type="email" id="leadEmail" class="sim-input" placeholder="seu@email.com">
+        </div>
+        <div class="sim-field">
+          <label class="sim-field-label" for="leadWhatsapp">WhatsApp</label>
+          <input type="tel" id="leadWhatsapp" class="sim-input" placeholder="(44) 99999-9999">
+        </div>
+      </div>
+      <label class="sim-consent">
+        <input type="checkbox" id="leadConsent">
+        <span>Concordo com o tratamento dos meus dados conforme a <a href="/privacidade" target="_blank">Política de Privacidade</a> da Áxicon, exclusivamente para que o time entre em contato sobre essa simulação.</span>
+      </label>
+      <div class="sim-actions">
+        <button class="btn btn-primary" id="enviarLead" style="padding: 14px 24px; font-size: 11px;">Quero conversar com o time →</button>
+        <button class="btn btn-outline-dark" id="recalcular" style="padding: 14px 24px; font-size: 11px;">↻ Refazer simulação</button>
+      </div>
+    </section>
+  </section>
+
+  <!-- SUCCESS (hidden until submit) -->
+  <section id="success-section" style="display:none;">
+    <div class="sim-success">
+      <div class="sim-success-icon">✓</div>
+      <h3>Obrigado, <em><span id="successNome">—</span></em></h3>
+      <p>Sua simulação chegou no nosso time. Em até 24h um consultor entra em contato.<br>Se quiser acelerar, abra direto no WhatsApp com seus dados pré-preenchidos:</p>
+      <a id="waLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="padding: 14px 32px; font-size: 11px;">📱 Continuar pelo WhatsApp</a>
+      <div style="margin-top: 28px; font-size: 12px; color: var(--c-text-faint-light);">
+        Pode ir para <a href="/produtos" style="color: var(--c-primary);">outros produtos</a> ou <a href="/cases" style="color: var(--c-primary);">ver cases reais</a> enquanto isso.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="/assets/logo-full-white.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
+      </div>
+      <p class="footer-tag"><em>"A inteligência financeira não deveria ter um endereço fixo."</em></p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/institucional">Institucional</a></li>
+        <li><a href="/produtos">Produtos</a></li>
+        <li><a href="/cases">Cases</a></li>
+        <li><a href="/consorcios">Consórcios</a></li>
+        <li><a href="/noticias">Notícias</a></li>
+        <li><a href="/simular">Simular</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Sede</h4>
+      <p>Av. Brasil, 4035<br>Maringá · PR · Brasil</p>
+    </div>
+    <div>
+      <h4>Contato</h4>
+      <p>
+        <a href="mailto:contato@axicon.com.br">contato@axicon.com.br</a><br>
+        <a href="https://wa.me/5544991147236">+55 (44) 99114-7236</a><br>
+        <a href="/privacidade">Política de Privacidade</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© MMXXVI · Áxicon Soluções Financeiras</span>
+    <span>Crédito estruturado · Brasil</span>
+  </div>
+</footer>
+
+<script src="/simular.js"></script>
+<script>
+(function () {
+  const A = window.AxiconSim
+  A.maskBRL(document.getElementById('valorImovel'))
+  A.maskBRL(document.getElementById('dividas'))
+  A.maskPhone(document.getElementById('leadWhatsapp'))
+
+  const prazo = document.getElementById('prazo')
+  const prazoLbl = document.getElementById('prazoLbl')
+  const prazoAnos = document.getElementById('prazoAnos')
+  prazo.addEventListener('input', () => {
+    prazoLbl.textContent = prazo.value
+    prazoAnos.textContent = Math.round(prazo.value / 12)
+  })
+
+  let lastResult = null
+
+  document.getElementById('calcular').addEventListener('click', () => {
+    const valorImovel = A.num(document.getElementById('valorImovel').value)
+    const dividas = A.num(document.getElementById('dividas').value)
+    const prazoMeses = parseInt(prazo.value, 10)
+    const finalidade = document.getElementById('finalidade').value
+
+    if (!valorImovel || valorImovel < 100000) {
+      alert('Informe um valor de imóvel realista (mínimo R$ 100.000).')
+      return
+    }
+    const out = A.calcHomeEquity({ valorImovel, dividas, prazoMeses })
+    lastResult = { inputs: { valorImovel, dividas, prazoMeses, finalidade }, outputs: out }
+    document.getElementById('faixaBaixa').textContent = A.BRLCompact(out.faixaBaixa)
+    document.getElementById('faixaAlta').textContent  = A.BRLCompact(out.faixaAlta)
+    document.getElementById('parcelaTxt').textContent = A.BRLCompact((out.parcelaBaixa + out.parcelaAlta) / 2)
+    document.getElementById('prazoTxt').textContent = String(prazoMeses)
+    document.getElementById('result-section').style.display = ''
+    document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+
+  document.getElementById('recalcular').addEventListener('click', () => {
+    document.getElementById('result-section').style.display = 'none'
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' })
+  })
+
+  document.getElementById('enviarLead').addEventListener('click', async () => {
+    const err = document.getElementById('leadError')
+    err.style.display = 'none'
+    if (!lastResult) { err.textContent = 'Calcule a simulação antes.'; err.style.display = ''; return }
+    const lead = {
+      nome: document.getElementById('leadNome').value.trim(),
+      email: document.getElementById('leadEmail').value.trim(),
+      whatsapp: document.getElementById('leadWhatsapp').value.trim(),
+      consentimento: document.getElementById('leadConsent').checked,
+    }
+    if (!lead.nome || !lead.email || !lead.whatsapp) { err.textContent = 'Preencha nome, e-mail e WhatsApp.'; err.style.display = ''; return }
+    if (!lead.consentimento) { err.textContent = 'É necessário aceitar a Política de Privacidade.'; err.style.display = ''; return }
+
+    const btn = document.getElementById('enviarLead')
+    btn.disabled = true; btn.textContent = 'Enviando...'
+    try {
+      const r = await A.submitLead({ tipo: 'home-equity', ...lastResult, lead })
+      document.getElementById('successNome').textContent = lead.nome.split(' ')[0]
+      document.getElementById('waLink').href = r.waUrl || A.makeWhatsAppUrl({ tipo: 'home-equity', nome: lead.nome, ...lastResult })
+      document.getElementById('result-section').style.display = 'none'
+      document.getElementById('success-section').style.display = ''
+      document.getElementById('success-section').scrollIntoView({ behavior: 'smooth' })
+    } catch (e) {
+      err.textContent = 'Erro ao enviar: ' + (e.message || 'tente novamente'); err.style.display = ''
+      btn.disabled = false; btn.textContent = 'Quero conversar com o time →'
+    }
+  })
+})();
+</script>
+</body>
+</html>

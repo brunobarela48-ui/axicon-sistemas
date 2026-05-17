@@ -43,6 +43,7 @@ function noStore(res: NextResponse) {
 const PUBLIC_API_PATHS = new Set([
   '/api/noticias',
   '/api/newsletter/descadastrar',  // link de unsubscribe vai nos emails
+  '/api/leads/simulador',          // captura de leads dos simuladores públicos
 ])
 
 // Páginas do site público que vivem em public/<nome>.html mas devem
@@ -56,6 +57,11 @@ const PUBLIC_CLEAN_PAGES = new Set([
   'consorcios',
   'noticias',
   'ecossistema',
+  'simular',
+  'simular/home-equity',
+  'simular/consorcio',
+  'simular/diagnostico-pj',
+  'privacidade',
 ])
 
 // Whitelist de paths que domínios públicos podem servir.
