@@ -28,6 +28,16 @@ const INTRANET_HOSTS = new Set([
 
 const INTRANET_URL = 'https://intranet.axiconsolucoes.com'
 
+// Impede cache de CDN em decisões de roteamento.
+// Sem isso, uma decisão antiga do proxy pode ficar cacheada por dias
+// no edge do Vercel — já aconteceu (age > 52h após mover o domínio).
+function noStore(res: NextResponse) {
+  res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+  res.headers.set('CDN-Cache-Control', 'no-store')
+  res.headers.set('Vercel-CDN-Cache-Control', 'no-store')
+  return res
+}
+
 // APIs públicas — autorizadas a serem servidas a partir de www.*.
 // Tudo que não está aqui é considerado API interna e fica restrito à intranet.
 const PUBLIC_API_PATHS = new Set([
@@ -56,28 +66,28 @@ export function proxy(request: NextRequest) {
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
       url.pathname = '/institucional.html'
-      return NextResponse.rewrite(url)
+      return noStore(NextResponse.rewrite(url))
     }
     if (isStaticPublicPath(pathname)) return NextResponse.next()
     // Tentativa de acessar rota dinâmica em domínio público → manda pra intranet
-    return NextResponse.redirect(INTRANET_URL + pathname, 302)
+    return noStore(NextResponse.redirect(INTRANET_URL + pathname, 302))
   }
 
   if (hostname === 'www.axiconsolucoes.com') {
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
       url.pathname = '/index.html'
-      return NextResponse.rewrite(url)
+      return noStore(NextResponse.rewrite(url))
     }
     if (isStaticPublicPath(pathname)) return NextResponse.next()
-    return NextResponse.redirect(INTRANET_URL + pathname, 302)
+    return noStore(NextResponse.redirect(INTRANET_URL + pathname, 302))
   }
 
   // axiconsolucoes.com apex → www
   if (hostname === 'axiconsolucoes.com') {
     const url = request.nextUrl.clone()
     url.host = 'www.axiconsolucoes.com'
-    return NextResponse.redirect(url, 301)
+    return noStore(NextResponse.redirect(url, 301))
   }
 
   // ───────────────────────────────────────────────────────────────────
