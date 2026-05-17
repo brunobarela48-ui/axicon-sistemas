@@ -158,7 +158,8 @@ export default function Curadoria() {
             <div style={{ fontSize: 24, fontWeight: 800, color: '#1a1a1a', fontFamily: FT }}>{visiveis.length} pendente{visiveis.length === 1 ? '' : 's'}</div>
             <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Busca automática às 06h, 12h e 15h. Aprovar = vai para www.axiconsolucoes.com/noticias.</div>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <a href="/curadoria/newsletter" style={{ ...btnGhost, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}>✉ Compor newsletter →</a>
             <button onClick={carregar} style={btnGhost}>↻ Atualizar</button>
             <button onClick={buscarAgora} disabled={fetching} style={{ ...btnPrimary, opacity: fetching ? 0.5 : 1 }}>
               {fetching ? 'Buscando...' : '⚡ Buscar agora'}
