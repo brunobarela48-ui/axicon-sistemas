@@ -73,6 +73,8 @@ export default async function handler(req, res) {
     const rows = enriched.map(it => ({
       titulo: it.titulo.slice(0, 500),
       resumo: it.resumo || null,
+      analise: it.analise || null,
+      tempo_leitura: it.tempo_leitura || null,
       fonte: it.fonte,
       link: it.link,
       link_hash: it.link_hash,

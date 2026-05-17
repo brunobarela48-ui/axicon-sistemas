@@ -25,6 +25,8 @@ export default async function handler(req, res) {
       pendente_id: pend.id,
       titulo: pend.titulo,
       resumo: pend.resumo,
+      analise: pend.analise,
+      tempo_leitura: pend.tempo_leitura,
       fonte: pend.fonte,
       link: pend.link,
       data: pend.data || pend.criado_em,

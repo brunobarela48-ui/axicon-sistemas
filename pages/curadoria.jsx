@@ -195,11 +195,22 @@ export default function Curadoria() {
                     {item.fonte && <span style={badge(NAVY)}>{item.fonte}</span>}
                     {item.tag && <span style={badge(GOLD, '#5a4520')}>{item.tag}</span>}
                     {item.data && <span style={{ fontSize: 11, color: '#888' }}>{fmtData(item.data)}</span>}
+                    {item.tempo_leitura && <span style={{ fontSize: 11, color: '#888' }}>· ⏱ {item.tempo_leitura} min de leitura</span>}
                   </div>
-                  <h3 style={{ fontSize: 17, fontFamily: FT, fontWeight: 700, color: '#1a1a1a', margin: '0 0 8px', lineHeight: 1.3 }}>
+                  <h3 style={{ fontSize: 17, fontFamily: FT, fontWeight: 700, color: '#1a1a1a', margin: '0 0 10px', lineHeight: 1.3 }}>
                     {item.titulo}
                   </h3>
-                  {item.resumo && <p style={{ fontSize: 13, color: '#555', lineHeight: 1.65, margin: '0 0 12px' }}>{item.resumo}</p>}
+                  {item.analise ? (
+                    <p style={{ fontSize: 14, color: '#333', lineHeight: 1.75, margin: '0 0 14px', whiteSpace: 'pre-wrap' }}>{item.analise}</p>
+                  ) : item.resumo ? (
+                    <p style={{ fontSize: 13, color: '#555', lineHeight: 1.65, margin: '0 0 12px' }}>{item.resumo}</p>
+                  ) : null}
+                  {item.analise && item.resumo && item.resumo !== item.analise && (
+                    <details style={{ marginBottom: 12 }}>
+                      <summary style={{ fontSize: 11, color: NAVY, cursor: 'pointer', fontWeight: 600, letterSpacing: 1 }}>RESUMO CURTO (CARD DO SITE)</summary>
+                      <p style={{ fontSize: 12, color: '#777', lineHeight: 1.6, margin: '8px 0 0', fontStyle: 'italic' }}>{item.resumo}</p>
+                    </details>
+                  )}
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                     <a href={item.link} target="_blank" rel="noopener noreferrer" style={linkSrc}>Ler na fonte ↗</a>
                     <div style={{ flex: 1 }} />
