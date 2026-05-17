@@ -44,6 +44,19 @@ const PUBLIC_API_PATHS = new Set([
   '/api/noticias',
 ])
 
+// Páginas do site público que vivem em public/<nome>.html mas devem
+// ser acessadas via URL limpa (/institucional, /produtos, etc).
+// O proxy faz rewrite extensionless → .html e redirect inverso para
+// manter as URLs canônicas sem .html.
+const PUBLIC_CLEAN_PAGES = new Set([
+  'institucional',
+  'produtos',
+  'cases',
+  'consorcios',
+  'noticias',
+  'ecossistema',
+])
+
 // Whitelist de paths que domínios públicos podem servir.
 // Tudo que não bate aqui é tratado como tentativa de acessar rota interna.
 function isStaticPublicPath(pathname: string): boolean {
@@ -83,6 +96,20 @@ export function proxy(request: NextRequest) {
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
       url.pathname = '/home.html'
+      return noStore(NextResponse.rewrite(url))
+    }
+    // Clean URL: /institucional.html → 301 para /institucional (canônico sem .html)
+    if (pathname.endsWith('.html')) {
+      const slug = pathname.slice(1, -5)
+      if (PUBLIC_CLEAN_PAGES.has(slug)) {
+        return noStore(NextResponse.redirect(`https://www.axiconsolucoes.com/${slug}`, 301))
+      }
+    }
+    // Clean URL: /institucional → rewrite para public/institucional.html
+    const slug = pathname.replace(/^\//, '')
+    if (PUBLIC_CLEAN_PAGES.has(slug)) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/${slug}.html`
       return noStore(NextResponse.rewrite(url))
     }
     if (isStaticPublicPath(pathname)) return NextResponse.next()
