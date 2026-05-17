@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   const { data, error } = await supabaseAdmin
     .from('newsletter_envios')
-    .select('id, edicao_numero, assunto, iniciado_em, finalizado_em, total_enviados, total_falhas')
+    .select('id, tipo, edicao_numero, assunto, iniciado_em, finalizado_em, total_enviados, total_falhas, payload_json')
     .order('iniciado_em', { ascending: false })
     .limit(50)
   if (error) return res.status(500).json({ error: error.message, itens: [] })

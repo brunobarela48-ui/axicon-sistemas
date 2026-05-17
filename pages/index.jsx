@@ -2734,6 +2734,7 @@ export default function Simulador(){
           <NavItem icon="⚡" label="Automações" href="/automacoes" active={secao==="crm"&&crmTela?.tela==="automacoes"} onClick={()=>navCRM("automacoes")}/>
           {isAdmin&&<NavItem icon="📰" label="Curadoria de Notícias" href="/curadoria" active={false} onClick={()=>{window.location.href='/curadoria'}} admin/>}
           {isAdmin&&<NavItem icon="✉️" label="Newsletter (Daily)" href="/curadoria/newsletter" active={false} onClick={()=>{window.location.href='/curadoria/newsletter'}} admin/>}
+          {isAdmin&&<NavItem icon="📧" label="E-mail Custom (HTML)" href="/curadoria/email-custom" active={false} onClick={()=>{window.location.href='/curadoria/email-custom'}} admin/>}
           {isAdmin&&<NavItem icon="👥" label="Assinantes" href="/curadoria/assinantes" active={false} onClick={()=>{window.location.href='/curadoria/assinantes'}} admin/>}
           {isAdmin&&<NavItem icon="📚" label="Histórico de Edições" href="/curadoria/historico" active={false} onClick={()=>{window.location.href='/curadoria/historico'}} admin/>}
           <NavItem icon="👤" label="RH" href="/rh" active={secao==="crm"&&crmTela?.tela==="rh"} onClick={()=>navCRM("rh")}/>

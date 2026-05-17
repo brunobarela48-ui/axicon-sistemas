@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   const { data, error } = await supabaseAdmin
     .from('newsletter_envios')
-    .select('id, edicao_numero, assunto, iniciado_em, finalizado_em, total_enviados, total_falhas, payload_json, html_snapshot, text_snapshot')
+    .select('id, tipo, edicao_numero, assunto, iniciado_em, finalizado_em, total_enviados, total_falhas, payload_json, html_snapshot, text_snapshot')
     .eq('id', id)
     .maybeSingle()
 

@@ -116,23 +116,32 @@ export default function HistoricoNewsletter() {
             </div>
           ) : (
             <div style={{ display: 'grid', gap: 8 }}>
-              {envios.map(e => (
-                <div
-                  key={e.id}
-                  onClick={() => abrir(e)}
-                  style={card(sel?.id === e.id)}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
-                    <div style={{ fontFamily: FT, fontWeight: 700, fontSize: 14, color: '#1a1a1a' }}>Edição #{e.edicao_numero}</div>
-                    <div style={{ fontSize: 11, color: '#888' }}>{fmtData(e.iniciado_em)}</div>
+              {envios.map(e => {
+                const isCustom = e.tipo === 'custom'
+                const titulo = isCustom
+                  ? (e.payload_json?.rotulo || 'E-mail custom')
+                  : `Edição #${e.edicao_numero}`
+                return (
+                  <div
+                    key={e.id}
+                    onClick={() => abrir(e)}
+                    style={card(sel?.id === e.id)}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4, gap: 8 }}>
+                      <div style={{ fontFamily: FT, fontWeight: 700, fontSize: 14, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={isCustom ? pillCustom : pillDaily}>{isCustom ? '📧 CUSTOM' : '📰 DAILY'}</span>
+                        {titulo}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>{fmtData(e.iniciado_em)}</div>
+                    </div>
+                    <div style={{ fontSize: 13, color: '#444', marginBottom: 6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.assunto}</div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11 }}>
+                      <span style={pillOk}>{e.total_enviados ?? 0} ENVIADAS</span>
+                      {(e.total_falhas ?? 0) > 0 && <span style={pillErr}>{e.total_falhas} FALHAS</span>}
+                      {!e.finalizado_em && <span style={pillWarn}>EM ANDAMENTO</span>}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 13, color: '#444', marginBottom: 6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{e.assunto}</div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11 }}>
-                    <span style={pillOk}>{e.total_enviados ?? 0} ENVIADAS</span>
-                    {(e.total_falhas ?? 0) > 0 && <span style={pillErr}>{e.total_falhas} FALHAS</span>}
-                    {!e.finalizado_em && <span style={pillWarn}>EM ANDAMENTO</span>}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>
@@ -148,11 +157,18 @@ export default function HistoricoNewsletter() {
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
                   <div>
-                    <div style={{ fontSize: 10, color: NAVY, letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>EDIÇÃO #{sel.edicao_numero}</div>
+                    <div style={{ fontSize: 10, color: NAVY, letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>
+                      {sel.tipo === 'custom'
+                        ? `📧 E-MAIL CUSTOM${sel.payload_json?.rotulo ? ' · ' + sel.payload_json.rotulo : ''}`
+                        : `EDIÇÃO #${sel.edicao_numero}`}
+                    </div>
                     <div style={{ fontFamily: FT, fontWeight: 700, fontSize: 16, color: '#1a1a1a', lineHeight: 1.3 }}>{sel.assunto}</div>
                     <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
                       Enviada em {fmtDataHora(sel.iniciado_em)} · {sel.total_enviados ?? 0} entregue{(sel.total_enviados ?? 0) === 1 ? '' : 's'}
                       {(sel.total_falhas ?? 0) > 0 && <span style={{ color: '#c62828' }}> · {sel.total_falhas} falha{sel.total_falhas === 1 ? '' : 's'}</span>}
+                      {sel.tipo === 'custom' && sel.payload_json?.modo && (
+                        <span> · modo: {sel.payload_json.modo}</span>
+                      )}
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
@@ -208,4 +224,6 @@ const btnGhost = { ...btnBase, background: 'white', color: NAVY, border: `1.5px 
 const pillOk = { padding: '2px 8px', borderRadius: 10, background: '#4caf50', color: '#fff', fontWeight: 600, letterSpacing: 0.5 }
 const pillErr = { padding: '2px 8px', borderRadius: 10, background: '#c62828', color: '#fff', fontWeight: 600, letterSpacing: 0.5 }
 const pillWarn = { padding: '2px 8px', borderRadius: 10, background: '#f9a825', color: '#fff', fontWeight: 600, letterSpacing: 0.5 }
+const pillDaily  = { padding: '2px 6px', borderRadius: 6, background: NAVY + '12', color: NAVY, fontWeight: 700, fontSize: 9, letterSpacing: 1 }
+const pillCustom = { padding: '2px 6px', borderRadius: 6, background: '#B87333' + '18', color: '#B87333', fontWeight: 700, fontSize: 9, letterSpacing: 1 }
 const alertErr = { padding: '10px 14px', borderRadius: 8, marginBottom: 12, background: '#fde8e8', color: '#c62828', fontSize: 12, border: '1px solid #f4433640' }
