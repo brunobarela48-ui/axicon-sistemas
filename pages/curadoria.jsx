@@ -11,7 +11,8 @@ const BG    = '#EEF0F8'
 const FT    = "'The Seasons','Georgia',serif"
 const SN    = "'Montserrat','Helvetica Neue',sans-serif"
 
-const TAGS_FILTRO = ['Todas','Macro','Câmbio','Crédito','Mercado de Capitais','Agro','Cross-Border','Regulatório']
+const TAGS_OFICIAIS = ['Macro','Câmbio','Crédito','Mercado de Capitais','Agro','Cross-Border','Regulatório']
+const norm = (s) => (s || '').toString().normalize('NFC').trim().toLowerCase()
 
 export default function Curadoria() {
   const [session, setSession]   = useState(null)
@@ -133,10 +134,30 @@ export default function Curadoria() {
   // Fontes únicas para o filtro
   const fontesUnicas = ['Todas', ...Array.from(new Set(itens.map(i => i.fonte).filter(Boolean))).sort()]
 
-  const visiveis = itens.filter(i =>
-    (fonte === 'Todas' || i.fonte === fonte) &&
-    (tag === 'Todas' || i.tag === tag)
-  )
+  // Tags: oficiais + qualquer outra que apareça no payload. "Sem categoria" se algum item não tiver tag.
+  const tagsNosItens = Array.from(new Set(itens.map(i => i.tag).filter(Boolean)))
+  const temSemTag = itens.some(i => !i.tag)
+  const tagsExtras = tagsNosItens.filter(t => !TAGS_OFICIAIS.some(o => norm(o) === norm(t)))
+  const TAGS_FILTRO = ['Todas', ...TAGS_OFICIAIS, ...tagsExtras, ...(temSemTag ? ['Sem categoria'] : [])]
+
+  // Contagem por tag (normalizado), pra mostrar quantos itens existem em cada categoria
+  const contagem = {}
+  for (const i of itens) {
+    const k = i.tag ? norm(i.tag) : '__nada__'
+    contagem[k] = (contagem[k] || 0) + 1
+  }
+  const contarOpcao = (opt) => {
+    if (opt === 'Todas') return itens.length
+    if (opt === 'Sem categoria') return contagem['__nada__'] || 0
+    return contagem[norm(opt)] || 0
+  }
+
+  const visiveis = itens.filter(i => {
+    if (fonte !== 'Todas' && i.fonte !== fonte) return false
+    if (tag === 'Todas') return true
+    if (tag === 'Sem categoria') return !i.tag
+    return norm(i.tag) === norm(tag)
+  })
 
   return (
     <div style={{ minHeight: '100vh', background: BG, fontFamily: SN }}>
@@ -174,7 +195,7 @@ export default function Curadoria() {
         {/* Filtros */}
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 20 }}>
           <FilterGroup label="FONTE" value={fonte} options={fontesUnicas} onChange={setFonte} />
-          <FilterGroup label="CATEGORIA" value={tag} options={TAGS_FILTRO} onChange={setTag} />
+          <FilterGroup label="CATEGORIA" value={tag} options={TAGS_FILTRO} onChange={setTag} counts={contarOpcao} />
         </div>
 
         {/* Lista */}
@@ -253,21 +274,28 @@ function Alert({ kind, children }) {
   )
 }
 
-function FilterGroup({ label, value, options, onChange }) {
+function FilterGroup({ label, value, options, onChange, counts }) {
   return (
     <div>
       <div style={{ fontSize: 10, color: NAVY, letterSpacing: 2, fontWeight: 700, marginBottom: 6 }}>{label}</div>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {options.map(o => {
           const active = o === value
+          const n = counts ? counts(o) : null
+          const dimmed = counts && n === 0 && !active
           return (
             <button key={o} onClick={() => onChange(o)} style={{
               padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontFamily: SN, fontSize: 12,
               border: `1.5px solid ${active ? NAVY : '#ddd'}`,
               background: active ? NAVY + '14' : 'white',
-              color: active ? NAVY : '#888',
+              color: active ? NAVY : (dimmed ? '#bbb' : '#888'),
               fontWeight: active ? 600 : 400,
-            }}>{o}</button>
+              opacity: dimmed ? 0.55 : 1,
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+            }}>
+              {o}
+              {n != null && <span style={{ fontSize: 10, color: active ? NAVY : '#aaa', fontWeight: 600 }}>{n}</span>}
+            </button>
           )
         })}
       </div>
