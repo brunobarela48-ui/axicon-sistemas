@@ -112,7 +112,9 @@ export default async function handler(req, res) {
     coverImage, coverCredit, manchetes, stories,
   })
 
-  // 4) Registra início do envio
+  // 4) Registra início do envio. Salvamos o HTML e texto renderizados em
+  //    snapshot para o histórico — assim a edição arquivada não muda mesmo
+  //    se as notícias-fonte forem editadas ou removidas depois.
   const { data: envio, error: errEnvio } = await supabaseAdmin
     .from('newsletter_envios')
     .insert({
@@ -120,6 +122,8 @@ export default async function handler(req, res) {
       assunto,
       iniciado_por: user.id,
       payload_json: { stories: storyIds, manchetes: mancheteIds, headline, intro, moodLine },
+      html_snapshot: htmlTemplate,
+      text_snapshot: textTemplate,
     })
     .select('id')
     .single()

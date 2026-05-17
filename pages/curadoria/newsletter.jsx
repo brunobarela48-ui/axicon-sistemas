@@ -250,6 +250,7 @@ export default function NewsletterComposer() {
           <div style={{ fontSize: 11, color: GOLD, letterSpacing: 3, textTransform: 'uppercase' }}>Áxicon Daily News · composer</div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          <a href="/curadoria/historico" style={linkChrome}>📚 Histórico</a>
           <a href="/curadoria" style={linkChrome}>← Curadoria</a>
           <a href="/" style={linkChrome}>← Intranet</a>
         </div>
