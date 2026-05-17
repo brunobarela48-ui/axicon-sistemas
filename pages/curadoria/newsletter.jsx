@@ -36,7 +36,9 @@ export default function NewsletterComposer() {
   const [previewHtml, setPreviewHtml] = useState('')
   const [busyPreview, setBusyPreview] = useState(false)
   const [busySend, setBusySend]       = useState(false)
+  const [busyBroadcast, setBusyBroadcast] = useState(false)
   const [destEmail, setDestEmail]     = useState('')
+  const [contagemAtivos, setContagemAtivos] = useState(null)
   const [msg, setMsg]   = useState('')
   const [erro, setErro] = useState('')
 
@@ -80,6 +82,15 @@ export default function NewsletterComposer() {
   }, [session])
 
   useEffect(() => { if (role === 'admin') carregar() }, [role, carregar])
+
+  // Pré-carrega contagem de assinantes ativos para mostrar no botão
+  useEffect(() => {
+    if (role !== 'admin' || !session) return
+    fetch('/api/newsletter/assinantes', { headers: { authorization: `Bearer ${session.access_token}` } })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (j) setContagemAtivos(j.ativos ?? 0) })
+      .catch(() => {})
+  }, [role, session])
 
   const selecionadas = useMemo(() => {
     const stories = []
@@ -175,6 +186,38 @@ export default function NewsletterComposer() {
       setErro('Erro de conexão ao enviar')
     } finally {
       setBusySend(false)
+    }
+  }
+
+  const enviarParaTodos = async () => {
+    setMsg(''); setErro('')
+    if (selecionadas.total === 0) { setErro('Selecione ao menos 1 notícia'); return }
+    if (!contagemAtivos || contagemAtivos === 0) { setErro('Não há assinantes ativos. Cadastre em /curadoria/assinantes'); return }
+
+    // Dupla confirmação para evitar disparo acidental
+    const c1 = confirm(`ENVIO EM LOTE\n\nEdição #${edicaoNumber} será enviada para ${contagemAtivos} assinantes ativos.\n\nVocê fez o teste antes? Clique OK só se sim.`)
+    if (!c1) return
+    const c2 = prompt(`Para confirmar, digite a palavra ENVIAR (em maiúsculas):`)
+    if (c2 !== 'ENVIAR') { setMsg('Envio cancelado.'); return }
+
+    setBusyBroadcast(true)
+    try {
+      const r = await fetch('/api/newsletter/enviar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          assunto, headline, intro: intro.split(/\n\n+/), moodLine, edicaoNumber,
+          stories: selecionadas.stories,
+          manchetes: selecionadas.manchetes,
+        }),
+      })
+      const j = await r.json()
+      if (!r.ok) { setErro(j?.error || 'Falha no envio em lote'); return }
+      setMsg(`Edição #${edicaoNumber} enviada · ${j.enviados} entregues · ${j.falhas} falhas.`)
+    } catch (e) {
+      setErro('Erro de conexão ao enviar em lote')
+    } finally {
+      setBusyBroadcast(false)
     }
   }
 
@@ -291,7 +334,7 @@ export default function NewsletterComposer() {
               <button style={btnGhost} onClick={copiarHtml} disabled={!previewHtml}>📋 Copiar HTML</button>
               <button style={btnGhost} onClick={baixarHtml} disabled={!previewHtml}>⬇ Baixar .html</button>
             </div>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <input
                 type="email"
                 value={destEmail}
@@ -302,6 +345,22 @@ export default function NewsletterComposer() {
               <button style={{ ...btnPrimary, background: BRONZE, whiteSpace: 'nowrap' }} onClick={enviarTeste} disabled={busySend || !destEmail || selecionadas.total === 0}>
                 {busySend ? 'Enviando...' : '✉ Enviar teste'}
               </button>
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center' }}>
+              <button
+                style={{
+                  ...btnPrimary,
+                  background: '#8E2A1F',
+                  flex: 1,
+                  fontSize: 13,
+                  opacity: (!contagemAtivos || busyBroadcast || selecionadas.total === 0) ? 0.5 : 1,
+                }}
+                onClick={enviarParaTodos}
+                disabled={busyBroadcast || !contagemAtivos || selecionadas.total === 0}
+                title={contagemAtivos ? `Envia para ${contagemAtivos} assinantes ativos` : 'Nenhum assinante ativo cadastrado'}>
+                {busyBroadcast ? 'Disparando...' : `📤 Enviar para todos (${contagemAtivos ?? '...'})`}
+              </button>
+              <a href="/curadoria/assinantes" style={{ ...btnGhost, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>👥 Gerenciar lista</a>
             </div>
             <div style={{ fontSize: 11, color: '#888', marginBottom: 8 }}>Preview · ~640px (largura de email)</div>
             <div style={previewWrap}>

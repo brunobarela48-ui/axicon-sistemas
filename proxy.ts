@@ -42,6 +42,7 @@ function noStore(res: NextResponse) {
 // Tudo que não está aqui é considerado API interna e fica restrito à intranet.
 const PUBLIC_API_PATHS = new Set([
   '/api/noticias',
+  '/api/newsletter/descadastrar',  // link de unsubscribe vai nos emails
 ])
 
 // Páginas do site público que vivem em public/<nome>.html mas devem
