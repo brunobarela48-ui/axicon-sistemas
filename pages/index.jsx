@@ -2733,6 +2733,7 @@ export default function Simulador(){
           <NavItem icon="🎨" label="Personalização" href="/personalizacao" active={secao==="crm"&&crmTela?.tela==="personalizacao"} onClick={()=>navCRM("personalizacao")}/>
           <NavItem icon="⚡" label="Automações" href="/automacoes" active={secao==="crm"&&crmTela?.tela==="automacoes"} onClick={()=>navCRM("automacoes")}/>
           {isAdmin&&<NavItem icon="📰" label="Curadoria de Notícias" href="/curadoria" active={false} onClick={()=>{window.location.href='/curadoria'}} admin/>}
+          {isAdmin&&<NavItem icon="✉️" label="Newsletter (Daily)" href="/curadoria/newsletter" active={false} onClick={()=>{window.location.href='/curadoria/newsletter'}} admin/>}
           <NavItem icon="👤" label="RH" href="/rh" active={secao==="crm"&&crmTela?.tela==="rh"} onClick={()=>navCRM("rh")}/>
         </div>}
 
