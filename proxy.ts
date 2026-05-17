@@ -74,9 +74,15 @@ export function proxy(request: NextRequest) {
   }
 
   if (hostname === 'www.axiconsolucoes.com') {
+    // /index.html é um path "armadilhado": pages/index.jsx é a home do CRM,
+    // então /index.html cai no catch-all [tela].jsx. Usamos /home.html no
+    // public/ para o site institucional, evitando o conflito de naming.
+    if (pathname === '/index.html') {
+      return noStore(NextResponse.redirect('https://www.axiconsolucoes.com/', 301))
+    }
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
-      url.pathname = '/index.html'
+      url.pathname = '/home.html'
       return noStore(NextResponse.rewrite(url))
     }
     if (isStaticPublicPath(pathname)) return NextResponse.next()
