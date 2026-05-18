@@ -92,13 +92,12 @@ export default function Curadoria() {
   }
 
   const buscarAgora = async () => {
-    const secret = window.prompt('CRON_SECRET (apenas para forçar uma busca manual):')
-    if (!secret) return
+    if (!session) return
     setFetching(true); setMsg(''); setErro('')
     try {
       const r = await fetch('/api/curadoria/buscar', {
         method: 'POST',
-        headers: { authorization: `Bearer ${secret}` },
+        headers: { authorization: `Bearer ${session.access_token}` },
       })
       const j = await r.json()
       if (!r.ok) { setErro(j?.error || 'Falha na busca'); return }

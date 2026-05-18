@@ -1,15 +1,15 @@
 import { supabaseAdmin } from '../../../lib/supabase-admin'
 import { FEEDS, fetchFeed, enrichWithClaude, hashLink } from '../../../lib/news-fetcher'
+import { getAdminUser } from '../../../lib/auth'
 
-// Endpoint chamado pelo GitHub Actions às 06h/12h/15h.
-// Autenticação por CRON_SECRET (compartilhado com o workflow).
-// Pode ser chamado manualmente também (com o mesmo secret) para forçar uma rodada.
+// Endpoint chamado pelo GitHub Actions às 06h/12h/15h (Bearer CRON_SECRET)
+// ou manualmente pelo botão "Buscar agora" na /curadoria (Bearer sessão admin).
 
 export const config = {
   maxDuration: 60,  // RSS + Claude pode levar até ~30s
 }
 
-function authorized(req) {
+function hasCronSecret(req) {
   const want = process.env.CRON_SECRET
   if (!want) return false
   const got = req.headers.authorization?.replace('Bearer ', '') || req.query.token
@@ -20,8 +20,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Método não permitido' })
   }
-  if (!authorized(req)) {
-    return res.status(401).json({ error: 'CRON_SECRET inválido' })
+  if (!hasCronSecret(req) && !(await getAdminUser(req))) {
+    return res.status(401).json({ error: 'Não autorizado' })
   }
 
   const startedAt = Date.now()
