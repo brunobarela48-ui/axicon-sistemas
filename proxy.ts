@@ -62,6 +62,19 @@ const PUBLIC_CLEAN_PAGES = new Set([
   'simular/consorcio',
   'simular/diagnostico-pj',
   'privacidade',
+  // /atacado/* — snapshot da versão anterior do site (foco crédito estruturado).
+  // Mantida acessível como arquivo enquanto a versão principal segue em /.
+  'atacado/institucional',
+  'atacado/produtos',
+  'atacado/cases',
+  'atacado/consorcios',
+  'atacado/noticias',
+  'atacado/ecossistema',
+  'atacado/simular',
+  'atacado/simular/home-equity',
+  'atacado/simular/consorcio',
+  'atacado/simular/diagnostico-pj',
+  'atacado/privacidade',
 ])
 
 // Whitelist de paths que domínios públicos podem servir.
@@ -104,6 +117,16 @@ export function proxy(request: NextRequest) {
       const url = request.nextUrl.clone()
       url.pathname = '/home.html'
       return noStore(NextResponse.rewrite(url))
+    }
+    // /atacado e /atacado/ → snapshot da home antiga em /atacado/home.html
+    if (pathname === '/atacado' || pathname === '/atacado/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/atacado/home.html'
+      return noStore(NextResponse.rewrite(url))
+    }
+    // /atacado/home.html → 301 para /atacado (canônico)
+    if (pathname === '/atacado/home.html' || pathname === '/atacado/index.html') {
+      return noStore(NextResponse.redirect('https://www.axiconsolucoes.com/atacado', 301))
     }
     // Clean URL: /institucional.html → 301 para /institucional (canônico sem .html)
     if (pathname.endsWith('.html')) {

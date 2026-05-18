@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Consórcio — Áxicon Soluções Financeiras</title>
+<link rel="icon" type="image/svg+xml" href="/assets/monogram-bronze.svg">
+<link rel="apple-touch-icon" href="/assets/monogram-bronze.svg">
+<meta name="description" content="Simule um consórcio estruturado: sem juros, com inteligência de lance e administradoras parceiras de primeira linha (Ademicon, BR Consórcios, Triângulo).">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/atacado" class="nav-brand">
+    <img src="/assets/logo-full-black.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
+  </a>
+  <div class="nav-menu">
+    <a href="/atacado">Home</a>
+    <a href="/atacado/institucional">Institucional</a>
+    <a href="/atacado/produtos">Produtos</a>
+    <a href="/atacado/cases">Cases</a>
+    <a href="/atacado/consorcios">Consórcios</a>
+    <a href="/atacado/noticias">Notícias</a>
+    <a href="/atacado/simular" class="active">Simular</a>
+  </div>
+  <div class="nav-right">
+    <a href="https://wa.me/5544991147236" class="nav-cta" target="_blank" rel="noopener">Fale conosco</a>
+  </div>
+</nav>
+
+<div class="breadcrumbs"><div class="container"><a href="/atacado">Home</a><span class="sep">/</span><a href="/atacado/simular">Simular</a><span class="sep">/</span><span>Consórcio</span></div></div>
+
+<main class="sim-wrap">
+  <div class="sim-eyebrow">Planejamento · Consórcio Estratégico</div>
+  <h1 class="sim-title">Quanto fica a <em>parcela</em> de um consórcio bem estruturado?</h1>
+  <p class="sim-lede">Consórcio sem juros — você paga taxa de administração e fundo de reserva. Com inteligência de lance, contemplação acelerada. Simule a sua parcela.</p>
+
+  <section id="form-section" class="sim-form">
+    <div class="sim-field">
+      <label class="sim-field-label" for="valorCarta">Valor da carta desejada</label>
+      <input type="text" id="valorCarta" class="sim-input large" placeholder="R$ 500.000" inputmode="numeric">
+      <div class="sim-field-hint">De R$ 100 mil a R$ 5 milhões.</div>
+    </div>
+
+    <div class="sim-field">
+      <label class="sim-field-label" for="categoria">Categoria</label>
+      <select id="categoria" class="sim-select">
+        <option value="imovel">Imóvel (residencial, comercial, terreno, rural)</option>
+        <option value="veiculo">Veículo (frota, automóvel, máquinas)</option>
+        <option value="construcao">Construção / Reforma</option>
+        <option value="servicos">Serviços (intercâmbio, casamento, procedimentos)</option>
+        <option value="equipamento">Equipamentos industriais / agro</option>
+      </select>
+    </div>
+
+    <div class="sim-field">
+      <label class="sim-field-label">Prazo</label>
+      <input type="range" id="prazo" class="sim-slider" min="60" max="240" value="180" step="12">
+      <div class="sim-slider-value"><span id="prazoLbl">180</span> meses (<span id="prazoAnos">15</span> anos)</div>
+    </div>
+
+    <button class="btn btn-primary" id="calcular" style="width: 100%; padding: 14px; font-size: 11px;">Calcular parcela →</button>
+  </section>
+
+  <section id="result-section" style="display:none;">
+    <div class="sim-result">
+      <div class="sim-result-label">Parcela mensal estimada</div>
+      <div class="sim-result-value"><em id="parcelaTxt">—</em></div>
+      <div class="sim-result-sub">Inclui taxa de administração (~0,18% a.m.) e fundo de reserva (~0,05% a.m.). Sem juros compostos.</div>
+      <div class="sim-result-grid">
+        <div>
+          <div class="sim-result-stat-label">CET estimado</div>
+          <div class="sim-result-stat-value"><span id="cetTxt">—</span><em>% ao ano</em></div>
+        </div>
+        <div>
+          <div class="sim-result-stat-label">Contemplação típica</div>
+          <div class="sim-result-stat-value"><span id="contempTxt">30–60</span><em> meses</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-disclaimer">
+      <strong>Sobre o número:</strong> usamos parâmetros médios das administradoras parceiras (Ademicon, BR Consórcios, Triângulo). A Áxicon estrutura o consórcio como engenharia financeira — escolha do grupo certo + modelagem de lance pode acelerar significativamente a contemplação. O time monta o cenário específico pro seu caso.
+    </div>
+
+    <section id="lead-section" class="sim-lead-form">
+      <h3>Quer <em>modelar a estratégia</em> de contemplação?</h3>
+      <p class="lead-sub">Deixa seu contato — em até 24h um consultor desenha o cenário com lance ideal, grupo certo e prazo otimizado.</p>
+      <div id="leadError" class="sim-error" style="display:none;"></div>
+      <div class="sim-field">
+        <label class="sim-field-label" for="leadNome">Nome completo</label>
+        <input type="text" id="leadNome" class="sim-input" placeholder="Como você quer ser chamado">
+      </div>
+      <div class="sim-row">
+        <div class="sim-field">
+          <label class="sim-field-label" for="leadEmail">E-mail</label>
+          <input type="email" id="leadEmail" class="sim-input" placeholder="seu@email.com">
+        </div>
+        <div class="sim-field">
+          <label class="sim-field-label" for="leadWhatsapp">WhatsApp</label>
+          <input type="tel" id="leadWhatsapp" class="sim-input" placeholder="(44) 99999-9999">
+        </div>
+      </div>
+      <label class="sim-consent">
+        <input type="checkbox" id="leadConsent">
+        <span>Concordo com o tratamento dos meus dados conforme a <a href="/atacado/privacidade" target="_blank">Política de Privacidade</a> da Áxicon, exclusivamente para que o time entre em contato sobre essa simulação.</span>
+      </label>
+      <div class="sim-actions">
+        <button class="btn btn-primary" id="enviarLead" style="padding: 14px 24px; font-size: 11px;">Quero conversar com o time →</button>
+        <button class="btn btn-outline-dark" id="recalcular" style="padding: 14px 24px; font-size: 11px;">↻ Refazer simulação</button>
+      </div>
+    </section>
+  </section>
+
+  <section id="success-section" style="display:none;">
+    <div class="sim-success">
+      <div class="sim-success-icon">✓</div>
+      <h3>Obrigado, <em><span id="successNome">—</span></em></h3>
+      <p>Sua simulação chegou no nosso time. Em até 24h um consultor entra em contato.<br>Se quiser acelerar, abra direto no WhatsApp:</p>
+      <a id="waLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="padding: 14px 32px; font-size: 11px;">📱 Continuar pelo WhatsApp</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="/assets/logo-full-white.svg" alt="Áxicon Soluções Financeiras" class="brand-logo">
+      </div>
+      <p class="footer-tag"><em>"A inteligência financeira não deveria ter um endereço fixo."</em></p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="/atacado">Home</a></li>
+        <li><a href="/atacado/institucional">Institucional</a></li>
+        <li><a href="/atacado/produtos">Produtos</a></li>
+        <li><a href="/atacado/cases">Cases</a></li>
+        <li><a href="/atacado/consorcios">Consórcios</a></li>
+        <li><a href="/atacado/noticias">Notícias</a></li>
+        <li><a href="/atacado/simular">Simular</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Sede</h4>
+      <p>Av. Brasil, 4035<br>Maringá · PR · Brasil</p>
+    </div>
+    <div>
+      <h4>Contato</h4>
+      <p>
+        <a href="mailto:contato@axicon.com.br">contato@axicon.com.br</a><br>
+        <a href="https://wa.me/5544991147236">+55 (44) 99114-7236</a><br>
+        <a href="/atacado/privacidade">Política de Privacidade</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© MMXXVI · Áxicon Soluções Financeiras</span>
+    <span>Crédito estruturado · Brasil</span>
+  </div>
+</footer>
+
+<script src="/simular.js"></script>
+<script>
+(function () {
+  const A = window.AxiconSim
+  A.maskBRL(document.getElementById('valorCarta'))
+  A.maskPhone(document.getElementById('leadWhatsapp'))
+
+  const prazo = document.getElementById('prazo')
+  const prazoLbl = document.getElementById('prazoLbl')
+  const prazoAnos = document.getElementById('prazoAnos')
+  prazo.addEventListener('input', () => {
+    prazoLbl.textContent = prazo.value
+    prazoAnos.textContent = Math.round(prazo.value / 12)
+  })
+
+  let lastResult = null
+
+  document.getElementById('calcular').addEventListener('click', () => {
+    const valorCarta = A.num(document.getElementById('valorCarta').value)
+    const prazoMeses = parseInt(prazo.value, 10)
+    const categoria = document.getElementById('categoria').value
+    if (!valorCarta || valorCarta < 100000) { alert('Carta mínima de R$ 100.000.'); return }
+    if (valorCarta > 5000000) { alert('Para cartas acima de R$ 5 mi, fale direto com o time.'); return }
+    const out = A.calcConsorcio({ valorCarta, prazoMeses, categoria })
+    lastResult = { inputs: { valorCarta, prazoMeses, categoria }, outputs: out }
+    document.getElementById('parcelaTxt').textContent = A.BRLCompact(out.parcela)
+    document.getElementById('cetTxt').textContent = (out.cetAnualRef * 100).toFixed(1).replace('.', ',')
+    document.getElementById('result-section').style.display = ''
+    document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' })
+  })
+
+  document.getElementById('recalcular').addEventListener('click', () => {
+    document.getElementById('result-section').style.display = 'none'
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' })
+  })
+
+  document.getElementById('enviarLead').addEventListener('click', async () => {
+    const err = document.getElementById('leadError')
+    err.style.display = 'none'
+    if (!lastResult) { err.textContent = 'Calcule a simulação antes.'; err.style.display = ''; return }
+    const lead = {
+      nome: document.getElementById('leadNome').value.trim(),
+      email: document.getElementById('leadEmail').value.trim(),
+      whatsapp: document.getElementById('leadWhatsapp').value.trim(),
+      consentimento: document.getElementById('leadConsent').checked,
+    }
+    if (!lead.nome || !lead.email || !lead.whatsapp) { err.textContent = 'Preencha nome, e-mail e WhatsApp.'; err.style.display = ''; return }
+    if (!lead.consentimento) { err.textContent = 'É necessário aceitar a Política de Privacidade.'; err.style.display = ''; return }
+
+    const btn = document.getElementById('enviarLead')
+    btn.disabled = true; btn.textContent = 'Enviando...'
+    try {
+      const r = await A.submitLead({ tipo: 'consorcio', ...lastResult, lead })
+      document.getElementById('successNome').textContent = lead.nome.split(' ')[0]
+      document.getElementById('waLink').href = r.waUrl || A.makeWhatsAppUrl({ tipo: 'consorcio', nome: lead.nome, ...lastResult })
+      document.getElementById('result-section').style.display = 'none'
+      document.getElementById('success-section').style.display = ''
+      document.getElementById('success-section').scrollIntoView({ behavior: 'smooth' })
+    } catch (e) {
+      err.textContent = 'Erro ao enviar: ' + (e.message || 'tente novamente'); err.style.display = ''
+      btn.disabled = false; btn.textContent = 'Quero conversar com o time →'
+    }
+  })
+})();
+</script>
+</body>
+</html>
