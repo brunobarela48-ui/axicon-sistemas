@@ -96,14 +96,32 @@ export function proxy(request: NextRequest) {
   // DOMÍNIOS PÚBLICOS — só servem o site estático em public/
   // ───────────────────────────────────────────────────────────────────
   if (hostname === 'institucional.axiconsolucoes.com') {
+    // Subdomínio dedicado ao LP business plan — versão atacado do institucional.
+    // Use case: link enviado a investidores, parceiros, conselho. Discurso
+    // crédito-first preservado mesmo após o site principal balancear com consórcio.
     if (pathname === '/' || pathname === '') {
       const url = request.nextUrl.clone()
-      url.pathname = '/institucional.html'
+      url.pathname = '/atacado/institucional.html'
       return noStore(NextResponse.rewrite(url))
     }
+    // Clean URLs do snapshot atacado: /atacado/produtos → public/atacado/produtos.html
+    // (mantém a navegação interna do LP funcionando no próprio subdomínio)
+    if (pathname.endsWith('.html')) {
+      const slug = pathname.slice(1, -5)
+      if (PUBLIC_CLEAN_PAGES.has(slug) && slug.startsWith('atacado/')) {
+        return noStore(NextResponse.redirect(`https://institucional.axiconsolucoes.com/${slug}`, 301))
+      }
+    }
+    const atacadoSlug = pathname.replace(/^\//, '')
+    if (PUBLIC_CLEAN_PAGES.has(atacadoSlug) && atacadoSlug.startsWith('atacado/')) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/${atacadoSlug}.html`
+      return noStore(NextResponse.rewrite(url))
+    }
+    // Assets (CSS, JS, fontes, imagens) — passa direto
     if (isStaticPublicPath(pathname)) return NextResponse.next()
-    // Tentativa de acessar rota dinâmica em domínio público → manda pra intranet
-    return noStore(NextResponse.redirect(INTRANET_URL + pathname, 302))
+    // Qualquer outra rota → manda pro www equivalente (visitante saiu do escopo do LP)
+    return noStore(NextResponse.redirect('https://www.axiconsolucoes.com' + pathname, 302))
   }
 
   if (hostname === 'www.axiconsolucoes.com') {
