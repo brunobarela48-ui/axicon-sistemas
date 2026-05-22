@@ -207,7 +207,7 @@ export default function EmailCustomComposer() {
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 10, color: NAVY, letterSpacing: 2, fontWeight: 700, marginBottom: 4 }}>DISPARO AVULSO</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#1a1a1a', fontFamily: FT }}>Compor e-mail custom</div>
-            <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Cole o HTML, escolha o destino, dispare via Resend. Arquiva automaticamente no histórico.</div>
+            <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Cole o HTML, escolha o destino, dispare via Brevo. Arquiva automaticamente no histórico.</div>
           </div>
 
           {msg && <Alert kind="ok">{msg}</Alert>}

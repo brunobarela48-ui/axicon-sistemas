@@ -4,7 +4,7 @@ import { renderNewsletter, dayLabelPtBR } from '../../../lib/newsletter-template
 
 // POST /api/newsletter/preview
 // Recebe seleção de notícias publicadas + textos editoriais e devolve
-// { html, text } prontos para preview, cópia ou envio via Resend.
+// { html, text } prontos para preview, cópia ou envio via Brevo.
 //
 // Body esperado:
 // {

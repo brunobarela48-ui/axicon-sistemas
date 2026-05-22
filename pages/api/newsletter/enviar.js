@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '../../../lib/supabase-admin'
 import { getAdminUser } from '../../../lib/auth'
 import { renderNewsletter, dayLabelPtBR } from '../../../lib/newsletter-template'
+import { sendBulk, senderFrom } from '../../../lib/brevo'
 
 // POST /api/newsletter/enviar
 // Envia a newsletter para TODOS os assinantes ativos.
@@ -12,15 +13,14 @@ import { renderNewsletter, dayLabelPtBR } from '../../../lib/newsletter-template
 // - Admin only
 // - Bloqueia se outro envio da MESMA edicao_numero rodou nos últimos 30 min
 //   (evita envio duplicado por clique acidental)
-// - Hard cap de 100 destinatários por execução (limite do batch Resend e
-//   do timeout serverless). Quando passar disso, refatoramos para job em
-//   background ou múltiplas chamadas
+// - Hard cap de 100 destinatários por execução (timeout serverless + plano
+//   Brevo). Quando passar disso, refatoramos para job em background ou
+//   múltiplas chamadas (ou messageVersions do Brevo num único POST)
 //
 // Registra a operação na tabela newsletter_envios.
 
 export const config = { maxDuration: 60 }
 
-const RESEND_BATCH_URL = 'https://api.resend.com/emails/batch'
 const SITE_BASE = 'https://www.axiconsolucoes.com'
 const HARD_CAP = 100
 
@@ -30,8 +30,7 @@ export default async function handler(req, res) {
   const user = await getAdminUser(req)
   if (!user) return res.status(403).json({ error: 'Acesso restrito a administradores' })
 
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'RESEND_API_KEY não configurada' })
+  if (!process.env.BREVO_API_KEY) return res.status(500).json({ error: 'BREVO_API_KEY não configurada' })
 
   const body = req.body || {}
   const {
@@ -129,59 +128,38 @@ export default async function handler(req, res) {
     .single()
   if (errEnvio) return res.status(500).json({ error: 'Falha registrando envio: ' + errEnvio.message })
 
-  const from = process.env.RESEND_SENDER || 'Áxicon Daily News <onboarding@resend.dev>'
-
-  // 5) Monta batch personalizado: cada email com URL única de unsubscribe
-  const emails = assinantes.map(a => {
-    const unsubUrl = `${SITE_BASE}/api/newsletter/descadastrar?token=${a.unsubscribe_token}`
-    const html = htmlTemplate.replace(/%unsubscribe%/g, unsubUrl)
-    const text = textTemplate.replace(/%unsubscribe%/g, unsubUrl)
-    return {
-      from,
-      to: [a.email],
-      subject: assunto,
-      html,
-      text,
-      headers: {
-        'List-Unsubscribe': `<${unsubUrl}>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-      },
-    }
-  })
-
-  // 6) Envia em batch via Resend (até 100 num único POST)
+  // 5+6) Envia individualmente via Brevo — cada e-mail com unsubscribe único
   let enviados = 0, falhas = 0, falhasDetalhes = []
   try {
-    const r = await fetch(RESEND_BATCH_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(emails),
+    const recipientes = assinantes.map(a => ({
+      id: a.id,
+      email: a.email,
+      name: a.nome || undefined,
+      unsubUrl: `${SITE_BASE}/api/newsletter/descadastrar?token=${a.unsubscribe_token}`,
+    }))
+    const out = await sendBulk(recipientes, {
+      sender: senderFrom('Áxicon Daily News'),
+      subject: assunto,
+      html: (r) => htmlTemplate.replace(/%unsubscribe%/g, r.unsubUrl),
+      text: (r) => textTemplate.replace(/%unsubscribe%/g, r.unsubUrl),
+      headers: (r) => ({
+        'List-Unsubscribe': `<${r.unsubUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      }),
     })
-    const out = await r.json().catch(() => ({}))
-    if (!r.ok) {
-      await supabaseAdmin.from('newsletter_envios').update({
-        finalizado_em: new Date().toISOString(),
-        total_enviados: 0,
-        total_falhas: assinantes.length,
-      }).eq('id', envio.id)
-      return res.status(r.status).json({
-        error: out?.message || 'Erro Resend HTTP ' + r.status,
-        details: out,
-      })
-    }
-    // Resend batch retorna { data: [{id}...] } — sucesso por padrão
-    const successItems = Array.isArray(out?.data) ? out.data : []
-    enviados = successItems.length || assinantes.length
+    enviados = out.enviados
+    falhas = out.falhas
+    falhasDetalhes = out.resultados.filter(x => !x.ok).map(x => `${x.email}: ${x.erro}`)
 
-    // Atualiza ultimo_envio_em de cada assinante
-    const agora = new Date().toISOString()
-    await supabaseAdmin
-      .from('newsletter_assinantes')
-      .update({ ultimo_envio_em: agora })
-      .in('id', assinantes.map(a => a.id))
+    // Atualiza ultimo_envio_em apenas dos que realmente enviaram
+    const okEmails = new Set(out.resultados.filter(x => x.ok).map(x => x.email))
+    const okIds = assinantes.filter(a => okEmails.has(a.email)).map(a => a.id)
+    if (okIds.length) {
+      await supabaseAdmin
+        .from('newsletter_assinantes')
+        .update({ ultimo_envio_em: new Date().toISOString() })
+        .in('id', okIds)
+    }
   } catch (e) {
     falhas = assinantes.length
     falhasDetalhes.push(e.message)

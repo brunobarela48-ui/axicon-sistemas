@@ -1,11 +1,11 @@
 import { supabaseAdmin } from '../../../lib/supabase-admin'
+import { sendEmail, senderFrom } from '../../../lib/brevo'
 
 // POST /api/leads/simulador
 // Endpoint público (chamado pelos simuladores em /simular/*).
 // Cria card no CRM (varejo ou atacado conforme o tipo) + email pro time
 // + devolve wa.me URL para o frontend redirecionar.
 
-const RESEND_API_URL = 'https://api.resend.com/emails'
 const TEAM_WHATSAPP = '5544991147236'
 const TEAM_EMAIL = process.env.LEADS_EMAIL || 'contato@axiconsolucoes.com'
 const SITE_BASE = 'https://www.axiconsolucoes.com'
@@ -112,7 +112,7 @@ export default async function handler(req, res) {
 
   const leadId = insertData?.id || null
 
-  // Envia email pro time via Resend (best-effort)
+  // Envia email pro time via Brevo (best-effort)
   await enviarEmailEquipe({ tipo, inputs, outputs, lead, leadId, area, valor })
     .catch(e => console.error('[simulador] falha no email', e.message))
 
@@ -187,9 +187,8 @@ function makeWhatsAppUrl({ tipo, lead, inputs, outputs }) {
 }
 
 async function enviarEmailEquipe({ tipo, inputs, outputs, lead, leadId, area, valor }) {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.warn('[simulador] RESEND_API_KEY não configurada — email não será enviado')
+  if (!process.env.BREVO_API_KEY) {
+    console.warn('[simulador] BREVO_API_KEY não configurada — email não será enviado')
     return
   }
 
@@ -224,14 +223,10 @@ async function enviarEmailEquipe({ tipo, inputs, outputs, lead, leadId, area, va
 </p>
 </body></html>`
 
-  const from = process.env.RESEND_SENDER || 'Áxicon Leads <onboarding@resend.dev>'
-  const r = await fetch(RESEND_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-    body: JSON.stringify({ from, to: [TEAM_EMAIL], subject, html, reply_to: lead.email }),
+  await sendEmail({
+    sender: senderFrom('Áxicon Leads'),
+    to: TEAM_EMAIL,
+    subject, html,
+    replyTo: lead.email,
   })
-  if (!r.ok) {
-    const errBody = await r.text().catch(() => '')
-    throw new Error(`Resend HTTP ${r.status}: ${errBody.slice(0, 200)}`)
-  }
 }

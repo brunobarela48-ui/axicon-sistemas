@@ -1,8 +1,9 @@
 import { supabaseAdmin } from '../../../lib/supabase-admin'
 import { getAdminUser } from '../../../lib/auth'
+import { sendEmail, sendBulk, senderFrom } from '../../../lib/brevo'
 
 // POST /api/newsletter/custom
-// Dispara um HTML "avulso" (não-newsletter) via Resend.
+// Dispara um HTML "avulso" (não-newsletter) via Brevo.
 //
 // Modos (campo "modo"):
 //   "teste"      → envia para 1 destinatário (campo destinatarios[0])
@@ -22,14 +23,12 @@ import { getAdminUser } from '../../../lib/auth'
 //
 // Segurança:
 //   - Admin only
-//   - HARD_CAP de 100 destinatários por execução (limite do batch Resend)
+//   - HARD_CAP de 100 destinatários por execução (timeout serverless + plano Brevo)
 //   - Modos 'assinantes' e 'lista' arquivam o envio em newsletter_envios
 //     com tipo = 'custom', preservando snapshot do HTML.
 
 export const config = { maxDuration: 60 }
 
-const RESEND_API_URL = 'https://api.resend.com/emails'
-const RESEND_BATCH_URL = 'https://api.resend.com/emails/batch'
 const SITE_BASE = 'https://www.axiconsolucoes.com'
 const HARD_CAP = 100
 
@@ -57,8 +56,7 @@ export default async function handler(req, res) {
   const user = await getAdminUser(req)
   if (!user) return res.status(403).json({ error: 'Acesso restrito a administradores' })
 
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'RESEND_API_KEY não configurada' })
+  if (!process.env.BREVO_API_KEY) return res.status(500).json({ error: 'BREVO_API_KEY não configurada' })
 
   const body = req.body || {}
   const {
@@ -75,7 +73,7 @@ export default async function handler(req, res) {
   if (!assunto || typeof assunto !== 'string') return res.status(400).json({ error: 'assunto obrigatório' })
   if (!html || typeof html !== 'string' || html.length < 20) return res.status(400).json({ error: 'html obrigatório' })
 
-  const from = process.env.RESEND_SENDER || 'Áxicon <onboarding@resend.dev>'
+  const from = senderFrom('Áxicon')
   const text = htmlToText(html)
 
   // ── MODO TESTE ────────────────────────────────────────────────────────
@@ -83,19 +81,13 @@ export default async function handler(req, res) {
     const dest = destinatarios[0]
     if (!isEmail(dest)) return res.status(400).json({ error: 'destinatário de teste inválido' })
     try {
-      const r = await fetch(RESEND_API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          from, to: [dest], subject: assunto, html, text,
-          headers: { 'X-Entity-Ref-ID': `axicon-custom-test-${Date.now()}` },
-        }),
+      const out = await sendEmail({
+        sender: from, to: dest, subject: assunto, html, text,
+        headers: { 'X-Entity-Ref-ID': `axicon-custom-test-${Date.now()}` },
       })
-      const out = await r.json().catch(() => ({}))
-      if (!r.ok) return res.status(r.status).json({ error: out?.message || 'Erro Resend HTTP ' + r.status, details: out })
-      return res.status(200).json({ ok: true, modo: 'teste', destinatario: dest, id: out.id || null })
+      return res.status(200).json({ ok: true, modo: 'teste', destinatario: dest, id: out.messageId || null })
     } catch (e) {
-      return res.status(500).json({ error: 'Falha Resend: ' + e.message })
+      return res.status(500).json({ error: 'Falha (Brevo): ' + e.message })
     }
   }
 
@@ -151,58 +143,37 @@ export default async function handler(req, res) {
     .single()
   if (errEnvio) return res.status(500).json({ error: 'Falha registrando envio: ' + errEnvio.message })
 
-  // ── Monta batch Resend ────────────────────────────────────────────────
-  const emails = recipientes.map(r => {
-    const finalHtml = r.unsubUrl ? html.replace(/%unsubscribe%/g, r.unsubUrl) : html
-    const finalText = r.unsubUrl ? text.replace(/%unsubscribe%/g, r.unsubUrl) : text
-    const headers = {}
-    if (r.unsubUrl) {
-      headers['List-Unsubscribe'] = `<${r.unsubUrl}>`
-      headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
-    }
-    return {
-      from,
-      to: [r.email],
-      subject: assunto,
-      html: finalHtml,
-      text: finalText,
-      headers,
-    }
-  })
-
+  // ── Envia individualmente via Brevo ──────────────────────────────────
   let enviados = 0, falhas = 0
-  let resendError = null
+  let sendError = null
   try {
-    const r = await fetch(RESEND_BATCH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify(emails),
+    const out = await sendBulk(recipientes, {
+      sender: from,
+      subject: assunto,
+      html: (r) => (r.unsubUrl ? html.replace(/%unsubscribe%/g, r.unsubUrl) : html),
+      text: (r) => (r.unsubUrl ? text.replace(/%unsubscribe%/g, r.unsubUrl) : text),
+      headers: (r) => (r.unsubUrl ? {
+        'List-Unsubscribe': `<${r.unsubUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      } : undefined),
     })
-    const out = await r.json().catch(() => ({}))
-    if (!r.ok) {
-      await supabaseAdmin.from('newsletter_envios').update({
-        finalizado_em: new Date().toISOString(),
-        total_enviados: 0,
-        total_falhas: recipientes.length,
-      }).eq('id', envio.id)
-      return res.status(r.status).json({ error: out?.message || 'Erro Resend HTTP ' + r.status, details: out })
-    }
-    const successItems = Array.isArray(out?.data) ? out.data : []
-    enviados = successItems.length || recipientes.length
+    enviados = out.enviados
+    falhas = out.falhas
 
-    // Se for assinantes, atualiza ultimo_envio_em
+    // Se for assinantes, atualiza ultimo_envio_em só dos que enviaram
     if (modo === 'assinantes') {
-      const ids = recipientes.map(r => r.id).filter(Boolean)
-      if (ids.length) {
+      const okEmails = new Set(out.resultados.filter(x => x.ok).map(x => x.email))
+      const okIds = recipientes.filter(r => okEmails.has(r.email)).map(r => r.id).filter(Boolean)
+      if (okIds.length) {
         await supabaseAdmin
           .from('newsletter_assinantes')
           .update({ ultimo_envio_em: new Date().toISOString() })
-          .in('id', ids)
+          .in('id', okIds)
       }
     }
   } catch (e) {
     falhas = recipientes.length
-    resendError = e.message
+    sendError = e.message
   }
 
   await supabaseAdmin.from('newsletter_envios').update({
@@ -218,6 +189,6 @@ export default async function handler(req, res) {
     total: recipientes.length,
     enviados,
     falhas,
-    erro: resendError,
+    erro: sendError,
   })
 }
