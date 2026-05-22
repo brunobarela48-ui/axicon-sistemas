@@ -100,6 +100,10 @@ export default function Comunicacao() {
   const [result,     setResult]     = useState(null)
   const [copied,     setCopied]     = useState(false)
   const [erro,       setErro]       = useState('')
+  const [toEmail,    setToEmail]    = useState('')
+  const [subject,    setSubject]    = useState('')
+  const [sending,    setSending]    = useState(false)
+  const [sendMsg,    setSendMsg]    = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setLoading(false) })
@@ -135,6 +139,29 @@ export default function Comunicacao() {
     if (!result) return
     navigator.clipboard.writeText(result)
     setCopied(true); setTimeout(() => setCopied(false), 2000)
+  }
+
+  // Converte a mensagem (texto puro) em HTML simples: parágrafos + quebras de linha, escapando o conteúdo.
+  const textToHtml = (txt) => {
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    const corpo = txt.trim().split(/\n{2,}/).map(p => `<p style="margin:0 0 14px">${esc(p).replace(/\n/g,'<br>')}</p>`).join('')
+    return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#333">${corpo}</div>`
+  }
+
+  const enviarEmail = async () => {
+    if (!toEmail || !result || !session) return
+    setSending(true); setSendMsg('')
+    try {
+      const res = await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${session.access_token}` },
+        body: JSON.stringify({ to: toEmail, subject: subject || 'Mensagem da Áxicon', text: result, html: textToHtml(result) }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) setSendMsg('erro: ' + (data.error || 'falha no envio'))
+      else setSendMsg('ok')
+    } catch { setSendMsg('erro: conexão') }
+    setSending(false)
   }
 
   if (loading) return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:BG }}><div style={{ color:NAVY, fontSize:14, fontFamily:SN }}>Verificando acesso...</div></div>
@@ -300,6 +327,21 @@ export default function Comunicacao() {
                   <button onClick={gerarMensagem} disabled={generating} style={{ marginTop:14, padding:'8px 16px', borderRadius:8, border:'1.5px solid #ddd', background:'white', color:'#888', cursor:'pointer', fontSize:12, fontFamily:SN }}>
                     🔄 Gerar outra versão
                   </button>
+
+                  {gCanal === 'email' && (
+                    <div style={{ marginTop:18, paddingTop:18, borderTop:`1px solid ${NAVY}20` }}>
+                      <span style={lbl}>ENVIAR POR E-MAIL</span>
+                      <div style={{ display:'flex', gap:10, marginTop:8, marginBottom:10, flexWrap:'wrap' }}>
+                        <input type="email" placeholder="destinatario@email.com" value={toEmail} onChange={e => { setToEmail(e.target.value); setSendMsg('') }} style={{ ...inp, flex:'1 1 200px' }}/>
+                        <input type="text" placeholder="Assunto do e-mail" value={subject} onChange={e => setSubject(e.target.value)} style={{ ...inp, flex:'1 1 200px' }}/>
+                      </div>
+                      <button onClick={enviarEmail} disabled={sending || !toEmail} style={{ width:'100%', padding:'11px 0', borderRadius:9, border:'none', background: (sending||!toEmail) ? '#ddd' : `linear-gradient(135deg,${NAVY},${NAVY2})`, color:'white', fontWeight:700, fontSize:14, cursor:(sending||!toEmail)?'not-allowed':'pointer', fontFamily:SN, letterSpacing:.5 }}>
+                        {sending ? 'Enviando...' : '📧 Enviar e-mail'}
+                      </button>
+                      {sendMsg === 'ok' && <div style={{ marginTop:10, padding:'9px 14px', borderRadius:8, background:'#e8f5e9', border:'1px solid #4caf5040', color:'#2e7d32', fontSize:13 }}>✓ E-mail enviado para {toEmail}</div>}
+                      {sendMsg.startsWith('erro') && <div style={{ marginTop:10, padding:'9px 14px', borderRadius:8, background:'#fde8e8', border:'1px solid #f4433640', color:'#c62828', fontSize:13 }}>{sendMsg.replace('erro: ','Falha: ')}</div>}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
